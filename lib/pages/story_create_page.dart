@@ -53,7 +53,13 @@ class StoryCreatePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(11),
                   ),
                 ),
-                child: Text('소문내기'),
+                child: Text(
+                  '소문내기',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
             SizedBox(height: 40)
