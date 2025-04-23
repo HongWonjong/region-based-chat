@@ -22,12 +22,20 @@ class StoryCreatePage extends StatelessWidget {
           children: [
             TextField(
               decoration: InputDecoration(
-                hintText: '소문을 입력하세요',
+                hintText: '내용을 입력하세요',
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+                contentPadding: EdgeInsets.all(16),
               ),
             ),
+            SizedBox(height: 16),
             TextField(
+              maxLines: 11,
               decoration: InputDecoration(
                 hintText: '내용을 입력하세요',
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+                contentPadding: EdgeInsets.all(16),
               ),
             ),
             Spacer(),
