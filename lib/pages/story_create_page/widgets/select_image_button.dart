@@ -33,8 +33,8 @@ class _SelectImageButtonState extends State<SelectImageButton> {
           // 이미지 추가 버튼
           InkWell(
             onTap: _pickImages,
-            splashColor: Colors.blue.withOpacity(0.3),
-            highlightColor: Colors.blue.withOpacity(0.1),
+            splashColor: Colors.blue.withAlpha(76),
+            highlightColor: Colors.blue.withAlpha(25),
             borderRadius: BorderRadius.circular(12),
             child: Container(
               width: 100,
