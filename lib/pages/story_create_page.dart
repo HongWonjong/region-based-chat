@@ -29,10 +29,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
         title: Text(
           '소문내기',
           style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+              color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
       body: Padding(
@@ -41,28 +38,11 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             selectImage(),
-            TextField(
-              decoration: InputDecoration(
-                hintText: '내용을 입력하세요',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
-                contentPadding: EdgeInsets.all(16),
-              ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              maxLines: 12,
-              decoration: InputDecoration(
-                hintText: '내용을 입력하세요',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
-                contentPadding: EdgeInsets.all(16),
-              ),
-            ),
+            input(),
             Spacer(),
             Row(
               children: [
-                categoreButton(),
+                categoreButton(text: '일반적인 행사'),
                 SizedBox(width: 10),
                 categoreButton(color: Color(0xFF77FA7D), text: '가벼운사건'),
               ],
@@ -70,9 +50,9 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
             SizedBox(height: 16),
             Row(
               children: [
-                categoreButton(),
+                categoreButton(text: '중요한 사건/범죄'),
                 SizedBox(width: 10),
-                categoreButton(),
+                categoreButton(text: '분실'),
               ],
             ),
             Spacer(),
@@ -81,6 +61,29 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
           ],
         ),
       ),
+    );
+  }
+
+  Column input() {
+    return Column(
+      children: [
+        TextField(
+          decoration: InputDecoration(
+            hintText: '내용을 입력하세요',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+            contentPadding: EdgeInsets.all(16),
+          ),
+        ),
+        SizedBox(height: 16),
+        TextField(
+          maxLines: 12,
+          decoration: InputDecoration(
+            hintText: '내용을 입력하세요',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+            contentPadding: EdgeInsets.all(16),
+          ),
+        ),
+      ],
     );
   }
 
