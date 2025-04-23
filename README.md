@@ -113,9 +113,10 @@ Kakao Maps
 
 🗄️ Firebase Storage 구조
 프로필 이미지와 채팅 이미지는 Firebase Storage에 저장됩니다. 아래는 파일 경로 구조입니다:
-
+```
 프로필 이미지: users/<user_uid>/profile.jpg
 채팅 이미지: chats/<marker_id>/messages/<message_id>/image.jpg
+```
 
 🚀 주요 기능
 마커 생성 및 관리
