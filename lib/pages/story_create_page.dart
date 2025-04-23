@@ -134,7 +134,17 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                 contentPadding: EdgeInsets.all(16),
               ),
             ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                categoreButton(),
+                SizedBox(width: 10),
+                categoreButton(),
+              ],
+            ),
+
             Spacer(),
+
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -160,6 +170,24 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
             ),
             SizedBox(height: 40)
           ],
+        ),
+      ),
+    );
+  }
+
+  Expanded categoreButton() {
+    return Expanded(
+      child: SizedBox(
+        height: 50,
+        child: ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey,
+            foregroundColor: Colors.black,
+            elevation: 0,
+            shadowColor: Colors.transparent,
+          ),
+          child: Text('소문 카테고리'),
         ),
       ),
     );
