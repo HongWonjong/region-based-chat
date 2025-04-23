@@ -53,17 +53,15 @@ Kakao Maps
 ```
 {
   "id": "marker001",
-  "type": "major_incident",
-  //major_incident, minor_incident, event
+  "type": "majorIncident",
+  //majorIncident, minorIncident, event, lostItem
   "title": "도난 신고",
   "description": "자전거 도난 사건 발생",
   "latitude": 37.5665,
   "longitude": 126.9780,
   "createdBy": "user123",
   "createdAt": "2025-04-22T00:00:00Z",
-  "color": "red"//red,
-  green,
-  purple
+  "color": "red"//red, green, blue, yellow
 }
 ```
 
