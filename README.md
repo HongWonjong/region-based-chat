@@ -53,8 +53,8 @@ Kakao Maps
 ```
 {
   "id": "marker001",
-  "type": "majorIncident",
-  //majorIncident, minorIncident, event, lostItem
+  "type": "major_incident",
+  //major_incident, minor_incident, event
   "title": "도난 신고",
   "description": "자전거 도난 사건 발생",
   "latitude": 37.5665,
@@ -73,7 +73,7 @@ Kakao Maps
 
 ```
 {
-  "markerId": "marker001", // 실제로는 UUID 사용할 예정
+  "markerId": "marker001",
   "title": "도난 신고",
   "createdBy": "user123",
   "createdAt": "2025-04-22T00:00:00Z",
