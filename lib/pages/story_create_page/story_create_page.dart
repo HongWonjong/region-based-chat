@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:region_based_chat/pages/story_create_page/widgets/category_button.dart';
+import 'widgets/select_image_button.dart';
 
 class StoryCreatePage extends StatelessWidget {
   const StoryCreatePage({super.key});
@@ -27,7 +26,8 @@ class StoryCreatePage extends StatelessWidget {
               children: [
                 categoryButton(text: '일반적인 행사'),
                 SizedBox(width: 10),
-                categoryButton(color: Color(0xFF77FA7D), text: '가벼운사건'),
+                categoryButton(
+                    color: Color(0xFF77FA7D), text: '가벼운사건', isSelected: true),
               ],
             ),
             SizedBox(height: 16),
@@ -96,7 +96,8 @@ class StoryCreatePage extends StatelessWidget {
     );
   }
 
-  Expanded categoryButton({Color? color, String text = '소문 카테고리'}) {
+  Expanded categoryButton(
+      {Color? color, String text = '소문 카테고리', bool isSelected = false}) {
     return Expanded(
       child: SizedBox(
         height: 50,
@@ -109,6 +110,10 @@ class StoryCreatePage extends StatelessWidget {
             shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
+            ),
+            side: BorderSide(
+              color: isSelected ? Colors.black : Colors.transparent,
+              width: 2,
             ),
           ),
           child: Text(
