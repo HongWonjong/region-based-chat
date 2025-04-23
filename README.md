@@ -30,7 +30,7 @@
 ```json
 // Users/<user_uid>
 {
-  "uid": "user123",
+  "uid": "user123", 
   "email": "user@example.com",
   "username": "홍길동",
   "profileImageUrl": null, // 또는 Storage URL
@@ -47,7 +47,7 @@
 ```json
 // Markers/<marker_id>
 {
-  "id": "marker001",
+  "id": "marker001", // 실제로는 uuid
   "type": "majorIncident", //majorIncident, minorIncident, event, lostItem
   "title": "도난 신고",
   "description": "자전거 도난 사건 발생",
@@ -66,7 +66,7 @@
 ```json
 // Markers/<marker_id>/Chats/<chat_id>
 {
-  "markerId": "marker001",
+  "markerId": "marker001", // 실제로는 uuid
   "title": "도난 신고",
   "createdBy": "user123",
   "createdAt": "2025-04-22T00:00:00Z",
@@ -85,7 +85,7 @@
 ```json
 // Markers/<marker_id>/Chats/<chat_id>/Messages/<message_id>
 {
-  "messageId": "msg001",
+  "messageId": "msg001", // 실제로는 uuid
   "senderId": "user123",
   "senderName": "홍길동",
   "message": "도난 장소 확인했습니다.",
@@ -100,7 +100,7 @@
   // 채팅방에 이미지를 올리는 경우
   // Markers/<marker_id>/Chats/<chat_id>/Messages/<message_id>
 
-  "messageId": "msg002",
+  "messageId": "msg002", // 실제로는 uuid
   "senderId": "user456",
   "senderName": "김영희",
   "message": "https://storage.googleapis.com/<bucket>/chats/marker001/messages/msg002/image.jpg",
