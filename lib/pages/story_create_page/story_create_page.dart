@@ -104,7 +104,7 @@ class StoryCreatePage extends StatelessWidget {
         child: ElevatedButton(
           onPressed: () {},
           style: ElevatedButton.styleFrom(
-            backgroundColor: color ?? Colors.grey,
+            backgroundColor: color ?? Colors.grey, //TODO: 카테고리 선택 시 색상 변경
             foregroundColor: Colors.black,
             elevation: 0,
             shadowColor: Colors.transparent,
