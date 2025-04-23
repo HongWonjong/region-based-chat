@@ -95,12 +95,12 @@ Kakao Maps
 // Chats/<marker_id>/Messages/<message_id>
 
 ```
-{
+{ // 채팅방에 메세지를 올리는 경우
   "messageId": "msg001",
   "senderId": "user123",
   "senderName": "홍길동",
   "message": "도난 장소 확인했습니다.",
-  "type": "text", // "image"도 추가 가능하도록 이미지 피커 사용
+  "type": "text", 
 
   "timestamp": "2025-04-22T10:00:00Z",
   "readBy": [
@@ -109,7 +109,17 @@ Kakao Maps
   ]
 }
 ```
-
+```
+{ // 채팅방에 이미지를 올리는 경우
+"messageId": "msg002",
+"senderId": "user456",
+"senderName": "김영희",
+"message": "https://storage.googleapis.com/<bucket>/chats/marker001/messages/msg002/image.jpg",
+"type": "image",
+"timestamp": "2025-04-22T10:01:00Z",
+"readBy": ["user456"]
+}
+```
 🗄️ Firebase Storage 구조
 프로필 이미지와 채팅 이미지는 Firebase Storage에 저장됩니다. 아래는 파일 경로 구조입니다:
 ```
