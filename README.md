@@ -35,60 +35,81 @@ Kakao Maps
 사용자 정보를 저장하는 컬렉션입니다.
 // Users/<user_uid>
 
+```
 {
-"uid": "user123",
-"email": "user@example.com",
-"username": "홍길동",
-"profileImageUrl": null, // 또는 Storage URL
-"createdAt": "2025-04-22T00:00:00Z",
-"lastLogin": "2025-04-22T10:00:00Z"
+  "uid": "user123",
+  "email": "user@example.com",
+  "username": "홍길동",
+  "profileImageUrl": null,
+  //또는StorageURL"createdAt": "2025-04-22T00:00:00Z",
+  "lastLogin": "2025-04-22T10:00:00Z"
 }
+```
 
 📍 Markers
 지도에 표시되는 마커(위치) 정보를 저장합니다.
 // Markers/<marker_id>
 
+```
 {
-"id": "marker001",
-"type": "major_incident", // major_incident, minor_incident, event
-"title": "도난 신고",
-"description": "자전거 도난 사건 발생",
-"latitude": 37.5665,
-"longitude": 126.9780,
-"createdBy": "user123",
-"createdAt": "2025-04-22T00:00:00Z",
-"color": "red" // red, green, purple
+  "id": "marker001",
+  "type": "major_incident",
+  //major_incident,
+  minor_incident,
+  event"title": "도난 신고",
+  "description": "자전거 도난 사건 발생",
+  "latitude": 37.5665,
+  "longitude": 126.9780,
+  "createdBy": "user123",
+  "createdAt": "2025-04-22T00:00:00Z",
+  "color": "red"//red,
+  green,
+  purple
 }
+```
 
 💬 Chats
 마커에 연결된 채팅방 정보를 저장합니다.
 // Chats/<marker_id>
 
+```
 {
-"markerId": "marker001",
-"title": "도난 신고",
-"createdBy": "user123",
-"createdAt": "2025-04-22T00:00:00Z",
-"participants": ["user123", "user456"],
-"lastMessage": "도난 장소 확인했습니다.",
-"lastMessageTime": "2025-04-22T10:00:00Z",
-"lastMessageSender": "user456",
-"typing": ["user123"]
+  "markerId": "marker001",
+  "title": "도난 신고",
+  "createdBy": "user123",
+  "createdAt": "2025-04-22T00:00:00Z",
+  "participants": [
+    "user123",
+    "user456"
+  ],
+  "lastMessage": "도난 장소 확인했습니다.",
+  "lastMessageTime": "2025-04-22T10:00:00Z",
+  "lastMessageSender": "user456",
+  "typing": [
+    "user123"
+  ]
 }
+```
 
 ✉️ Messages
 채팅방 내 개별 메시지를 저장합니다.
 // Chats/<marker_id>/Messages/<message_id>
 
+```
 {
-"messageId": "msg001",
-"senderId": "user123",
-"senderName": "홍길동",
-"message": "도난 장소 확인했습니다.",
-"type": "text", // text, image
-"timestamp": "2025-04-22T10:00:00Z",
-"readBy": ["user123", "user456"]
+  "messageId": "msg001",
+  "senderId": "user123",
+  "senderName": "홍길동",
+  "message": "도난 장소 확인했습니다.",
+  "type": "text",
+  //text,
+  image"timestamp": "2025-04-22T10:00:00Z",
+  "readBy": [
+    "user123",
+    "user456"
+  ]
 }
+```
 
 🗄️ Firebase Storage 구조
 프로필 이미지와 채팅 이미지는 Firebase Storage에 저장됩니다. 아래는 파일 경로 구조입니다:
