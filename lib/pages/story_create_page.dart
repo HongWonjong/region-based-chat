@@ -126,13 +126,21 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
             ),
             SizedBox(height: 16),
             TextField(
-              maxLines: 11,
+              maxLines: 12,
               decoration: InputDecoration(
                 hintText: '내용을 입력하세요',
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
                 contentPadding: EdgeInsets.all(16),
               ),
+            ),
+            Spacer(),
+            Row(
+              children: [
+                categoreButton(),
+                SizedBox(width: 10),
+                categoreButton(),
+              ],
             ),
             SizedBox(height: 16),
             Row(
@@ -144,7 +152,6 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
             ),
 
             Spacer(),
-
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -186,6 +193,9 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
             foregroundColor: Colors.black,
             elevation: 0,
             shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
           child: Text('소문 카테고리'),
         ),
