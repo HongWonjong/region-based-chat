@@ -20,6 +20,15 @@ migrate_working_dir/
 *.iws
 .idea/
 
+
+# Firebase 설정 파일
+android/app/google-services.json
+
+# Android keystore (릴리즈 빌드용)
+*.jks
+*.keystore
+key.properties
+
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
