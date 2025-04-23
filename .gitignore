@@ -23,6 +23,7 @@ migrate_working_dir/
 
 # Firebase 설정 파일
 android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
 
 # Android keystore (릴리즈 빌드용)
 *.jks
