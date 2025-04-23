@@ -115,7 +115,7 @@ Kakao Maps
 
 지도 연동
 
-Google Maps 또는 Kakao Maps API를 사용해 마커를 시각화합니다.
+Kakao Maps API를 사용해 마커를 시각화합니다.
 사용자는 지도에서 마커를 클릭해 채팅방에 입장할 수 있습니다.
 
 
