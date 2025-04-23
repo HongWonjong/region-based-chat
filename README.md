@@ -33,9 +33,10 @@
   "uid": "user123",
   "email": "user@example.com",
   "username": "홍길동",
-  "profileImageUrl": null, //또는 Storage URL
+  "profileImageUrl": null, // 또는 Storage URL
   "createdAt": "2025-04-22T00:00:00Z",
-  "lastLogin": "2025-04-22T10:00:00Z"
+  "lastLogin": "2025-04-22T10:00:00Z",
+  "joinedMarkers": ["marker001", "marker002"] // 참여한 마커 ID 리스트
 }
 ```
 
@@ -63,7 +64,7 @@
 마커에 연결된 채팅방 정보를 저장합니다.
 
 ```json
-// Chats/<marker_id>
+// Markers/<marker_id>/Chats/<chat_id>
 {
   "markerId": "marker001",
   "title": "도난 신고",
@@ -82,9 +83,8 @@
 채팅방 내 개별 메시지를 저장합니다.
 
 ```json
-// Chats/<marker_id>/Messages/<message_id>
+// Markers/<marker_id>/Chats/<chat_id>/Messages/<message_id>
 {
-  // 채팅방에 메세지를 올리는 경우
   "messageId": "msg001",
   "senderId": "user123",
   "senderName": "홍길동",
@@ -98,6 +98,8 @@
 ```json
 {
   // 채팅방에 이미지를 올리는 경우
+  // Markers/<marker_id>/Chats/<chat_id>/Messages/<message_id>
+
   "messageId": "msg002",
   "senderId": "user456",
   "senderName": "김영희",
