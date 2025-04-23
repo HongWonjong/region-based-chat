@@ -54,9 +54,8 @@ Kakao Maps
 {
   "id": "marker001",
   "type": "major_incident",
-  //major_incident,
-  minor_incident,
-  event"title": "도난 신고",
+  //major_incident, minor_incident, event
+  "title": "도난 신고",
   "description": "자전거 도난 사건 발생",
   "latitude": 37.5665,
   "longitude": 126.9780,
@@ -101,9 +100,9 @@ Kakao Maps
   "senderId": "user123",
   "senderName": "홍길동",
   "message": "도난 장소 확인했습니다.",
-  "type": "text",
-  //text,
-  image"timestamp": "2025-04-22T10:00:00Z",
+  "type": "text", // "image"도 추가 가능하도록 이미지 피커 사용
+
+  "timestamp": "2025-04-22T10:00:00Z",
   "readBy": [
     "user123",
     "user456"
