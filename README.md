@@ -35,14 +35,14 @@ Kakao Maps
 사용자 정보를 저장하는 컬렉션입니다.
 // Users/<user_uid>
 
-{
+'''{
 "uid": "user123",
 "email": "user@example.com",
 "username": "홍길동",
 "profileImageUrl": null, // 또는 Storage URL
 "createdAt": "2025-04-22T00:00:00Z",
 "lastLogin": "2025-04-22T10:00:00Z"
-}
+}'''
 
 📍 Markers
 지도에 표시되는 마커(위치) 정보를 저장합니다.
