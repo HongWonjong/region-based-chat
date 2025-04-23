@@ -11,12 +11,11 @@ class StoryCreatePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          '소문내기',
-          style: TextStyle(
-              color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-      ),
+          title: Text('소문내기',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold))),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
