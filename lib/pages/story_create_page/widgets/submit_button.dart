@@ -14,16 +14,16 @@ class SubmitButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 50,
+      height: 55,
       child: ElevatedButton(
         onPressed: onPressed ?? () {},
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.deepPurple,
           foregroundColor: Colors.white,
           elevation: 2,
           shadowColor: Colors.blue.shade200,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(11),
+            borderRadius: BorderRadius.circular(16),
           ),
         ),
         child: Text(
