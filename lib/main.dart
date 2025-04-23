@@ -27,10 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const ChatPage(
-        markerId: 'marker001',
-        chatId: 'chat001',
-      ),
+      home: const WelcomePage(),
     );
   }
 }
