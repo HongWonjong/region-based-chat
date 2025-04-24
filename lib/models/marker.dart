@@ -10,7 +10,7 @@ class Marker {
   final String description;
   final String createdBy;
   final String createdAt;
-  final StoryType storyType;
+  final StoryType type;
 
   Marker({
     required this.id,
@@ -20,19 +20,19 @@ class Marker {
     required this.description,
     required this.createdBy,
     required this.createdAt,
-    required this.storyType,
+    required this.type,
   });
   factory Marker.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     return Marker(
       id: data['id'] as String,
       title: data['title'] as String,
-      longitude: data['longitude'] as double,
-      latitude: data['latitude'] as double,
+      longitude: (data['longitude'] is int ? (data['longitude'] as int).toDouble() : data['longitude'] as double),
+      latitude: (data['latitude'] is int ? (data['latitude'] as int).toDouble() : data['latitude'] as double),
       description: data['description'] as String,
       createdBy: data['createdBy'] as String,
       createdAt: data['createdAt'] as String,
-      storyType: StoryType.fromJson(data['storyType'] as Map<String, dynamic>),
+      type: StoryType.fromString(data['type'] as String),
     );
   }
 
@@ -45,7 +45,7 @@ class Marker {
       'description': description,
       'createdBy': createdBy,
       'createdAt': createdAt,
-      'storyType': storyType.toJson(),
+      'type': type.toJson(),
     };
   }
 }
@@ -59,9 +59,8 @@ enum StoryType {
   const StoryType(this.type, this.color);
   final String type;
   final Color color;
-
-  factory StoryType.fromJson(Map<String, dynamic> json) {
-    switch (json['type']) {
+  factory StoryType.fromString(String typeString) {
+    switch (typeString) {
       case 'majorIncident':
         return StoryType.majorIncident;
       case 'minorIncident':
@@ -71,11 +70,13 @@ enum StoryType {
       case 'lostItem':
         return StoryType.lostItem;
       default:
-        throw ArgumentError('Unknown StoryType: ${json['type']}');
+        throw ArgumentError('Unknown StoryType: $typeString');
     }
   }
 
   Map<String, dynamic> toJson() {
-    return {'type': type};
+    return {
+      'type': type,
+    };
   }
 }
