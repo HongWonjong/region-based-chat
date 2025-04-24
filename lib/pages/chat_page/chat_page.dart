@@ -216,21 +216,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                       filled: true,
                       fillColor: Colors.grey[200],
                     ),
-                    onSubmitted: (value) {
-                      print('Text submitted: $value');
-                      if (value.isNotEmpty) {
-                        ref
-                            .read(chatNotifierProvider(params).notifier)
-                            .sendMessage(
-                          'wonjonghong',
-                          '홍원종',
-                          value,
-                          'text',
-                        );
-                        _controller.clear();
-                        _focusNode.requestFocus();
-                      }
-                    },
                   ),
                 ),
                 IconButton(

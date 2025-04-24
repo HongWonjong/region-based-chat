@@ -3,8 +3,6 @@ import '../models/chat.dart';
 import '../models/message.dart';
 import '../repository/chat_repository.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 class ChatParams {
   final String markerId;
 
@@ -32,6 +30,7 @@ class ChatNotifier extends StateNotifier<List<Message>> {
 
   Future<void> _loadData() async {
     try {
+
       _chat = await _repository.getChat(markerId);
       state = await _repository.getMessages(markerId);
       print('Chat loaded: ${_chat?.title}, Messages: ${state.length}');
@@ -43,7 +42,7 @@ class ChatNotifier extends StateNotifier<List<Message>> {
   Future<void> sendMessage(String senderId, String senderName, String message, String type) async {
     try {
       final newMessage = Message(
-        messageId: 'msg${state.length + 1}',
+        messageId: DateTime.now().millisecondsSinceEpoch.toString(), // 고유 ID 생성
         senderId: senderId,
         senderName: senderName,
         message: message,
