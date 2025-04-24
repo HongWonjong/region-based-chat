@@ -6,6 +6,7 @@ import 'widgets/submit_button.dart';
 import 'widgets/category_button.dart';
 import 'widgets/location_picker_button.dart';
 import 'widgets/location_map_modal.dart';
+import 'widgets/location_info_panel.dart';
 
 class StoryCreatePage extends StatefulWidget {
   const StoryCreatePage({super.key});
@@ -121,55 +122,9 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                 Container(child: SelectImageButton()),
 
                 // 위치 정보 패널 (항상 표시, 선택하지 않았을 때는 회색으로)
-                Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: _selectedLocation != null
-                        ? Colors.blue.withOpacity(0.08)
-                        : Colors.grey.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                        color: _selectedLocation != null
-                            ? Colors.blue.withOpacity(0.2)
-                            : Colors.grey.withOpacity(0.2)),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    child: Row(
-                      children: [
-                        Icon(Icons.location_on,
-                            color: _selectedLocation != null
-                                ? Colors.blue
-                                : Colors.grey[400],
-                            size: 20),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            _selectedLocation != null
-                                ? '선택한 위치: ${_selectedLocation!.latitude.toStringAsFixed(5)}, ${_selectedLocation!.longitude.toStringAsFixed(5)}'
-                                : '위치를 선택해주세요',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: _selectedLocation != null
-                                  ? Colors.black87
-                                  : Colors.grey[600],
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: _showLocationPickerModal,
-                          child: Icon(
-                            Icons.edit,
-                            color: _selectedLocation != null
-                                ? Colors.blue
-                                : Colors.grey[400],
-                            size: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                LocationInfoPanel(
+                  selectedLocation: _selectedLocation,
+                  onEditPressed: _showLocationPickerModal,
                 ),
 
                 // 입력 필드
