@@ -66,7 +66,7 @@ class _LocationMapModalState extends State<LocationMapModal> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withAlpha(26),
                   blurRadius: 4,
                   offset: Offset(0, 1),
                 ),
