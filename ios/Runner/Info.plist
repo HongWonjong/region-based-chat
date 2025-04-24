@@ -52,6 +52,9 @@
 		</array>
 	</dict>
 	</array>
+
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>이 앱은 로컬 네트워크를 사용하여 디버그 연결을 합니다.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
