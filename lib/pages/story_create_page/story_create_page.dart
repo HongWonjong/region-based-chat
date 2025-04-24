@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import '../../services/story_service.dart';
 import 'widgets/select_image_button.dart';
 import 'widgets/input_fields.dart';
 import 'widgets/submit_button.dart';
@@ -18,6 +19,8 @@ class StoryCreatePage extends StatefulWidget {
 class _StoryCreatePageState extends State<StoryCreatePage> {
   int _selectedCategoryIndex = 1; // 기본값: '가벼운사건'
   NLatLng? _selectedLocation;
+  bool _isLoading = false;
+  final StoryService _storyService = StoryService();
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
@@ -60,6 +63,72 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
       _selectedLocation = location;
     });
     _checkFormValidity();
+  }
+
+  // 카테고리 인덱스를 StoryType으로 변환
+  StoryType _getStoryTypeFromIndex(int index) {
+    switch (index) {
+      case 0:
+        return StoryType.event; // 일반적인 행사
+      case 1:
+        return StoryType.minorIncident; // 가벼운 사건
+      case 2:
+        return StoryType.majorIncident; // 중요한 사건/범죄
+      case 3:
+        return StoryType.lostItem; // 분실
+      default:
+        return StoryType.minorIncident;
+    }
+  }
+
+  // 스토리 저장
+  Future<void> _saveStory() async {
+    if (!_isFormValid || _selectedLocation == null) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final String storyId = await _storyService.createStory(
+        title: _titleController.text,
+        description: _contentController.text,
+        latitude: _selectedLocation!.latitude,
+        longitude: _selectedLocation!.longitude,
+        userId: "user123", // 실제 사용자 ID로 대체 필요
+        type: _getStoryTypeFromIndex(_selectedCategoryIndex),
+        // imageUrls는 이미지 업로드 후 URL 배열로 대체 필요
+      );
+
+      // 성공 메시지 표시
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('소문이 성공적으로 등록되었습니다.')),
+      );
+
+      // 폼 초기화 또는 이전 화면으로 이동
+      _resetForm();
+    } catch (e) {
+      // 오류 메시지 표시
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('소문 등록 중 오류가 발생했습니다: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  // 폼 초기화
+  void _resetForm() {
+    _titleController.clear();
+    _contentController.clear();
+    setState(() {
+      _selectedLocation = null;
+      _selectedCategoryIndex = 1;
+      _isTitleValid = false;
+      _isContentValid = false;
+    });
   }
 
   // 위치 선택 모달 표시
@@ -112,96 +181,102 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
             ),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 사진 추가 버튼 (위치 버튼 제거)
-                SelectImageButton(),
-
-                // 위치 정보 패널 (항상 표시, 선택하지 않았을 때는 회색으로)
-                LocationInfoPanel(
-                  selectedLocation: _selectedLocation,
-                  onEditPressed: _showLocationPickerModal,
-                ),
-                SizedBox(height: 16),
-                // 입력 필드
-                InputFields(
-                  titleController: _titleController,
-                  contentController: _contentController,
-                  onTitleChanged: (_) => _checkFormValidity(),
-                  onContentChanged: (_) => _checkFormValidity(),
-                ),
-                SizedBox(height: 32),
-
-                // 카테고리 선택
-                Row(
+        body: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: CategoryButton(
-                        text: '일반적인 행사',
-                        color: Colors.grey[300],
-                        activeColor: Color(0xffEEFF06).withAlpha(76),
-                        initiallySelected: _selectedCategoryIndex == 0,
-                        onSelectionChanged: (_) => _selectCategory(0),
-                      ),
+                    // 사진 추가 버튼 (위치 버튼 제거)
+                    SelectImageButton(),
+
+                    // 위치 정보 패널 (항상 표시, 선택하지 않았을 때는 회색으로)
+                    LocationInfoPanel(
+                      selectedLocation: _selectedLocation,
+                      onEditPressed: _showLocationPickerModal,
                     ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: CategoryButton(
-                        color: Colors.grey[300],
-                        activeColor: Color(0xFF77FA7D).withAlpha(76),
-                        text: '가벼운사건',
-                        initiallySelected: _selectedCategoryIndex == 1,
-                        onSelectionChanged: (_) => _selectCategory(1),
-                      ),
+                    SizedBox(height: 16),
+                    // 입력 필드
+                    InputFields(
+                      titleController: _titleController,
+                      contentController: _contentController,
+                      onTitleChanged: (_) => _checkFormValidity(),
+                      onContentChanged: (_) => _checkFormValidity(),
                     ),
+                    SizedBox(height: 24),
+
+                    // 카테고리 선택
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CategoryButton(
+                            text: '일반적인 행사',
+                            color: Colors.grey[300],
+                            activeColor: Color(0xffEEFF06).withAlpha(76),
+                            initiallySelected: _selectedCategoryIndex == 0,
+                            onSelectionChanged: (_) => _selectCategory(0),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: CategoryButton(
+                            color: Colors.grey[300],
+                            activeColor: Color(0xFF77FA7D).withAlpha(76),
+                            text: '가벼운사건',
+                            initiallySelected: _selectedCategoryIndex == 1,
+                            onSelectionChanged: (_) => _selectCategory(1),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CategoryButton(
+                            text: '중요한 사건/범죄',
+                            color: Colors.grey[300],
+                            activeColor: Color(0xffF20C0C).withAlpha(76),
+                            initiallySelected: _selectedCategoryIndex == 2,
+                            onSelectionChanged: (_) => _selectCategory(2),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: CategoryButton(
+                            text: '분실',
+                            color: Colors.grey[300],
+                            activeColor: Color(0xff0022FF).withAlpha(76),
+                            initiallySelected: _selectedCategoryIndex == 3,
+                            onSelectionChanged: (_) => _selectCategory(3),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // 제출 버튼
+                    SizedBox(height: 24),
+                    SubmitButton(
+                      onPressed:
+                          _isFormValid && !_isLoading ? _saveStory : null,
+                      text: '소문내기',
+                    ),
+                    SizedBox(height: 24),
                   ],
                 ),
-                SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CategoryButton(
-                        text: '중요한 사건/범죄',
-                        color: Colors.grey[300],
-                        activeColor: Color(0xffF20C0C).withAlpha(76),
-                        initiallySelected: _selectedCategoryIndex == 2,
-                        onSelectionChanged: (_) => _selectCategory(2),
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: CategoryButton(
-                        text: '분실',
-                        color: Colors.grey[300],
-                        activeColor: Color(0xff0022FF).withAlpha(76),
-                        initiallySelected: _selectedCategoryIndex == 3,
-                        onSelectionChanged: (_) => _selectCategory(3),
-                      ),
-                    ),
-                  ],
-                ),
-
-                // 제출 버튼
-                SizedBox(height: 24),
-                SubmitButton(
-                  onPressed: _isFormValid
-                      ? () {
-                          // 위치 정보가 선택되었을 때만 제출 가능
-                          print(
-                              '소문 제출: 제목: ${_titleController.text}, 내용: ${_contentController.text}, 위치: (${_selectedLocation!.latitude}, ${_selectedLocation!.longitude}), 카테고리: $_selectedCategoryIndex');
-                          // 여기에 실제 제출 로직 추가
-                        }
-                      : null,
-                  text: '소문내기',
-                ),
-                SizedBox(height: 24),
-              ],
+              ),
             ),
-          ),
+            // 로딩 인디케이터
+            if (_isLoading)
+              Container(
+                color: Colors.black.withAlpha(100),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+          ],
         ),
       ),
     );
