@@ -10,16 +10,29 @@ final authProvider = StateNotifierProvider<AuthNotifier, User?>((ref) {
 class AuthNotifier extends StateNotifier<User?> {
   AuthNotifier() : super(FirebaseAuth.instance.currentUser);
 
-  // 환경변수에서 clientId 가져와서 GoogleSignIn 객체 생성
-  final GoogleSignIn googleSignIn = GoogleSignIn(
-    clientId: dotenv.env['GOOGLE_CLIENT_ID'],
-    scopes: ['email'],
-  );
-
   Future<void> signInWithGoogle() async {
     try {
-      final googleUser = await googleSignIn.signIn();
-      if (googleUser == null) return;
+      final googleSignIn = GoogleSignIn(
+        clientId: dotenv.env['GOOGLE_CLIENT_ID'],
+        scopes: ['email'],
+      );
+
+      final isSignedIn = await googleSignIn.isSignedIn();
+
+      GoogleSignInAccount? googleUser;
+
+      if (isSignedIn) {
+        googleUser = await googleSignIn.signInSilently();
+        print('기존 계정으로 자동 로그인 시도');
+      } else {
+        googleUser = await googleSignIn.signIn();
+        print('로그인 창 표시됨');
+      }
+
+      if (googleUser == null) {
+        print('사용자가 로그인을 취소했거나 실패함');
+        return;
+      }
 
       final googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
@@ -29,6 +42,8 @@ class AuthNotifier extends StateNotifier<User?> {
 
       await FirebaseAuth.instance.signInWithCredential(credential);
       state = FirebaseAuth.instance.currentUser;
+
+      print('로그인 성공: ${state?.email}');
     } catch (e) {
       print("로그인 실패: $e");
     }
@@ -37,10 +52,15 @@ class AuthNotifier extends StateNotifier<User?> {
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
 
-    final googleSignIn = GoogleSignIn();
-    await googleSignIn.disconnect(); // 내부 세션까지 초기화
+    final googleSignIn = GoogleSignIn(
+      clientId: dotenv.env['GOOGLE_CLIENT_ID'],
+      scopes: ['email'],
+    );
+
+    await googleSignIn.disconnect();
     await googleSignIn.signOut();
 
     state = null;
+    print('로그아웃 완료');
   }
 }
