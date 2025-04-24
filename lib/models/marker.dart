@@ -3,8 +3,8 @@ import 'dart:ui';
 class Marker {
   final String id;
   final String title;
-  final String longitude;
-  final String latitude;
+  final double longitude;
+  final double latitude;
   final String description;
   final String createdBy;
   final String createdAt;
@@ -24,8 +24,8 @@ class Marker {
     return Marker(
       id: json['id'] as String,
       title: json['title'] as String,
-      longitude: json['longitude'] as String,
-      latitude: json['latitude'] as String,
+      longitude: json['longitude'] as double,
+      latitude: json['latitude'] as double,
       description: json['description'] as String,
       createdBy: json['createdBy'] as String,
       createdAt: json['createdAt'] as String,
