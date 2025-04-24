@@ -187,18 +187,20 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
 
                 // 제출 버튼
                 SizedBox(height: 32),
-                SubmitButton(
-                  onPressed: _isFormValid
-                      ? () {
-                          // 위치 정보가 선택되었을 때만 제출 가능
-                          print(
-                              '소문 제출: 제목: ${_titleController.text}, 내용: ${_contentController.text}, 위치: (${_selectedLocation!.latitude}, ${_selectedLocation!.longitude}), 카테고리: $_selectedCategoryIndex');
-                          // 여기에 실제 제출 로직 추가
-                        }
-                      : null,
-                  text: '소문내기',
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 40),
+                  child: SubmitButton(
+                    onPressed: _isFormValid
+                        ? () {
+                            // 위치 정보가 선택되었을 때만 제출 가능
+                            print(
+                                '소문 제출: 제목: ${_titleController.text}, 내용: ${_contentController.text}, 위치: (${_selectedLocation!.latitude}, ${_selectedLocation!.longitude}), 카테고리: $_selectedCategoryIndex');
+                            // 여기에 실제 제출 로직 추가
+                          }
+                        : null,
+                    text: '소문내기',
+                  ),
                 ),
-                SizedBox(height: 40)
               ],
             ),
           ),
