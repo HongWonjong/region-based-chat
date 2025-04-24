@@ -7,10 +7,10 @@ class LocationPickerButton extends StatefulWidget {
   final NLatLng? selectedLocation;
 
   const LocationPickerButton({
-    Key? key,
+    super.key,
     required this.onLocationSelected,
     this.selectedLocation,
-  }) : super(key: key);
+  });
 
   @override
   State<LocationPickerButton> createState() => _LocationPickerButtonState();
