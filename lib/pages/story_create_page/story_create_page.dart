@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import '../../services/story_service.dart';
+import '../../widgets/custom_alert_dialog.dart';
 import 'widgets/select_image_button.dart';
 import 'widgets/input_fields.dart';
 import 'widgets/submit_button.dart';
@@ -100,17 +101,20 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
         // imageUrls는 이미지 업로드 후 URL 배열로 대체 필요
       );
 
-      // 성공 메시지 표시
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('소문이 성공적으로 등록되었습니다.')),
+      // 성공 메시지 표시 (스낵바 대신 멋진 알림창 사용)
+      await CustomAlertDialog.showSuccess(
+        context: context,
+        title: '소문 등록 완료',
+        message: '소문이 성공적으로 등록되었습니다. 소중한 정보 공유에 감사드립니다! 😊',
+        onConfirm: _resetForm,
       );
-
-      // 폼 초기화 또는 이전 화면으로 이동
-      _resetForm();
     } catch (e) {
-      // 오류 메시지 표시
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('소문 등록 중 오류가 발생했습니다: $e')),
+      // 오류 메시지 표시 (스낵바 대신 멋진 알림창 사용)
+      await CustomAlertDialog.showError(
+        context: context,
+        title: '소문 등록 실패',
+        message: '소문 등록 중 오류가 발생했습니다: $e\n잠시 후 다시 시도해 주세요.',
+        confirmText: '닫기',
       );
     } finally {
       setState(() {
