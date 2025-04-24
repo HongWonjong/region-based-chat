@@ -36,7 +36,11 @@ class AuthNotifier extends StateNotifier<User?> {
 
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
+
+    final googleSignIn = GoogleSignIn();
+    await googleSignIn.disconnect(); // 내부 세션까지 초기화
     await googleSignIn.signOut();
+
     state = null;
   }
 }
