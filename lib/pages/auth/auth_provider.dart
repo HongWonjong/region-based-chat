@@ -15,7 +15,6 @@ class AuthNotifier extends StateNotifier<User?> {
   Future<void> signInWithGoogle() async {
     try {
       final googleSignIn = GoogleSignIn(
-        clientId: Platform.isAndroid ? dotenv.env['GOOGLE_CLIENT_ID'] : null,
         scopes: ['email'],
       );
 
@@ -55,7 +54,6 @@ class AuthNotifier extends StateNotifier<User?> {
     await FirebaseAuth.instance.signOut();
 
     final googleSignIn = GoogleSignIn(
-      clientId: Platform.isAndroid ? dotenv.env['GOOGLE_CLIENT_ID'] : null,
       scopes: ['email'],
     );
 
