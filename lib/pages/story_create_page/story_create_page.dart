@@ -5,6 +5,7 @@ import 'widgets/input_fields.dart';
 import 'widgets/submit_button.dart';
 import 'widgets/category_button.dart';
 import 'widgets/location_picker_button.dart';
+import 'widgets/location_map_modal.dart';
 
 class StoryCreatePage extends StatefulWidget {
   const StoryCreatePage({super.key});
@@ -60,6 +61,22 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
     _checkFormValidity();
   }
 
+  // 위치 선택 모달 표시
+  Future<void> _showLocationPickerModal() async {
+    final NLatLng? result = await showModalBottomSheet<NLatLng>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => LocationMapModal(
+        initialLocation: _selectedLocation,
+      ),
+    );
+
+    if (result != null) {
+      _onLocationSelected(result);
+    }
+  }
+
   bool get _isFormValid =>
       _isTitleValid && _isContentValid && _selectedLocation != null;
 
@@ -71,39 +88,91 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
       },
       child: Scaffold(
         appBar: AppBar(
-            title: Text('소문내기',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold))),
+          title: Text('소문내기',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold)),
+          actions: [
+            // 위치 선택 버튼을 앱바 액션으로 이동
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.location_on,
+                      color: _selectedLocation != null
+                          ? Colors.blue
+                          : Colors.grey[600],
+                      size: 28,
+                    ),
+                    onPressed: _showLocationPickerModal,
+                    tooltip: _selectedLocation != null ? '위치 변경' : '위치 추가',
+                  ),
+                  if (_selectedLocation != null)
+                    Positioned(
+                      right: 6,
+                      top: 6,
+                      child: Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 1.5),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 사진 추가 버튼
-                    Expanded(
-                      flex: 7,
-                      child: SelectImageButton(),
-                    ),
-
-                    // 위치 추가 버튼
-                    Expanded(
-                      flex: 3,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        child: LocationPickerButton(
-                          onLocationSelected: _onLocationSelected,
-                          selectedLocation: _selectedLocation,
-                        ),
-                      ),
-                    ),
-                  ],
+                // 사진 추가 버튼 (위치 버튼 제거)
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 16),
+                  child: SelectImageButton(),
                 ),
+
+                // 위치 정보 표시 (선택된 경우에만)
+                if (_selectedLocation != null)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.location_on, color: Colors.blue, size: 20),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            '선택한 위치: ${_selectedLocation!.latitude.toStringAsFixed(4)}, ${_selectedLocation!.longitude.toStringAsFixed(4)}',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.edit, color: Colors.blue, size: 18),
+                          constraints:
+                              BoxConstraints(minWidth: 36, minHeight: 36),
+                          padding: EdgeInsets.zero,
+                          onPressed: _showLocationPickerModal,
+                          tooltip: '위치 변경',
+                        ),
+                      ],
+                    ),
+                  ),
 
                 // 입력 필드
                 InputFields(
