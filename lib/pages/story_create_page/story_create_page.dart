@@ -97,35 +97,16 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
             // 위치 선택 버튼을 앱바 액션으로 이동
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
-              child: Stack(
-                alignment: Alignment.topRight,
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.location_on,
-                      color: _selectedLocation != null
-                          ? Colors.blue
-                          : Colors.grey[600],
-                      size: 28,
-                    ),
-                    onPressed: _showLocationPickerModal,
-                    tooltip: _selectedLocation != null ? '위치 변경' : '위치 추가',
-                  ),
-                  if (_selectedLocation != null)
-                    Positioned(
-                      right: 6,
-                      top: 6,
-                      child: Container(
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 1.5),
-                        ),
-                      ),
-                    ),
-                ],
+              child: IconButton(
+                icon: Icon(
+                  Icons.location_on,
+                  color: _selectedLocation != null
+                      ? Colors.blue
+                      : Colors.grey[600],
+                  size: 28,
+                ),
+                onPressed: _showLocationPickerModal,
+                tooltip: _selectedLocation != null ? '위치 변경' : '위치 추가',
               ),
             ),
           ],
@@ -137,42 +118,59 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 사진 추가 버튼 (위치 버튼 제거)
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 16),
-                  child: SelectImageButton(),
-                ),
+                Container(child: SelectImageButton()),
 
-                // 위치 정보 표시 (선택된 경우에만)
-                if (_selectedLocation != null)
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.blue.withOpacity(0.3)),
-                    ),
+                // 위치 정보 패널 (항상 표시, 선택하지 않았을 때는 회색으로)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: _selectedLocation != null
+                        ? Colors.blue.withOpacity(0.08)
+                        : Colors.grey.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                        color: _selectedLocation != null
+                            ? Colors.blue.withOpacity(0.2)
+                            : Colors.grey.withOpacity(0.2)),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
                     child: Row(
                       children: [
-                        Icon(Icons.location_on, color: Colors.blue, size: 20),
+                        Icon(Icons.location_on,
+                            color: _selectedLocation != null
+                                ? Colors.blue
+                                : Colors.grey[400],
+                            size: 20),
                         SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            '선택한 위치: ${_selectedLocation!.latitude.toStringAsFixed(4)}, ${_selectedLocation!.longitude.toStringAsFixed(4)}',
-                            style: TextStyle(fontSize: 14),
+                            _selectedLocation != null
+                                ? '선택한 위치: ${_selectedLocation!.latitude.toStringAsFixed(5)}, ${_selectedLocation!.longitude.toStringAsFixed(5)}'
+                                : '위치를 선택해주세요',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: _selectedLocation != null
+                                  ? Colors.black87
+                                  : Colors.grey[600],
+                            ),
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.edit, color: Colors.blue, size: 18),
-                          constraints:
-                              BoxConstraints(minWidth: 36, minHeight: 36),
-                          padding: EdgeInsets.zero,
-                          onPressed: _showLocationPickerModal,
-                          tooltip: '위치 변경',
+                        GestureDetector(
+                          onTap: _showLocationPickerModal,
+                          child: Icon(
+                            Icons.edit,
+                            color: _selectedLocation != null
+                                ? Colors.blue
+                                : Colors.grey[400],
+                            size: 16,
+                          ),
                         ),
                       ],
                     ),
                   ),
+                ),
 
                 // 입력 필드
                 InputFields(
