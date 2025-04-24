@@ -15,7 +15,7 @@ class StoryMarkerMap extends ConsumerStatefulWidget {
 
 class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBindingObserver {
   NaverMapController? mapController;
-  final Set<NMarker> currentMarkers0 = {}; // 현재 지도에 표시된 마커 세트
+  final Set<NMarker> currentMarkers = {}; // 현재 지도에 표시된 마커 세트
   List<Marker> previousMarkers = []; // 이전 조회된 마커 리스트
   Timer? pollingTimer; // 주기적인 폴링을 위한 타이머
 
@@ -69,16 +69,15 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
 
     setState(() {
       // 기존 마커 제거
-      for (var marker in currentMarkers0) {
+      for (var marker in currentMarkers) {
         mapController!.deleteOverlay(marker.info);
       }
-      currentMarkers0.clear();
+      currentMarkers.clear();
 
       // 새로운 마커 추가
       for (final marker in newMarkers) {
         final nMarker = convertToNMarker(marker);
         mapController!.addOverlay(nMarker);
-        currentMarkers0.add(nMarker);
       }
       previousMarkers = newMarkers; // 현재 마커 리스트를 이전 리스트로 업데이트
     });
