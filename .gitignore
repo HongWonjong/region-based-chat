@@ -55,3 +55,13 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# 자동 생성된 플러그인 등록 파일
+**/linux/flutter/generated_plugin_registrant.cc
+**/linux/flutter/generated_plugins.cmake
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/windows/flutter/generated_plugin_registrant.cc
+**/windows/flutter/generated_plugins.cmake
+
+# 의존성 락 파일 
+pubspec.lock
