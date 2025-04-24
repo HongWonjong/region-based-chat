@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:region_based_chat/pages/welcome_page/welcome_page.dart';
 import 'firebase_options.dart';
-import 'package:region_based_chat/pages/welcome_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
