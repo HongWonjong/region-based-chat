@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:region_based_chat/models/marker.dart'; // 모델 클래스와 이름 충돌 방지
+import 'package:region_based_chat/models/marker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:region_based_chat/pages/welcome_page/widget/focus_detector.dart';
 
 class StoryMarkerMap extends ConsumerStatefulWidget {
   const StoryMarkerMap({super.key});
@@ -44,12 +43,9 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    log(state.toString());
     if (state == AppLifecycleState.resumed) {
       // 화면에 다시 돌아왔을 때 타이머 재개
       startPollingTimer();
-      // 화면이 다시 활성화되었으므로 데이터를 즉시 갱신할 수도 있습니다.
-      fetchAndUpdateMarkers();
     } else {
       // 화면을 보고있는 상태가 아닐때
       stopPollingTimer();
@@ -104,22 +100,25 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        NaverMap(
-          onMapReady: (controller) {
-            setState(() {
-              mapController = controller;
-              isMapReady = true;
-              // 맵이 준비되면 초기 데이터 로딩
-              fetchAndUpdateMarkers();
-            });
-          },
-          options: const NaverMapViewOptions(
-            initialCameraPosition: NCameraPosition(
-              target: NLatLng(37.5, 127),
-              zoom: 12,
-            ),
-          ),
-        ),
+        FocusDetector(
+            focusOnCallback: () => startPollingTimer(),
+            focusOffCallback: () => stopPollingTimer(),
+            child: NaverMap(
+              onMapReady: (controller) {
+                setState(() {
+                  mapController = controller;
+                  isMapReady = true;
+                  // 맵이 준비되면 초기 데이터 로딩
+                  fetchAndUpdateMarkers();
+                });
+              },
+              options: const NaverMapViewOptions(
+                initialCameraPosition: NCameraPosition(
+                  target: NLatLng(37.5, 127),
+                  zoom: 12,
+                ),
+              ),
+            )),
         Positioned(right: 10, bottom: MediaQuery.of(context).size.height / 2, child: NaverMapZoomControlWidget(mapController: mapController)),
       ],
     );
