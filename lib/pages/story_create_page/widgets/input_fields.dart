@@ -30,7 +30,7 @@ class InputFields extends StatelessWidget {
         SizedBox(height: 16),
         TextField(
           controller: contentController,
-          maxLines: 12,
+          maxLines: 10,
           decoration: InputDecoration(
             hintText: '내용을 입력하세요',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
