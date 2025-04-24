@@ -6,7 +6,6 @@ import 'widgets/select_image_button.dart';
 import 'widgets/input_fields.dart';
 import 'widgets/submit_button.dart';
 import 'widgets/category_button.dart';
-import 'widgets/location_picker_button.dart';
 import 'widgets/location_map_modal.dart';
 import 'widgets/location_info_panel.dart';
 
