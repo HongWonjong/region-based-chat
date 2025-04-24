@@ -51,7 +51,6 @@ class StoryBottomSheet extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     SizedBox(height: 10),
                     Divider(thickness: 2, color: Colors.grey[300]),
                     Text("떡볶이 무료 시식 있습니다.", style: TextStyle(fontSize: 20)),
