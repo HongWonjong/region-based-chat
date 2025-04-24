@@ -198,7 +198,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                       : null,
                   text: '소문내기',
                 ),
-                Spacer()
+                SizedBox(height: 24),
               ],
             ),
           ),
