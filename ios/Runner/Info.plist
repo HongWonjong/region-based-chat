@@ -41,6 +41,20 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+	<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+		<string>com.googleusercontent.apps.491666675037-qn78023hniftgrbnvs5r0r2jots6lt51</string>
+		</array>
+	</dict>
+	</array>
+
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>이 앱은 로컬 네트워크를 사용하여 디버그 연결을 합니다.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
