@@ -1,4 +1,5 @@
 # Miscellaneous
+.env
 .env.dev
 *.class
 *..log
@@ -22,12 +23,28 @@ migrate_working_dir/
 
 # Firebase 설정 파일
 android/app/google-services.json
-
+ios/Runner/GoogleService-Info.plist
 
 # Android keystore (릴리즈 빌드용)
 *.jks
 *.keystore
 key.properties
+
+# iOS 캐시/설정 관련
+*.xcuserstate
+*.xccheckout
+*.pif
+*.xcworkspace/xcuserdata
+DerivedData/
+build/
+
+# Android 캐시/빌드 관련
+*.iml
+.gradle/
+build/
+local.properties
+.idea/
+
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
