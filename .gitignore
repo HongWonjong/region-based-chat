@@ -1,4 +1,5 @@
 # Miscellaneous
+google-services.json
 .env
 .env.dev
 *.class
