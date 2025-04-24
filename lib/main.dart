@@ -9,7 +9,7 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    runApp(const MyApp());
+    runApp(const ProviderScope(child: MyApp()));
   } catch (e) {
     print('Firebase 초기화 실패: $e');
   }

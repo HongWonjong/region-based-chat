@@ -1,8 +1,7 @@
 # Miscellaneous
-.env
 .env.dev
 *.class
-*.log
+*..log
 *.pyc
 *.swp
 .DS_Store
@@ -23,6 +22,7 @@ migrate_working_dir/
 
 # Firebase 설정 파일
 android/app/google-services.json
+
 
 # Android keystore (릴리즈 빌드용)
 *.jks

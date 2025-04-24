@@ -30,12 +30,13 @@
 ```json
 // Users/<user_uid>
 {
-  "uid": "user123",
+  "uid": "user123", 
   "email": "user@example.com",
   "username": "홍길동",
-  "profileImageUrl": null, //또는 Storage URL
+  "profileImageUrl": null, // 또는 Storage URL
   "createdAt": "2025-04-22T00:00:00Z",
-  "lastLogin": "2025-04-22T10:00:00Z"
+  "lastLogin": "2025-04-22T10:00:00Z",
+  "joinedMarkers": ["marker001", "marker002"] // 참여한 마커 ID 리스트
 }
 ```
 
@@ -46,7 +47,7 @@
 ```json
 // Markers/<marker_id>
 {
-  "id": "marker001",
+  "id": "marker001", // 실제로는 uuid
   "type": "majorIncident", //majorIncident, minorIncident, event, lostItem
   "title": "도난 신고",
   "description": "자전거 도난 사건 발생",
@@ -63,9 +64,9 @@
 마커에 연결된 채팅방 정보를 저장합니다.
 
 ```json
-// Chats/<marker_id>
+// Markers/<marker_id>/Chats/<chat_id>
 {
-  "markerId": "marker001",
+  "markerId": "marker001", // 실제로는 uuid
   "title": "도난 신고",
   "createdBy": "user123",
   "createdAt": "2025-04-22T00:00:00Z",
@@ -82,10 +83,9 @@
 채팅방 내 개별 메시지를 저장합니다.
 
 ```json
-// Chats/<marker_id>/Messages/<message_id>
+// Markers/<marker_id>/Chats/<chat_id>/Messages/<message_id>
 {
-  // 채팅방에 메세지를 올리는 경우
-  "messageId": "msg001",
+  "messageId": "msg001", // 실제로는 uuid
   "senderId": "user123",
   "senderName": "홍길동",
   "message": "도난 장소 확인했습니다.",
@@ -98,7 +98,9 @@
 ```json
 {
   // 채팅방에 이미지를 올리는 경우
-  "messageId": "msg002",
+  // Markers/<marker_id>/Chats/<chat_id>/Messages/<message_id>
+
+  "messageId": "msg002", // 실제로는 uuid
   "senderId": "user456",
   "senderName": "김영희",
   "message": "https://storage.googleapis.com/<bucket>/chats/marker001/messages/msg002/image.jpg",
