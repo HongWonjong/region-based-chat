@@ -134,7 +134,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                   onTitleChanged: (_) => _checkFormValidity(),
                   onContentChanged: (_) => _checkFormValidity(),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 32),
 
                 // 카테고리 선택
                 Row(
