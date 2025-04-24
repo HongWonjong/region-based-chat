@@ -19,13 +19,13 @@ class LocationInfoPanel extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 16, top: 8),
         decoration: BoxDecoration(
           color: selectedLocation != null
-              ? Colors.blue.withOpacity(0.08)
-              : Colors.grey.withOpacity(0.05),
+              ? Colors.blue.withAlpha(20)
+              : Colors.grey.withAlpha(13),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
               color: selectedLocation != null
-                  ? Colors.blue.withOpacity(0.2)
-                  : Colors.grey.withOpacity(0.2)),
+                  ? Colors.blue.withAlpha(51)
+                  : Colors.grey.withAlpha(51)),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
