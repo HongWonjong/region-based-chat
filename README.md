@@ -72,8 +72,7 @@
   "participants": ["user123", "user456"],
   "lastMessage": "도난 장소 확인했습니다.",
   "lastMessageTime": "2025-04-22T10:00:00Z",
-  "lastMessageSender": "user456",
-  "typing": ["user123"]
+  "lastMessageSender": "user456"
 }
 ```
 
