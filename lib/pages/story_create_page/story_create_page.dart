@@ -174,7 +174,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                           // 여기에 실제 제출 로직 추가
                         }
                       : null,
-                  text: _isFormValid ? '소문내기' : '제목, 내용, 위치를 모두 입력해주세요',
+                  text: '소문내기',
                 ),
                 SizedBox(height: 40)
               ],
