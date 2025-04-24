@@ -23,7 +23,7 @@ class CustomDrawer extends ConsumerWidget {
                     onPressed: () => auth.signInWithGoogle(),
                     child: const Text("Sign in with Google"),
                   )
-                : Text("환영합니다\n\${user.email}님"),
+                : Text("환영합니다\n${user.email}님"),
             const Divider(),
             ListTile(
               leading: const Icon(Icons.edit),
