@@ -63,7 +63,7 @@
 마커에 연결된 채팅방 정보를 저장합니다.
 
 ```json
-// Markers/<marker_id>/Chats/<chat_id>
+// Markers/<marker_id>/Chats/<chat_id> // 채팅방은 마커당 하나이므로 chatId를 알 필요는 없음
 {
   "markerId": "marker001", // 실제로는 uuid
   "title": "도난 신고",
@@ -82,7 +82,7 @@
 채팅방 내 개별 메시지를 저장합니다.
 
 ```json
-// Markers/<marker_id>/Chats/<chat_id>/Messages/<message_id>
+// Markers/<marker_id>/Chats/<chat_id>/Messages/<message_id> 
 {
   "messageId": "msg001", // 실제로는 uuid
   "senderId": "user123",

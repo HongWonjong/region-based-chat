@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../providers/chat_providers.dart';
+import '../../providers/chat_providers.dart';
 
 class ChatPage extends ConsumerStatefulWidget {
   final String markerId;
