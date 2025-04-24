@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Marker {
   final String id;
   final String title;
@@ -20,16 +22,17 @@ class Marker {
     required this.createdAt,
     required this.storyType,
   });
-  factory Marker.fromJson(Map<String, dynamic> json) {
+  factory Marker.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data()!;
     return Marker(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      longitude: json['longitude'] as double,
-      latitude: json['latitude'] as double,
-      description: json['description'] as String,
-      createdBy: json['createdBy'] as String,
-      createdAt: json['createdAt'] as String,
-      storyType: StoryType.fromJson(json['storyType'] as Map<String, dynamic>),
+      id: data['id'] as String,
+      title: data['title'] as String,
+      longitude: data['longitude'] as double,
+      latitude: data['latitude'] as double,
+      description: data['description'] as String,
+      createdBy: data['createdBy'] as String,
+      createdAt: data['createdAt'] as String,
+      storyType: StoryType.fromJson(data['storyType'] as Map<String, dynamic>),
     );
   }
 
