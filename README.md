@@ -54,8 +54,7 @@
   "latitude": 37.5665,
   "longitude": 126.978,
   "createdBy": "user123",
-  "createdAt": "2025-04-22T00:00:00Z",
-  "color": "red" //red, green, blue, yellow
+  "createdAt": "2025-04-22T00:00:00Z"
 }
 ```
 
