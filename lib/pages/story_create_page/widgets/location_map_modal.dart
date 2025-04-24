@@ -4,7 +4,10 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 class LocationMapModal extends StatefulWidget {
   final NLatLng? initialLocation;
 
-  const LocationMapModal({Key? key, this.initialLocation}) : super(key: key);
+  const LocationMapModal({
+    super.key,
+    this.initialLocation,
+  });
 
   @override
   State<LocationMapModal> createState() => _LocationMapModalState();
@@ -101,13 +104,14 @@ class _LocationMapModalState extends State<LocationMapModal> {
               ],
             ),
           ),
-          
+
           // 지도
           Expanded(
             child: NaverMap(
               options: NaverMapViewOptions(
                 initialCameraPosition: NCameraPosition(
-                  target: widget.initialLocation ?? NLatLng(37.5666102, 126.9783881), // 서울시청 기본값
+                  target: widget.initialLocation ??
+                      NLatLng(37.5666102, 126.9783881), // 서울시청 기본값
                   zoom: 15,
                 ),
                 logoAlign: NLogoAlign.leftBottom,
@@ -125,7 +129,7 @@ class _LocationMapModalState extends State<LocationMapModal> {
               onMapTapped: _onMapTap,
             ),
           ),
-          
+
           // 하단 정보 표시
           if (_selectedLocation != null)
             Container(
@@ -155,4 +159,4 @@ class _LocationMapModalState extends State<LocationMapModal> {
       ),
     );
   }
-} 
+}
