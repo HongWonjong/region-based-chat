@@ -5,12 +5,10 @@ import '../providers/chat_providers.dart';
 
 class ChatPage extends ConsumerStatefulWidget {
   final String markerId;
-  final String chatId;
 
   const ChatPage({
     super.key,
     required this.markerId,
-    required this.chatId,
   });
 
   @override
@@ -56,7 +54,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   @override
   Widget build(BuildContext context) {
     print('ChatPage build called');
-    final params = ChatParams(widget.markerId, widget.chatId);
+    final params = ChatParams(widget.markerId);
     final messages = ref.watch(chatNotifierProvider(params));
     final chatAsync = ref.watch(chatProvider(params));
 
