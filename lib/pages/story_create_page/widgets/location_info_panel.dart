@@ -6,10 +6,10 @@ class LocationInfoPanel extends StatelessWidget {
   final VoidCallback onEditPressed;
 
   const LocationInfoPanel({
-    Key? key,
+    super.key,
     required this.selectedLocation,
     required this.onEditPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
