@@ -94,7 +94,7 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
   Positioned _customNaverMapZoom(BuildContext context) {
     return Positioned(
       right: 10,
-      bottom: MediaQuery.of(context).size.height / 2,
+      bottom: MediaQuery.of(context).size.height / 1.8,
       child: NaverMapZoomControlWidget(mapController: mapController),
     );
   }
