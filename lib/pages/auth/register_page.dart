@@ -53,8 +53,9 @@ class RegisterPage extends ConsumerWidget {
 
     ///스토리지 연결 전이라 이미지 선택시 오류날수 있음 스토리지 연결되면 정상작동
     if (pickedFile != null) {
-      final storageRef =
-          FirebaseStorage.instance.ref().child('users/profileImages/\$uid.jpg');
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('users/profileImages/${uid}.jpg');
       await storageRef.putFile(File(pickedFile.path));
       profileImageUrl = await storageRef.getDownloadURL();
     }
