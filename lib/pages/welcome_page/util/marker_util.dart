@@ -25,9 +25,15 @@ class MarkerUtils {
     for (final marker in newMarkers) {
       final nMarker = convertToNMarker(marker);
       mapController.addOverlay(nMarker);
-      nMarker.setOnTapListener((NMarker tappedMarker) {
+      nMarker.setOnTapListener((NMarker tappedMarker) async {
+        // 바텀 시트가 올라온 상태에서 지도 중간에 마커가 위치하기위한 좌표 보정
+        NCameraPosition position = await mapController.getCameraPosition();
+        var point1 = await mapController.screenLocationToLatLng(NPoint(0.5, 0.5));
+        var point2 = await mapController.screenLocationToLatLng(NPoint(0.5, 0.4));
+        await mapController.updateCamera(NCameraUpdate.withParams(
+            target:
+                NLatLng(nMarker.position.latitude - 350 * (point2.latitude - point1.latitude) * (21 - position.zoom), nMarker.position.longitude)));
         onMarkerTapped(marker);
-        print(marker.title);
       });
       currentMarkers.add(nMarker);
     }
