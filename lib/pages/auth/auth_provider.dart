@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,7 +14,7 @@ final authProvider = StateNotifierProvider<AuthNotifier, User?>((ref) {
 class AuthNotifier extends StateNotifier<User?> {
   AuthNotifier() : super(FirebaseAuth.instance.currentUser);
 
-  Future<void> signInWithGoogle() async {
+  Future<void> signInWithGoogle(BuildContext context) async {
     try {
       final googleSignIn = GoogleSignIn(
         scopes: ['email'],
@@ -42,11 +44,26 @@ class AuthNotifier extends StateNotifier<User?> {
       );
 
       await FirebaseAuth.instance.signInWithCredential(credential);
+      final currentUser = FirebaseAuth.instance.currentUser;
       state = FirebaseAuth.instance.currentUser;
 
       print('로그인 성공: ${state?.email}');
+
+      /// 파이어스토어에 해당 uid 문서 있는지 확인
+      final uid = currentUser!.uid;
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      if (doc.exists) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        Navigator.pushReplacementNamed(context, '/register');
+      }
     } catch (e) {
       print("로그인 실패: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("로그인 실패: \$e")),
+      );
     }
   }
 

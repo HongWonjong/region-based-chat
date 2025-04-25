@@ -1,4 +1,3 @@
-// custom_drawer.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:region_based_chat/pages/auth/widgets/google_sign_in_button.dart';
@@ -32,7 +31,7 @@ class CustomDrawer extends ConsumerWidget {
                             )),
                         const SizedBox(height: 8),
                         GoogleSignInButton(
-                          onPressed: () => auth.signInWithGoogle(),
+                          onPressed: () => auth.signInWithGoogle(context),
                         ),
                       ],
                     )
