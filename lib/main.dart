@@ -12,8 +12,7 @@ Future<void> main() async {
   await _initNaverMap();
 
   try {
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     runApp(const ProviderScope(child: MyApp()));
   } catch (e) {
     print('Firebase 초기화 실패: $e');
@@ -33,8 +32,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
       home: const WelcomePage(),
       routes: {
         '/register': (_) => const RegisterPage(),
