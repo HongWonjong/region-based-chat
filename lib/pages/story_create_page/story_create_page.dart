@@ -214,7 +214,6 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                     ),
                     SizedBox(height: 24),
 
-                    // 당근마켓 스타일의 카테고리 선택
                     CategorySelector(
                       selectedIndex: _selectedCategoryIndex,
                       onCategoryChanged: _selectCategory,
