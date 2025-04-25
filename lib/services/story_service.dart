@@ -14,7 +14,7 @@ class Story {
   final double latitude;
   final double longitude;
   final String createdBy;
-  final DateTime createdAt;
+  final String createdAt; // ISO 8601 문자열로 유지
   final StoryType type;
   final List<String> imageUrls;
 
@@ -38,7 +38,7 @@ class Story {
       'latitude': latitude,
       'longitude': longitude,
       'createdBy': createdBy,
-      'createdAt': Timestamp.fromDate(createdAt),
+      'createdAt': createdAt,
       'type': type.toString().split('.').last,
       'imageUrls': imageUrls,
     };
@@ -52,10 +52,11 @@ class Story {
       latitude: map['latitude'],
       longitude: map['longitude'],
       createdBy: map['createdBy'],
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
+      createdAt: map['createdAt'] as String,
       type: StoryType.values.firstWhere(
-          (e) => e.toString().split('.').last == map['type'],
-          orElse: () => StoryType.minorIncident),
+            (e) => e.toString().split('.').last == map['type'],
+        orElse: () => StoryType.minorIncident,
+      ),
       imageUrls: List<String>.from(map['imageUrls'] ?? []),
     );
   }
@@ -63,7 +64,7 @@ class Story {
 
 class StoryService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final String _collection = 'stories';
+  final String _collection = 'markers';
 
   // 스토리 생성
   Future<String> createStory({
@@ -87,7 +88,7 @@ class StoryService {
         latitude: latitude,
         longitude: longitude,
         createdBy: userId,
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc().toIso8601String(),
         type: type,
         imageUrls: imageUrls,
       );
@@ -120,7 +121,8 @@ class StoryService {
       List<Story> stories = querySnapshot.docs
           .map((doc) => Story.fromMap(doc.data()))
           .where(
-              (story) => story.longitude >= minLng && story.longitude <= maxLng)
+            (story) => story.longitude >= minLng && story.longitude <= maxLng,
+      )
           .toList();
 
       return stories;
