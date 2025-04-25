@@ -104,7 +104,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
       await CustomAlertDialog.showSuccess(
         context: context,
         title: '소문 등록 완료',
-        message: '소문이 성공적으로 등록되었습니다. 소중한 정보 공유에 감사드립니다! 😊',
+        message: '소문이 성공적으로 등록되었습니다.\n 소중한 정보 공유에 감사드립니다! 😊',
         onConfirm: _resetForm,
       );
     } catch (e) {
