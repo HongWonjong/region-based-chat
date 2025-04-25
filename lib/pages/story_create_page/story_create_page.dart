@@ -5,7 +5,7 @@ import '../../widgets/custom_alert_dialog.dart';
 import 'widgets/select_image_button.dart';
 import 'widgets/input_fields.dart';
 import 'widgets/submit_button.dart';
-import 'widgets/category_button.dart';
+import 'widgets/category_selector.dart';
 import 'widgets/location_map_modal.dart';
 import 'widgets/location_info_panel.dart';
 
@@ -214,57 +214,15 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                     ),
                     SizedBox(height: 24),
 
-                    // 카테고리 선택
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CategoryButton(
-                            text: '일반적인 행사',
-                            color: Colors.grey[300],
-                            activeColor: Color(0xffEEFF06).withAlpha(76),
-                            initiallySelected: _selectedCategoryIndex == 0,
-                            onSelectionChanged: (_) => _selectCategory(0),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: CategoryButton(
-                            color: Colors.grey[300],
-                            activeColor: Color(0xFF77FA7D).withAlpha(76),
-                            text: '가벼운사건',
-                            initiallySelected: _selectedCategoryIndex == 1,
-                            onSelectionChanged: (_) => _selectCategory(1),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CategoryButton(
-                            text: '중요한 사건/범죄',
-                            color: Colors.grey[300],
-                            activeColor: Color(0xffF20C0C).withAlpha(76),
-                            initiallySelected: _selectedCategoryIndex == 2,
-                            onSelectionChanged: (_) => _selectCategory(2),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: CategoryButton(
-                            text: '분실',
-                            color: Colors.grey[300],
-                            activeColor: Color(0xff0022FF).withAlpha(76),
-                            initiallySelected: _selectedCategoryIndex == 3,
-                            onSelectionChanged: (_) => _selectCategory(3),
-                          ),
-                        ),
-                      ],
+                    // 당근마켓 스타일의 카테고리 선택
+                    CategorySelector(
+                      selectedIndex: _selectedCategoryIndex,
+                      onCategoryChanged: _selectCategory,
+                      categories: CategoryOption.defaultCategories,
                     ),
 
                     // 제출 버튼
-                    SizedBox(height: 24),
+                    SizedBox(height: 32),
                     SubmitButton(
                       onPressed:
                           _isFormValid && !_isLoading ? _saveStory : null,
