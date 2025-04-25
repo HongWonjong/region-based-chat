@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../providers/chat_providers.dart';
+import '../../providers/chat_providers.dart';
 
 class ChatPage extends ConsumerStatefulWidget {
   final String markerId;
-  final String chatId;
 
   const ChatPage({
     super.key,
     required this.markerId,
-    required this.chatId,
   });
 
   @override
@@ -56,7 +54,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   @override
   Widget build(BuildContext context) {
     print('ChatPage build called');
-    final params = ChatParams(widget.markerId, widget.chatId);
+    final params = ChatParams(widget.markerId);
     final messages = ref.watch(chatNotifierProvider(params));
     final chatAsync = ref.watch(chatProvider(params));
 
@@ -218,21 +216,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                       filled: true,
                       fillColor: Colors.grey[200],
                     ),
-                    onSubmitted: (value) {
-                      print('Text submitted: $value');
-                      if (value.isNotEmpty) {
-                        ref
-                            .read(chatNotifierProvider(params).notifier)
-                            .sendMessage(
-                          'wonjonghong',
-                          '홍원종',
-                          value,
-                          'text',
-                        );
-                        _controller.clear();
-                        _focusNode.requestFocus();
-                      }
-                    },
                   ),
                 ),
                 IconButton(

@@ -5,28 +5,24 @@ import '../repository/chat_repository.dart';
 
 class ChatParams {
   final String markerId;
-  final String chatId;
 
-  ChatParams(this.markerId, this.chatId);
+  ChatParams(this.markerId);
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is ChatParams &&
-              markerId == other.markerId &&
-              chatId == other.chatId;
+          other is ChatParams && markerId == other.markerId;
 
   @override
-  int get hashCode => markerId.hashCode ^ chatId.hashCode;
+  int get hashCode => markerId.hashCode;
 }
 
 class ChatNotifier extends StateNotifier<List<Message>> {
   final ChatRepository _repository;
   final String markerId;
-  final String chatId;
   Chat? _chat;
 
-  ChatNotifier(this._repository, this.markerId, this.chatId) : super([]) {
+  ChatNotifier(this._repository, this.markerId) : super([]) {
     _loadData();
   }
 
@@ -34,8 +30,9 @@ class ChatNotifier extends StateNotifier<List<Message>> {
 
   Future<void> _loadData() async {
     try {
-      _chat = await _repository.getChat(markerId, chatId);
-      state = await _repository.getMessages(markerId, chatId);
+
+      _chat = await _repository.getChat(markerId);
+      state = await _repository.getMessages(markerId);
       print('Chat loaded: ${_chat?.title}, Messages: ${state.length}');
     } catch (e) {
       print('Error loading data: $e');
@@ -45,7 +42,7 @@ class ChatNotifier extends StateNotifier<List<Message>> {
   Future<void> sendMessage(String senderId, String senderName, String message, String type) async {
     try {
       final newMessage = Message(
-        messageId: 'msg${state.length + 1}',
+        messageId: DateTime.now().millisecondsSinceEpoch.toString(), // 고유 ID 생성
         senderId: senderId,
         senderName: senderName,
         message: message,
@@ -53,7 +50,7 @@ class ChatNotifier extends StateNotifier<List<Message>> {
         timestamp: DateTime.now(),
         readBy: [senderId],
       );
-      await _repository.sendMessage(markerId, chatId, newMessage);
+      await _repository.sendMessage(markerId, newMessage);
       state = [...state, newMessage];
       print('Message sent: ${newMessage.message}');
     } catch (e) {
@@ -67,11 +64,11 @@ final chatRepositoryProvider = Provider((ref) => ChatRepository());
 final chatNotifierProvider = StateNotifierProvider.family<ChatNotifier, List<Message>, ChatParams>(
       (ref, params) {
     final repository = ref.watch(chatRepositoryProvider);
-    return ChatNotifier(repository, params.markerId, params.chatId);
+    return ChatNotifier(repository, params.markerId);
   },
 );
 
 final chatProvider = FutureProvider.family<Chat?, ChatParams>((ref, params) async {
   final repository = ref.watch(chatRepositoryProvider);
-  return await repository.getChat(params.markerId, params.chatId);
+  return await repository.getChat(params.markerId);
 });
