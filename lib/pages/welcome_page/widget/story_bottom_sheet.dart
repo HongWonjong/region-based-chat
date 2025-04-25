@@ -77,7 +77,7 @@ class StoryBottomSheet extends ConsumerWidget {
       Row(
         children: [
           Text(marker.type.typeKor, style: TextStyle(color: Colors.grey[500])),
-          Text(dateConvert(marker.createdAt), style: TextStyle(color: Colors.grey[500]))
+          Text(" ${dateConvert(marker.createdAt)}", style: TextStyle(color: Colors.grey[500]))
         ],
       ),
       SizedBox(height: 10),
