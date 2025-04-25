@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:region_based_chat/models/marker.dart';
+import 'package:region_based_chat/pages/chat_page/chat_page.dart';
+import 'package:region_based_chat/providers/marker_provider.dart';
 
-class StoryBottomSheet extends StatelessWidget {
+class StoryBottomSheet extends ConsumerWidget {
   final DraggableScrollableController draggableController;
 
   const StoryBottomSheet({super.key, required this.draggableController});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final markerProvider = ref.watch(selectedMarkerProvider);
     return DraggableScrollableSheet(
       controller: draggableController,
       initialChildSize: 0.05,
@@ -37,33 +42,7 @@ class StoryBottomSheet extends StatelessWidget {
               SliverPadding(
                 padding: EdgeInsets.all(30),
                 sliver: SliverList.list(
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.blueAccent),
-                          height: 50,
-                          width: 50,
-                          child: Icon(Icons.person),
-                        ),
-                        SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [Text("유저 닉네임"), Text("OO동", style: TextStyle(color: Colors.grey[500]))],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Divider(thickness: 2, color: Colors.grey[300]),
-                    Text("떡볶이 무료 시식 있습니다.", style: TextStyle(fontSize: 20)),
-                    Row(
-                      children: [Text("동네 행사", style: TextStyle(color: Colors.grey[500])), Text(" 5분전", style: TextStyle(color: Colors.grey[500]))],
-                    ),
-                    SizedBox(height: 10),
-                    Text("교회 앞에서 떡볶이 무료 시식 행사가 있습니다.\n다들 와서 한입씩 하세요^^"),
-                    SizedBox(height: 30),
-                    ElevatedButton(onPressed: () {}, child: Text("채팅방 참여하기")),
-                  ],
+                  children: _content(markerProvider, context),
                 ),
               ),
             ],
@@ -71,5 +50,41 @@ class StoryBottomSheet extends StatelessWidget {
         );
       },
     );
+  }
+
+  List<Widget> _content(Marker? marker, BuildContext context) {
+    if (marker == null) {
+      return [Text("지도의 마커를 클릭해 다양한 소문들을 확인해보세요!")];
+    }
+
+    return [
+      Row(
+        children: [
+          Container(
+            decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.blueAccent),
+            height: 50,
+            width: 50,
+            child: Icon(Icons.person),
+          ),
+          SizedBox(width: 10),
+          Text(marker.createdBy)
+        ],
+      ),
+      SizedBox(height: 10),
+      Divider(thickness: 2, color: Colors.grey[300]),
+      Text(marker.title, style: TextStyle(fontSize: 20)),
+      Row(
+        children: [Text("동네 행사", style: TextStyle(color: Colors.grey[500])), Text(" 5분전", style: TextStyle(color: Colors.grey[500]))],
+      ),
+      SizedBox(height: 10),
+      Text(marker.description),
+      SizedBox(height: 30),
+      ElevatedButton(
+          onPressed: () {
+            final route = MaterialPageRoute(builder: (context) => ChatPage(markerId: marker.id));
+            Navigator.push(context, route);
+          },
+          child: Text("채팅방 참여하기")),
+    ];
   }
 }

@@ -13,7 +13,7 @@ class MarkerUtils {
     required NaverMapController mapController,
     required Set<NMarker> currentMarkers,
     required List<Marker> newMarkers,
-    required Function(NMarker) onMarkerTapped,
+    required Function(Marker) onMarkerTapped,
   }) {
     // 기존 마커 제거
     for (var marker in currentMarkers) {
@@ -26,7 +26,8 @@ class MarkerUtils {
       final nMarker = convertToNMarker(marker);
       mapController.addOverlay(nMarker);
       nMarker.setOnTapListener((NMarker tappedMarker) {
-        onMarkerTapped(tappedMarker);
+        onMarkerTapped(marker);
+        print(marker.title);
       });
       currentMarkers.add(nMarker);
     }

@@ -75,9 +75,10 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
     startPollingTimer();
   }
 
-  void _onMarkerTapped(NMarker tappedMarker) {
+  void _onMarkerTapped(Marker tappedMarker) {
     log("마커 탭 감지");
     widget.draggableController.animateTo(0.6, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    ref.read(selectedMarkerProvider.notifier).state = tappedMarker; // 상태 업데이트
   }
 
   @override
