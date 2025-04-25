@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:region_based_chat/pages/welcome_page/welcome_page.dart';
 
 final authProvider = StateNotifierProvider<AuthNotifier, User?>((ref) {
   return AuthNotifier();
@@ -53,9 +54,13 @@ class AuthNotifier extends StateNotifier<User?> {
       final uid = currentUser!.uid;
       final doc =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final nickname = doc.data()?['nickname'];
 
-      if (doc.exists) {
-        Navigator.pushReplacementNamed(context, '/home');
+      if (doc.exists && nickname != null && nickname != "") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const WelcomePage()),
+        );
       } else {
         Navigator.pushReplacementNamed(context, '/register');
       }
@@ -68,14 +73,14 @@ class AuthNotifier extends StateNotifier<User?> {
   }
 
   Future<void> signOut() async {
-    await FirebaseAuth.instance.signOut();
+    final googleSignIn = GoogleSignIn(scopes: ['email']);
 
-    final googleSignIn = GoogleSignIn(
-      scopes: ['email'],
-    );
+    try {
+      await googleSignIn.disconnect(); // 세션 초기화
+    } catch (_) {}
 
-    await googleSignIn.disconnect();
-    await googleSignIn.signOut();
+    await googleSignIn.signOut(); // 구글 계정 로그아웃
+    await FirebaseAuth.instance.signOut(); // Firebase 로그아웃
 
     state = null;
     print('로그아웃 완료');

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:region_based_chat/pages/auth/widgets/google_sign_in_button.dart';
+import 'package:region_based_chat/pages/auth/widgets/show_register_prompt.dart';
 import 'package:region_based_chat/pages/story_create_page/story_create_page.dart';
 import 'auth_provider.dart';
 
@@ -56,11 +57,12 @@ class CustomDrawer extends ConsumerWidget {
                     )
                   : const SizedBox.shrink(), // 로그인 안 된 경우 아무것도 안 보임
               const Divider(),
+              const SizedBox(height: 20),
               if (user != null)
                 ListTile(
                   leading: const Icon(Icons.logout),
                   title: const Text("로그아웃"),
-                  onTap: () => auth.signOut(),
+                  onTap: () => ref.read(authProvider.notifier).signOut(),
                 ),
             ],
           ),
