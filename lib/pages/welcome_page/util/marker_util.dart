@@ -27,27 +27,31 @@ class MarkerUtils {
     for (final marker in newMarkers) {
       final nMarker = convertToNMarker(marker);
       mapController.addOverlay(nMarker);
-      setMarkerColor(marker, nMarker);
+      setMarkerVisual(marker, nMarker);
       setMarkerListener(nMarker, mapController, context, onMarkerTapped, marker);
       currentMarkers.add(nMarker);
     }
   }
 
-  static void setMarkerColor(Marker marker, NMarker nMarker) {
+  static void setMarkerVisual(Marker marker, NMarker nMarker) {
     Color? color;
 
     switch (marker.type) {
       case StoryType.majorIncident:
         color = Colors.red;
+        break;
       case StoryType.minorIncident:
         color = Colors.green;
+        break;
       case StoryType.event:
         color = Colors.yellow;
-        throw UnimplementedError();
+        break;
       case StoryType.lostItem:
         color = Colors.blue;
+        break;
     }
-
+    nMarker.setIcon(const NOverlayImage.fromAssetImage('assets/marker_black.png'));
+    nMarker.setSize(const Size(35, 50));
     nMarker.setIconTintColor(color);
   }
 
