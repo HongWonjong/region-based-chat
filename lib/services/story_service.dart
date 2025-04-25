@@ -63,7 +63,7 @@ class Story {
 
 class StoryService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final String _collection = 'stories';
+  final String _collection = 'markers';
 
   // 스토리 생성
   Future<String> createStory({
