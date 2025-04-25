@@ -9,14 +9,15 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await _initNaverMap();
 
   try {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    runApp(const ProviderScope(child: MyApp()));
   } catch (e) {
     print('Firebase 초기화 실패: $e');
   }
+  await _initNaverMap();
+
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 Future<void> _initNaverMap() async {
