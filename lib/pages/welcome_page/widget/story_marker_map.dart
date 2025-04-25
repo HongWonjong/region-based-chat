@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:region_based_chat/models/marker.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:region_based_chat/pages/welcome_page/util/marker_util.dart';
+import 'package:region_based_chat/pages/welcome_page/util/polling_timer.dart';
 import 'package:region_based_chat/pages/welcome_page/widget/focus_detector.dart';
+import 'package:region_based_chat/providers/marker_provider.dart';
+import 'package:region_based_chat/services/firebase_firestore_service.dart';
 
 class StoryMarkerMap extends ConsumerStatefulWidget {
   final DraggableScrollableController draggableController;
@@ -18,29 +22,17 @@ class StoryMarkerMap extends ConsumerStatefulWidget {
 
 class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBindingObserver {
   NaverMapController? mapController;
-  final Set<NMarker> currentMarkers = {}; // 현재 지도에 표시된 마커 세트
-  List<Marker> previousMarkers = []; // 이전 조회된 마커 리스트
-  Timer? pollingTimer; // 주기적인 폴링을 위한 타이머
+  final Set<NMarker> currentMarkers = {};
+  List<Marker> previousMarkers = [];
+  final PollingTimer pollingTimer = PollingTimer();
 
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  bool isMapReady = false;
+  final FirebaseFirestoreService firestoreService = FirebaseFirestoreService(FirebaseFirestore.instance);
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this); // 위젯 바인딩 옵저버 등록
-    // 5초마다 새로운 마커를 확인하는 폴링 시작
-    startPollingTimer();
-  }
-
-  void startPollingTimer() {
-    pollingTimer ??= Timer.periodic(const Duration(seconds: 5), (timer) {
-      fetchAndUpdateMarkers();
-    });
-  }
-
-  void stopPollingTimer() {
-    pollingTimer?.cancel();
-    pollingTimer = null;
+    WidgetsBinding.instance.addObserver(this);
+    _loadInitialMarkers();
   }
 
   @override
@@ -55,87 +47,80 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
     }
   }
 
-  Future<List<Marker>> fetchMarkers() async {
-    final snapshot = await firestore.collection('markers').get();
-    return snapshot.docs.map((doc) => Marker.fromFirestore(doc)).toList();
-  }
-
-  NMarker convertToNMarker(Marker marker) {
-    return NMarker(
-      id: marker.id,
-      position: NLatLng(marker.latitude, marker.longitude),
-    );
-  }
-
-  void updateMapMarkers(List<Marker> newMarkers) {
-    if (mapController == null || !isMapReady) return;
-
-    setState(() {
-      // 기존 마커 제거
-      for (var marker in currentMarkers) {
-        mapController!.deleteOverlay(marker.info);
-      }
-      currentMarkers.clear();
-
-      // 새로운 마커 추가
-      for (final marker in newMarkers) {
-        final nMarker = convertToNMarker(marker);
-        mapController!.addOverlay(nMarker);
-        nMarker.setOnTapListener((NMarker tappedMarker) {
-          log("마커 탭 감지");
-          widget.draggableController.animateTo(0.6, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-        });
-      }
-      previousMarkers = newMarkers; // 현재 마커 리스트를 이전 리스트로 업데이트
+  void startPollingTimer() {
+    pollingTimer.start(const Duration(seconds: 5), () {
+      ref.read(markerListProvider.notifier).fetchMarkers();
     });
   }
 
-  Future<void> fetchAndUpdateMarkers() async {
-    final currentMarkers = await fetchMarkers();
+  void stopPollingTimer() {
+    pollingTimer.stop();
+  }
 
-    // 이전 마커 리스트와 비교하여 새로운 마커가 있는지 확인
-    final newMarkers = currentMarkers.where((marker) => !previousMarkers.any((prevMarker) => prevMarker.id == marker.id)).toList();
+  @override
+  void dispose() {
+    stopPollingTimer();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
-    if (newMarkers.isNotEmpty || currentMarkers.length != previousMarkers.length) {
-      // 새로운 마커가 있거나 마커 개수가 변경되었으면 지도 업데이트
-      updateMapMarkers(currentMarkers);
-    }
+  Future<void> _loadInitialMarkers() async {
+    final initialMarkers = await firestoreService.fetchMarkers();
+    MarkerUtils.updateMapMarkers(
+      mapController: mapController!,
+      currentMarkers: currentMarkers,
+      newMarkers: initialMarkers.map((doc) => Marker.fromFirestore(doc)).toList(),
+      onMarkerTapped: _onMarkerTapped,
+    );
+    startPollingTimer();
+  }
+
+  void _onMarkerTapped(NMarker tappedMarker) {
+    log("마커 탭 감지");
+    widget.draggableController.animateTo(0.6, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        FocusDetector(
-            focusOnCallback: () => startPollingTimer(),
-            focusOffCallback: () => stopPollingTimer(),
-            child: NaverMap(
-              forceGesture: true,
-              onMapReady: (controller) {
-                setState(() {
-                  mapController = controller;
-                  isMapReady = true;
-                  // 맵이 준비되면 초기 데이터 로딩
-                  fetchAndUpdateMarkers();
-                });
-              },
-              onCameraChange: (reason, animated) {
-                log("카메라 이동 감지");
-                widget.draggableController.animateTo(0.05, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-              },
-              onMapTapped: (_, __) {
-                log("지도 탭 감지");
-                widget.draggableController.animateTo(0.05, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-              },
-              options: const NaverMapViewOptions(
-                initialCameraPosition: NCameraPosition(
-                  target: NLatLng(37.5, 127),
-                  zoom: 12,
-                ),
-              ),
-            )),
-        Positioned(right: 10, bottom: MediaQuery.of(context).size.height / 2, child: NaverMapZoomControlWidget(mapController: mapController)),
+        _customNaverMap(),
+        _customNaverMapZoom(context),
       ],
     );
+  }
+
+  Positioned _customNaverMapZoom(BuildContext context) {
+    return Positioned(
+      right: 10,
+      bottom: MediaQuery.of(context).size.height / 2,
+      child: NaverMapZoomControlWidget(mapController: mapController),
+    );
+  }
+
+  FocusDetector _customNaverMap() {
+    return FocusDetector(
+        focusOnCallback: () => startPollingTimer(),
+        focusOffCallback: () => stopPollingTimer(),
+        child: NaverMap(
+          forceGesture: true,
+          onMapReady: (controller) {
+            setState(() {
+              mapController = controller;
+            });
+          },
+          onCameraChange: (_, __) {
+            widget.draggableController.animateTo(0.05, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          },
+          onMapTapped: (_, __) {
+            widget.draggableController.animateTo(0.05, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          },
+          options: const NaverMapViewOptions(
+            initialCameraPosition: NCameraPosition(
+              target: NLatLng(37.5, 127),
+              zoom: 12,
+            ),
+          ),
+        ));
   }
 }
