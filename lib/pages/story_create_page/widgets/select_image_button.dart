@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SelectImageButton extends StatefulWidget {
-  const SelectImageButton({super.key});
+  const SelectImageButton({
+    super.key,
+  });
 
   @override
   State<SelectImageButton> createState() => _SelectImageButtonState();

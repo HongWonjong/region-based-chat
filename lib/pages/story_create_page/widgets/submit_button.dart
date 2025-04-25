@@ -12,16 +12,18 @@ class SubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isEnabled = onPressed != null;
+
     return SizedBox(
       width: double.infinity,
       height: 55,
       child: ElevatedButton(
-        onPressed: onPressed ?? () {},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.deepPurple,
+          backgroundColor: isEnabled ? Colors.deepPurple : Colors.grey[400],
           foregroundColor: Colors.white,
-          elevation: 2,
-          shadowColor: Colors.blue.shade200,
+          elevation: isEnabled ? 2 : 0,
+          shadowColor: isEnabled ? Colors.blue.shade200 : Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
