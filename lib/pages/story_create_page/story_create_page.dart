@@ -161,11 +161,15 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('소문내기',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold)),
+          centerTitle: true,
+          title: Text(
+            '소문내기',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           actions: [
             // 위치 선택 버튼을 앱바 액션으로 이동
             Padding(
