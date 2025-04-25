@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,7 +15,6 @@ class AuthNotifier extends StateNotifier<User?> {
   Future<void> signInWithGoogle() async {
     try {
       final googleSignIn = GoogleSignIn(
-        clientId: dotenv.env['GOOGLE_CLIENT_ID'],
         scopes: ['email'],
       );
 
@@ -53,7 +54,6 @@ class AuthNotifier extends StateNotifier<User?> {
     await FirebaseAuth.instance.signOut();
 
     final googleSignIn = GoogleSignIn(
-      clientId: dotenv.env['GOOGLE_CLIENT_ID'],
       scopes: ['email'],
     );
 
