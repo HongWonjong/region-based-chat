@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class StoryBottomSheet extends StatelessWidget {
-  final DraggableScrollableController draggableController = DraggableScrollableController();
+  final DraggableScrollableController draggableController;
 
-  StoryBottomSheet({super.key});
+  const StoryBottomSheet({super.key, required this.draggableController});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +11,9 @@ class StoryBottomSheet extends StatelessWidget {
       controller: draggableController,
       initialChildSize: 0.05,
       minChildSize: 0.05,
-      maxChildSize: 0.8,
+      maxChildSize: 0.6,
+      snap: true,
+      snapSizes: [0.05, 0.6],
       builder: (BuildContext context, scrollController) {
         return Container(
           clipBehavior: Clip.hardEdge,

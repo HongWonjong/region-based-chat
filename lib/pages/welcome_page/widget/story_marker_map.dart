@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,7 +8,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:region_based_chat/pages/welcome_page/widget/focus_detector.dart';
 
 class StoryMarkerMap extends ConsumerStatefulWidget {
-  const StoryMarkerMap({super.key});
+  final DraggableScrollableController draggableController;
+
+  const StoryMarkerMap({super.key, required this.draggableController});
 
   @override
   StoryMarkerMapState createState() => StoryMarkerMapState();
@@ -78,6 +81,10 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
       for (final marker in newMarkers) {
         final nMarker = convertToNMarker(marker);
         mapController!.addOverlay(nMarker);
+        nMarker.setOnTapListener((NMarker tappedMarker) {
+          log("마커 탭 감지");
+          widget.draggableController.animateTo(0.6, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+        });
       }
       previousMarkers = newMarkers; // 현재 마커 리스트를 이전 리스트로 업데이트
     });
@@ -103,6 +110,7 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
             focusOnCallback: () => startPollingTimer(),
             focusOffCallback: () => stopPollingTimer(),
             child: NaverMap(
+              forceGesture: true,
               onMapReady: (controller) {
                 setState(() {
                   mapController = controller;
@@ -110,6 +118,14 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
                   // 맵이 준비되면 초기 데이터 로딩
                   fetchAndUpdateMarkers();
                 });
+              },
+              onCameraChange: (reason, animated) {
+                log("카메라 이동 감지");
+                widget.draggableController.animateTo(0.05, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+              },
+              onMapTapped: (_, __) {
+                log("지도 탭 감지");
+                widget.draggableController.animateTo(0.05, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
               },
               options: const NaverMapViewOptions(
                 initialCameraPosition: NCameraPosition(
