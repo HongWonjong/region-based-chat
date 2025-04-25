@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:region_based_chat/pages/auth/register_page.dart';
 import 'package:region_based_chat/pages/welcome_page/welcome_page.dart';
 import 'firebase_options.dart';
 
@@ -32,7 +33,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
-      home: WelcomePage(),
+      home: const WelcomePage(),
+      routes: {
+        '/register': (_) => const RegisterPage(),
+      },
     );
   }
 }
