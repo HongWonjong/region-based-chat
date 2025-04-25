@@ -54,7 +54,7 @@ class AuthNotifier extends StateNotifier<User?> {
       final uid = currentUser!.uid;
       final doc =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      final nickname = doc.data()?['nickname'];
+      final nickname = doc.data()?['username'];
 
       if (doc.exists && nickname != null && nickname != "") {
         Navigator.pushReplacement(

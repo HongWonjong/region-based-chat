@@ -61,10 +61,12 @@ class RegisterPage extends ConsumerWidget {
 
     await FirebaseFirestore.instance.collection('users').doc(uid).set({
       'email': email,
-      'nickname': nickname,
-      'profileImage': profileImageUrl,
+      'username': nickname,
+      'profileImageUrl': profileImageUrl,
       'createdAt': Timestamp.now(),
-      'lastLoginAt': Timestamp.now(),
+      'lastLogin': Timestamp.now(),
+      'joinedMarkers': [],
+      'uid': uid,
     });
 
     ref.read(isRegisteringProvider.notifier).state = false;
