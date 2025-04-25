@@ -51,13 +51,14 @@ class Marker {
 }
 
 enum StoryType {
-  majorIncident('majorIncident', Color(0xFFF44336)),
-  minorIncident('minorIncident', Color(0xFF4CAF50)),
-  event('event', Color(0xFFFFEB3B)),
-  lostItem('lostItem', Color(0xFF2196F3));
+  majorIncident('majorIncident', '범죄', Color(0xFFF44336)),
+  minorIncident('minorIncident', '사건/사고', Color(0xFF4CAF50)),
+  event('event', '행사', Color(0xFFFFEB3B)),
+  lostItem('lostItem', '분실', Color(0xFF2196F3));
 
-  const StoryType(this.type, this.color);
+  const StoryType(this.type, this.typeKor, this.color);
   final String type;
+  final String typeKor;
   final Color color;
   factory StoryType.fromString(String typeString) {
     switch (typeString) {
