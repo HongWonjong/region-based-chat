@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:region_based_chat/models/marker.dart';
 
@@ -14,6 +15,7 @@ class MarkerUtils {
     required Set<NMarker> currentMarkers,
     required List<Marker> newMarkers,
     required Function(Marker) onMarkerTapped,
+    required BuildContext context,
   }) {
     // 기존 마커 제거
     for (var marker in currentMarkers) {
@@ -27,12 +29,16 @@ class MarkerUtils {
       mapController.addOverlay(nMarker);
       nMarker.setOnTapListener((NMarker tappedMarker) async {
         // 바텀 시트가 올라온 상태에서 지도 중간에 마커가 위치하기위한 좌표 보정
-        NCameraPosition position = await mapController.getCameraPosition();
-        var point1 = await mapController.screenLocationToLatLng(NPoint(0.5, 0.5));
-        var point2 = await mapController.screenLocationToLatLng(NPoint(0.5, 0.4));
+
+        // 1dp의 좌표값
+        var point1 = await mapController.screenLocationToLatLng(NPoint(0.0, 0.0));
+        var point2 = await mapController.screenLocationToLatLng(NPoint(0, 1));
+
+        // 현재 화면의 사이즈 * 0.2 만큼의 길이 * 1dp의 좌표값으로 보정해야되는 수치를 구해서
+        // 마커의 위치에 적용
         await mapController.updateCamera(NCameraUpdate.withParams(
-            target:
-                NLatLng(nMarker.position.latitude - 350 * (point2.latitude - point1.latitude) * (21 - position.zoom), nMarker.position.longitude)));
+            target: NLatLng(nMarker.position.latitude - MediaQuery.of(context).size.height * 0.2 * (point1.latitude - point2.latitude),
+                nMarker.position.longitude)));
         onMarkerTapped(marker);
       });
       currentMarkers.add(nMarker);
