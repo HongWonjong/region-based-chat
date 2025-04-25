@@ -32,7 +32,9 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _loadInitialMarkers();
+    Future.delayed(Duration.zero, () {
+      _loadInitialMarkers();
+    });
   }
 
   @override
@@ -67,11 +69,11 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
   Future<void> _loadInitialMarkers() async {
     final initialMarkers = await firestoreService.fetchMarkers();
     MarkerUtils.updateMapMarkers(
-      mapController: mapController!,
-      currentMarkers: currentMarkers,
-      newMarkers: initialMarkers.map((doc) => Marker.fromFirestore(doc)).toList(),
-      onMarkerTapped: _onMarkerTapped,
-    );
+        mapController: mapController!,
+        currentMarkers: currentMarkers,
+        newMarkers: initialMarkers.map((doc) => Marker.fromFirestore(doc)).toList(),
+        onMarkerTapped: _onMarkerTapped,
+        context: context);
     startPollingTimer();
   }
 
