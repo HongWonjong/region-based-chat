@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:region_based_chat/models/marker.dart';
 import 'package:region_based_chat/pages/chat_page/chat_page.dart';
+import 'package:region_based_chat/pages/welcome_page/util/date_onvert.dart';
 import 'package:region_based_chat/providers/marker_provider.dart';
 
 class StoryBottomSheet extends ConsumerWidget {
@@ -74,7 +75,10 @@ class StoryBottomSheet extends ConsumerWidget {
       Divider(thickness: 2, color: Colors.grey[300]),
       Text(marker.title, style: TextStyle(fontSize: 20)),
       Row(
-        children: [Text("동네 행사", style: TextStyle(color: Colors.grey[500])), Text(" 5분전", style: TextStyle(color: Colors.grey[500]))],
+        children: [
+          Text(marker.type.typeKor, style: TextStyle(color: Colors.grey[500])),
+          Text(dateConvert(marker.createdAt), style: TextStyle(color: Colors.grey[500]))
+        ],
       ),
       SizedBox(height: 10),
       Text(marker.description),
