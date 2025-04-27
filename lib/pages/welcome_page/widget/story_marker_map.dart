@@ -102,12 +102,13 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
             });
           },
           onCameraChange: (_, __) {
-            widget.draggableController.animateTo(0.06, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+            widget.draggableController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
           },
           onMapTapped: (_, __) {
-            widget.draggableController.animateTo(0.06, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+            widget.draggableController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
           },
           options: const NaverMapViewOptions(
+            liteModeEnable: true,
             initialCameraPosition: NCameraPosition(
               target: NLatLng(37.5, 127),
               zoom: 12,
