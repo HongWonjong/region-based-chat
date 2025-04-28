@@ -7,13 +7,15 @@ import 'dart:io';
 // ProfileState 클래스 정의
 class ProfileState {
   final String? profileImageUrl;
+  final String? username;
 
-  ProfileState({this.profileImageUrl});
+  ProfileState({this.profileImageUrl, this.username});
 }
 
 // profileProvider 정의
-final profileProvider = StateNotifierProvider.family<ProfileNotifier, ProfileState, String?>(
-      (ref, uid) => ProfileNotifier(uid),
+final profileProvider =
+    StateNotifierProvider.family<ProfileNotifier, ProfileState, String?>(
+  (ref, uid) => ProfileNotifier(uid),
 );
 
 class ProfileNotifier extends StateNotifier<ProfileState> {
@@ -21,24 +23,28 @@ class ProfileNotifier extends StateNotifier<ProfileState> {
 
   ProfileNotifier(this.uid) : super(ProfileState()) {
     if (uid != null) {
-      _loadProfileImageUrl();
+      _loadProfile();
     }
   }
 
-  // Firestore에서 프로필 이미지 URL 로드
-  Future<void> _loadProfileImageUrl() async {
+  // Firestore에서 프로필 정보 로드
+  Future<void> _loadProfile() async {
     if (uid == null) return;
 
     try {
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .get();
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
       final url = doc.data()?['profileImageUrlChu'] as String?;
-      state = ProfileState(profileImageUrl: url);
+      final username = doc.data()?['username'] as String?;
+
+      state = ProfileState(
+        profileImageUrl: url,
+        username: username,
+      );
     } catch (e) {
-      print('프로필 이미지 URL 로드 실패: $e');
-      state = ProfileState(profileImageUrl: null);
+      print('프로필 정보 로드 실패: $e');
+      state = ProfileState(profileImageUrl: null, username: null);
     }
   }
 
@@ -47,9 +53,8 @@ class ProfileNotifier extends StateNotifier<ProfileState> {
     if (uid == null) return;
 
     try {
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('users/profileImages/$uid.jpg');
+      final ref =
+          FirebaseStorage.instance.ref().child('users/profileImages/$uid.jpg');
       await ref.putFile(File(image.path));
       final url = await ref.getDownloadURL();
 
@@ -60,7 +65,7 @@ class ProfileNotifier extends StateNotifier<ProfileState> {
           .update({'profileImageUrlChu': url});
 
       // 상태 업데이트
-      state = ProfileState(profileImageUrl: url);
+      state = ProfileState(profileImageUrl: url, username: state.username);
     } catch (e) {
       print('프로필 이미지 업로드 실패: $e');
       throw Exception('프로필 이미지 업로드 실패: $e');
