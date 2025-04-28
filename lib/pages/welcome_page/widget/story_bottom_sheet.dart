@@ -197,23 +197,57 @@ class StoryBottomSheet extends ConsumerWidget {
                 ),
               ],
             ),
-            ElevatedButton.icon(
-              onPressed: () {
-                final route = MaterialPageRoute(
-                    builder: (context) => ChatPage(markerId: marker.id));
-                Navigator.push(context, route);
-              },
-              icon: const Icon(Icons.chat_bubble_outline, size: 18),
-              label: const Text("채팅방 참여"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppBarStyles.appBarGradientStart,
-                foregroundColor: Colors.white,
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppBarStyles.appBarGradientStart,
+                    AppBarStyles.appBarGradientEnd
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppBarStyles.appBarGradientStart.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(24),
+                  onTap: () {
+                    final route = MaterialPageRoute(
+                        builder: (context) => ChatPage(markerId: marker.id));
+                    Navigator.push(context, route);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.chat_bubble_outlined,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          "채팅방 참여",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
