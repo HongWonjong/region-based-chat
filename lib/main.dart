@@ -11,7 +11,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
   } catch (e) {
     print('Firebase 초기화 실패: $e');
   }
@@ -26,17 +27,53 @@ Future<void> _initNaverMap() async {
   await FlutterNaverMap().init(clientId: xNcpApigwApiKeyId);
 }
 
-class MyApp extends StatelessWidget {
+final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
+
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        brightness: Brightness.light,
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.deepPurple, brightness: Brightness.dark),
+        brightness: Brightness.dark,
+      ),
+      themeMode: themeMode,
       home: const WelcomePage(),
       routes: {
         '/register': (_) => const RegisterPage(),
+      },
+    );
+  }
+}
+
+// 테마 토글 위젯 예시 (원하는 곳에 배치)
+class ThemeToggleButton extends ConsumerWidget {
+  const ThemeToggleButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+    return IconButton(
+      icon: Icon(
+        themeMode == ThemeMode.dark
+            ? Icons.dark_mode
+            : themeMode == ThemeMode.light
+                ? Icons.light_mode
+                : Icons.brightness_auto,
+      ),
+      tooltip: '다크모드 전환',
+      onPressed: () {
+        ref.read(themeModeProvider.notifier).state =
+            themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
       },
     );
   }
