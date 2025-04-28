@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+
 import '../../providers/chat_providers.dart';
 import '../../style/style.dart';
 import '../auth/auth_provider.dart';

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'service_info_page.dart';
-import 'widgets/google_sign_in_button.dart';
+
+import '../../main.dart';
+import '../../style/style.dart';
 import '../story_create_page/story_create_page.dart';
 import 'auth_provider.dart';
 import 'profile_provider.dart';
-import 'dart:io';
-import '../../style/style.dart';
-import '../../main.dart';
+import 'service_info_page.dart';
+import 'widgets/google_sign_in_button.dart';
 
 class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({super.key});
