@@ -44,18 +44,9 @@ class _WelcomePageState extends State<WelcomePage> {
             children: [
               Image.asset(
                 'assets/logo_soeasy.png',
-                height: 36,
-                color: Colors.white,
+                height: 136,
               ),
               const SizedBox(width: 8),
-              const Text(
-                '소문이지',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
             ],
           ),
           centerTitle: true,
