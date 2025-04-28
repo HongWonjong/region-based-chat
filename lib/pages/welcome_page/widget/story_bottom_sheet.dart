@@ -46,6 +46,28 @@ class StoryBottomSheet extends ConsumerWidget {
                   children: _content(markerProvider, context),
                 ),
               ),
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final route = MaterialPageRoute(builder: (context) => ChatPage(markerId: markerProvider!.id));
+                            Navigator.push(context, route);
+                          },
+                          child: Text("채팅방 참여하기"),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).padding.bottom),
+                  ],
+                ),
+              ),
             ],
           ),
         );
@@ -83,17 +105,6 @@ class StoryBottomSheet extends ConsumerWidget {
       SizedBox(height: 10),
       Text(marker.description),
       SizedBox(height: 30),
-
-      // 최대한 확장되는 공간 추가
-      SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-
-      ElevatedButton(
-        onPressed: () {
-          final route = MaterialPageRoute(builder: (context) => ChatPage(markerId: marker.id));
-          Navigator.push(context, route);
-        },
-        child: Text("채팅방 참여하기"),
-      ),
     ];
   }
 }
