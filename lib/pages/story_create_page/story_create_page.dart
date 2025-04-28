@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 import '../../services/story_service.dart';
 import '../../widgets/custom_alert_dialog.dart';
 import 'widgets/input_fields.dart';
@@ -113,14 +115,20 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
 
       final String userName = userDoc.data()?['username'] ?? '';
 
+      // 이미지 업로드
+      List<String> imageUrls = [];
+      if (_selectedImages.isNotEmpty) {
+        imageUrls = await _uploadImages(_selectedImages);
+      }
+
       final String storyId = await _storyService.createStory(
         title: _titleController.text,
         description: _contentController.text,
         latitude: _selectedLocation!.latitude,
         longitude: _selectedLocation!.longitude,
-        userId: userName, // 이제 닉네임을 userId로 전달
+        userId: userName,
         type: _getStoryTypeFromIndex(_selectedCategoryIndex),
-        // imageUrls는 이미지 업로드 후 URL 배열로 대체 필요
+        imageUrls: imageUrls, // 업로드된 이미지 URL 전달
       );
 
       // 성공 메시지 표시 (스낵바 대신 멋진 알림창 사용)
@@ -145,6 +153,37 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
     }
   }
 
+  // 이미지 업로드 메서드
+  Future<List<String>> _uploadImages(List<XFile> images) async {
+    List<String> urls = [];
+    final FirebaseStorage storage = FirebaseStorage.instance;
+
+    try {
+      for (int i = 0; i < images.length; i++) {
+        XFile image = images[i];
+        final String timestamp =
+            DateTime.now().millisecondsSinceEpoch.toString();
+        final String fileName = 'story_image_${timestamp}_$i.jpg';
+
+        // 스토리지 참조 생성
+        final Reference storageRef =
+            storage.ref().child('story_images/$fileName');
+
+        // 이미지 파일 업로드
+        final UploadTask uploadTask = storageRef.putFile(File(image.path));
+
+        // 업로드 완료 대기 및 URL 가져오기
+        final TaskSnapshot taskSnapshot = await uploadTask;
+        final String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+
+        urls.add(downloadUrl);
+      }
+      return urls;
+    } catch (e) {
+      throw Exception('이미지 업로드 실패: $e');
+    }
+  }
+
   // 폼 초기화
   void _resetForm() {
     _titleController.clear();
@@ -154,6 +193,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
       _selectedCategoryIndex = 1;
       _isTitleValid = false;
       _isContentValid = false;
+      _selectedImages = []; // 이미지 목록도 초기화
     });
   }
 
