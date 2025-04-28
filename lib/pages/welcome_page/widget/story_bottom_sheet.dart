@@ -22,15 +22,18 @@ class StoryBottomSheet extends ConsumerWidget {
       snap: true,
       snapSizes: [0.05, 0.8],
       builder: (BuildContext context, scrollController) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Container(
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? Colors.grey[900] : Colors.white,
             borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(25), topRight: Radius.circular(25)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: isDark
+                    ? Colors.black.withOpacity(0.4)
+                    : Colors.black.withOpacity(0.1),
                 blurRadius: 10,
                 spreadRadius: 0,
                 offset: const Offset(0, -2),
@@ -100,7 +103,7 @@ class StoryBottomSheet extends ConsumerWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 sliver: SliverList.list(
-                  children: _content(markerProvider, context),
+                  children: _content(markerProvider, context, isDark),
                 ),
               ),
               SliverFillRemaining(
@@ -120,7 +123,7 @@ class StoryBottomSheet extends ConsumerWidget {
   }
 
   // 소문 내용 렌더링
-  List<Widget> _content(Marker? marker, BuildContext context) {
+  List<Widget> _content(Marker? marker, BuildContext context, bool isDark) {
     if (marker == null) {
       return [
         Center(
@@ -258,7 +261,7 @@ class StoryBottomSheet extends ConsumerWidget {
       // 구분선
       Container(
         height: 1,
-        color: Colors.grey[200],
+        color: isDark ? Colors.grey[800] : Colors.grey[200],
         margin: const EdgeInsets.symmetric(vertical: 12),
       ),
 
@@ -269,10 +272,10 @@ class StoryBottomSheet extends ConsumerWidget {
           Expanded(
             child: Text(
               marker.title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF4A148C),
+                color: isDark ? Colors.amber[100] : Color(0xFF4A148C),
               ),
             ),
           ),
@@ -300,18 +303,19 @@ class StoryBottomSheet extends ConsumerWidget {
       Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.grey[50],
+          color: isDark ? Colors.grey[850] : Colors.grey[50],
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Colors.grey[200]!,
+            color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
             width: 1,
           ),
         ),
         child: Text(
           marker.description,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             height: 1.5,
+            color: isDark ? Colors.grey[100] : null,
           ),
         ),
       ),
