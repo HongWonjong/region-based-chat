@@ -17,16 +17,15 @@ class StoryBottomSheet extends ConsumerWidget {
       controller: draggableController,
       initialChildSize: 0.05,
       minChildSize: 0.05,
-      maxChildSize: 0.8,
+      maxChildSize: 0.6,
       snap: true,
-      snapSizes: [0.05, 0.8],
+      snapSizes: [0.05, 0.6],
       builder: (BuildContext context, scrollController) {
         return Container(
           clipBehavior: Clip.hardEdge,
           decoration: const BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(50), topRight: Radius.circular(50)),
           ),
           child: CustomScrollView(
             controller: scrollController,
@@ -34,9 +33,7 @@ class StoryBottomSheet extends ConsumerWidget {
               SliverToBoxAdapter(
                 child: Center(
                   child: Container(
-                    decoration: const BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    decoration: const BoxDecoration(color: Colors.black, borderRadius: BorderRadius.all(Radius.circular(10))),
                     height: 4,
                     width: 80,
                     margin: const EdgeInsets.symmetric(vertical: 10),
@@ -47,15 +44,6 @@ class StoryBottomSheet extends ConsumerWidget {
                 padding: EdgeInsets.all(30),
                 sliver: SliverList.list(
                   children: _content(markerProvider, context),
-                ),
-              ),
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    SizedBox(height: MediaQuery.of(context).padding.bottom),
-                  ],
                 ),
               ),
             ],
@@ -77,8 +65,7 @@ class StoryBottomSheet extends ConsumerWidget {
           Row(
             children: [
               Container(
-                decoration: const BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.blueAccent),
+                decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.blueAccent),
                 height: 50,
                 width: 50,
                 child: Icon(Icons.person),
@@ -89,8 +76,7 @@ class StoryBottomSheet extends ConsumerWidget {
           ),
           ElevatedButton.icon(
             onPressed: () {
-              final route = MaterialPageRoute(
-                  builder: (context) => ChatPage(markerId: marker.id));
+              final route = MaterialPageRoute(builder: (context) => ChatPage(markerId: marker.id));
               Navigator.push(context, route);
             },
             icon: Icon(Icons.chat_bubble_outline, size: 18),
@@ -112,8 +98,7 @@ class StoryBottomSheet extends ConsumerWidget {
       Row(
         children: [
           Text(marker.type.typeKor, style: TextStyle(color: Colors.grey[500])),
-          Text(" ${dateConvert(marker.createdAt)}",
-              style: TextStyle(color: Colors.grey[500]))
+          Text(" ${dateConvert(marker.createdAt)}", style: TextStyle(color: Colors.grey[500]))
         ],
       ),
       SizedBox(height: 10),
@@ -147,7 +132,7 @@ class StoryBottomSheet extends ConsumerWidget {
   }
 
   Widget _buildImageGallery(List<String> imageUrls, BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 200,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -178,11 +163,9 @@ class StoryBottomSheet extends ConsumerWidget {
                     return Center(
                       child: CircularProgressIndicator(
                         value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
+                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                             : null,
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
                       ),
                     );
                   },
@@ -206,8 +189,7 @@ class StoryBottomSheet extends ConsumerWidget {
     );
   }
 
-  void _showFullScreenImage(
-      BuildContext context, List<String> imageUrls, int initialIndex) {
+  void _showFullScreenImage(BuildContext context, List<String> imageUrls, int initialIndex) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -233,8 +215,7 @@ class StoryBottomSheet extends ConsumerWidget {
                       if (loadingProgress == null) return child;
                       return Center(
                         child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       );
                     },
