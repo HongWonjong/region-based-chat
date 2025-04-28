@@ -9,7 +9,6 @@ class Chat {
   final String lastMessage;
   final DateTime lastMessageTime;
   final String lastMessageSender;
-  final List<String> typing;
 
   Chat({
     required this.markerId,
@@ -20,7 +19,6 @@ class Chat {
     required this.lastMessage,
     required this.lastMessageTime,
     required this.lastMessageSender,
-    required this.typing,
   });
 
   factory Chat.fromJson(Map<String, dynamic> json) {
@@ -28,12 +26,24 @@ class Chat {
       markerId: json['markerId'],
       title: json['title'],
       createdBy: json['createdBy'],
-      createdAt: DateTime.parse(json['createdAt']),
+      createdAt: (json['createdAt'] as Timestamp).toDate(),
       participants: List<String>.from(json['participants']),
       lastMessage: json['lastMessage'],
-      lastMessageTime: DateTime.parse(json['lastMessageTime']),
+      lastMessageTime: (json['lastMessageTime'] as Timestamp).toDate(),
       lastMessageSender: json['lastMessageSender'],
-      typing: List<String>.from(json['typing']),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'markerId': markerId,
+      'title': title,
+      'createdBy': createdBy,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'participants': participants,
+      'lastMessage': lastMessage,
+      'lastMessageTime': Timestamp.fromDate(lastMessageTime),
+      'lastMessageSender': lastMessageSender,
+    };
   }
 }

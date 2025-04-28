@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/chat.dart';
 import '../models/message.dart';
+import '../pages/auth/auth_provider.dart';
 import '../repository/chat_repository.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatParams {
   final String markerId;
@@ -20,9 +23,10 @@ class ChatParams {
 class ChatNotifier extends StateNotifier<List<Message>> {
   final ChatRepository _repository;
   final String markerId;
+  final Ref _ref;
   Chat? _chat;
 
-  ChatNotifier(this._repository, this.markerId) : super([]) {
+  ChatNotifier(this._repository, this.markerId, this._ref) : super([]) {
     _loadData();
   }
 
@@ -30,45 +34,103 @@ class ChatNotifier extends StateNotifier<List<Message>> {
 
   Future<void> _loadData() async {
     try {
+      final user = _ref.read(authProvider);
+      if (user == null) {
+        print('User not logged in');
+        return;
+      }
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      final userName = userDoc.data()?['username'] ?? 'Unknown';
 
-      _chat = await _repository.getChat(markerId);
-      state = await _repository.getMessages(markerId);
-      print('Chat loaded: ${_chat?.title}, Messages: ${state.length}');
+      _chat = await _repository.getOrCreateChat(markerId, user.uid, userName);
+      _repository.getMessages(markerId).listen((messages) {
+        state = messages;
+      });
     } catch (e) {
       print('Error loading data: $e');
     }
   }
 
-  Future<void> sendMessage(String senderId, String senderName, String message, String type) async {
+  Future<void> sendMessage(String message, String type) async {
     try {
+      final user = _ref.read(authProvider);
+      if (user == null) {
+        print('User not logged in');
+        return;
+      }
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      final userName = userDoc.data()?['username'] ?? 'Unknown';
+
       final newMessage = Message(
-        messageId: DateTime.now().millisecondsSinceEpoch.toString(), // 고유 ID 생성
-        senderId: senderId,
-        senderName: senderName,
+        messageId: '', // Firestore에서 자동 생성
+        senderId: user.uid,
+        senderName: userName,
         message: message,
         type: type,
         timestamp: DateTime.now(),
-        readBy: [senderId],
+        readBy: [user.uid],
       );
       await _repository.sendMessage(markerId, newMessage);
-      state = [...state, newMessage];
-      print('Message sent: ${newMessage.message}');
     } catch (e) {
       print('Error sending message: $e');
+    }
+  }
+
+  Future<void> sendImage(XFile image) async {
+    try {
+      final user = _ref.read(authProvider);
+      if (user == null) {
+        print('User not logged in');
+        return;
+      }
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      final userName = userDoc.data()?['username'] ?? 'Unknown';
+
+      final messageId = DateTime.now().millisecondsSinceEpoch.toString(); // 임시 ID
+      final imageUrl = await _repository.uploadImage(markerId, messageId, image);
+      final newMessage = Message(
+        messageId: '', // Firestore에서 자동 생성
+        senderId: user.uid,
+        senderName: userName,
+        message: imageUrl,
+        type: 'image',
+        timestamp: DateTime.now(),
+        readBy: [user.uid],
+      );
+      await _repository.sendMessage(markerId, newMessage);
+    } catch (e) {
+      print('Error sending image: $e');
     }
   }
 }
 
 final chatRepositoryProvider = Provider((ref) => ChatRepository());
 
-final chatNotifierProvider = StateNotifierProvider.family<ChatNotifier, List<Message>, ChatParams>(
+final chatNotifierProvider =
+StateNotifierProvider.family<ChatNotifier, List<Message>, ChatParams>(
       (ref, params) {
     final repository = ref.watch(chatRepositoryProvider);
-    return ChatNotifier(repository, params.markerId);
+    return ChatNotifier(repository, params.markerId, ref);
   },
 );
 
 final chatProvider = FutureProvider.family<Chat?, ChatParams>((ref, params) async {
   final repository = ref.watch(chatRepositoryProvider);
-  return await repository.getChat(params.markerId);
+  final user = ref.read(authProvider);
+  if (user == null) return null;
+  final userDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .get();
+  final userName = userDoc.data()?['username'] ?? 'Unknown';
+  return await repository.getOrCreateChat(params.markerId, user.uid, userName);
 });
