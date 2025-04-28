@@ -20,19 +20,80 @@ class StoryBottomSheet extends ConsumerWidget {
       minChildSize: 0.05,
       maxChildSize: 0.8,
       snap: true,
-      snapSizes: [0.05, 0.6, 0.8],
+      snapSizes: [0.05, 0.8],
       builder: (BuildContext context, scrollController) {
         return Container(
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
             color: Colors.white,
-
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(25), topRight: Radius.circular(25)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                spreadRadius: 0,
+                offset: const Offset(0, -2),
+              ),
+            ],
           ),
           child: CustomScrollView(
             controller: scrollController,
             slivers: [
               SliverToBoxAdapter(
-
+                child: Column(
+                  children: [
+                    // 드래그 핸들
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 12),
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    // 타이틀 바 (접었을 때만 보임)
+                    if (markerProvider != null)
+                      AnimatedBuilder(
+                        animation: draggableController,
+                        builder: (context, child) {
+                          final isCollapsed = draggableController.size <= 0.1;
+                          return AnimatedOpacity(
+                            duration: const Duration(milliseconds: 200),
+                            opacity: isCollapsed ? 1.0 : 0.0,
+                            child: isCollapsed
+                                ? Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.campaign,
+                                          color:
+                                              AppBarStyles.appBarGradientStart,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            markerProvider.title,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                          );
+                        },
+                      ),
+                  ],
                 ),
               ),
               SliverPadding(
@@ -42,6 +103,15 @@ class StoryBottomSheet extends ConsumerWidget {
                   children: _content(markerProvider, context),
                 ),
               ),
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).padding.bottom),
+                  ],
+                ),
+              ),
             ],
           ),
         );
@@ -49,6 +119,7 @@ class StoryBottomSheet extends ConsumerWidget {
     );
   }
 
+  // 소문 내용 렌더링
   List<Widget> _content(Marker? marker, BuildContext context) {
     if (marker == null) {
       return [
@@ -195,17 +266,54 @@ class StoryBottomSheet extends ConsumerWidget {
       Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-
+          Expanded(
+            child: Text(
+              marker.title,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF4A148C),
               ),
             ),
           ),
-
+          const SizedBox(width: 10),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: marker.type.color.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              marker.type.typeKor,
+              style: TextStyle(
+                color: marker.type.color,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
               ),
             ),
           ),
         ],
       ),
+      const SizedBox(height: 16),
 
+      // 소문 내용
+      Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.grey[200]!,
+            width: 1,
+          ),
+        ),
+        child: Text(
+          marker.description,
+          style: const TextStyle(
+            fontSize: 16,
+            height: 1.5,
+          ),
+        ),
       ),
       const SizedBox(height: 24),
     ];
@@ -269,7 +377,55 @@ class StoryBottomSheet extends ConsumerWidget {
                   ),
                 ],
               ),
+              child: Stack(
+                children: [
+                  // 이미지
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      imageUrls[index],
+                      fit: BoxFit.cover,
+                      width: 200,
+                      height: 200,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                AppBarStyles.appBarGradientStart),
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[200],
+                          width: 200,
+                          height: 200,
+                          child: const Center(
+                            child: Icon(
+                              Icons.error_outline,
+                              color: Colors.red,
+                              size: 32,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
 
+                  // 확대 표시기
+                  Positioned(
+                    bottom: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        shape: BoxShape.circle,
                       ),
                       child: const Icon(
                         Icons.zoom_in,
@@ -287,7 +443,8 @@ class StoryBottomSheet extends ConsumerWidget {
     );
   }
 
-  void _showFullScreenImage(BuildContext context, List<String> imageUrls, int initialIndex) {
+  void _showFullScreenImage(
+      BuildContext context, List<String> imageUrls, int initialIndex) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -329,7 +486,29 @@ class StoryBottomSheet extends ConsumerWidget {
               );
             },
             itemBuilder: (context, index) {
-
+              return InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 3.0,
+                child: Center(
+                  child: Hero(
+                    tag: 'image_${imageUrls[index]}',
+                    child: Image.network(
+                      imageUrls[index],
+                      fit: BoxFit.contain,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                                Colors.white),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               );
