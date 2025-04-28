@@ -12,7 +12,7 @@ class ChatRepository {
 
   Future<Chat> getOrCreateChat(String markerId, String userId, String userName) async {
     final chatRef = _firestore.collection('markers').doc(markerId).collection('Chats');
-    final chatDocRef = chatRef.doc('default'); // 'default' 문서 참조
+    final chatDocRef = chatRef.doc('default');
     final querySnapshot = await chatRef.get();
 
     // 유저의 joinedMarkers 업데이트 함수
@@ -117,12 +117,13 @@ class ChatRepository {
     return await ref.getDownloadURL();
   }
 
-  // 사용자 프로필 이미지 URL 가져오기
+// 사용자 프로필 이미지 URL 가져오기
   Future<String?> getProfileImageUrl(String userId) async {
     try {
-      final ref = _storage.ref().child('users/$userId/profile.jpg');
+      final ref = _storage.ref().child('users/profileImages/$userId.jpg');
       return await ref.getDownloadURL();
     } catch (e) {
+      print('Error fetching profile image URL: $e');
       return null; // 프로필 이미지가 없는 경우
     }
   }
