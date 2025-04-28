@@ -26,8 +26,20 @@ class Message {
       senderName: json['senderName'],
       message: json['message'],
       type: json['type'],
-      timestamp: DateTime.parse(json['timestamp']),
+      timestamp: (json['timestamp'] as Timestamp).toDate(),
       readBy: List<String>.from(json['readBy']),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'messageId': messageId,
+      'senderId': senderId,
+      'senderName': senderName,
+      'message': message,
+      'type': type,
+      'timestamp': Timestamp.fromDate(timestamp),
+      'readBy': readBy,
+    };
   }
 }
