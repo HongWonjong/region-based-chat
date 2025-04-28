@@ -51,10 +51,7 @@ class _LocationMapModalState extends State<LocationMapModal> {
       height: MediaQuery.of(context).size.height * 0.8,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
-        ),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         children: [
@@ -108,10 +105,15 @@ class _LocationMapModalState extends State<LocationMapModal> {
             ),
           ),
 
-          // 지도,
+          // 지도
           Expanded(
             child: Material(
               color: Colors.transparent,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
+              clipBehavior: Clip.antiAlias,
               child: NaverMap(
                 options: NaverMapViewOptions(
                   initialCameraPosition: NCameraPosition(
@@ -168,32 +170,6 @@ class _LocationMapModalState extends State<LocationMapModal> {
               ),
             ),
           ),
-
-          // 하단 정보 표시
-          if (_selectedLocation != null)
-            Container(
-              padding: EdgeInsets.all(16),
-              color: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '선택한 위치: ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    '위도: ${_selectedLocation!.latitude.toStringAsFixed(6)}\n경도: ${_selectedLocation!.longitude.toStringAsFixed(6)}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ],
-              ),
-            ),
         ],
       ),
     );
