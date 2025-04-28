@@ -315,8 +315,6 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                     ),
                   ),
                   actions: [
-                    // 다크모드 토글 버튼
-                    ThemeToggleButton(),
                     // 위치 선택 버튼
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
