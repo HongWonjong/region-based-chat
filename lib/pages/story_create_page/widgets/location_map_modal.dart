@@ -107,7 +107,12 @@ class _LocationMapModalState extends State<LocationMapModal> {
                         backgroundColor: isDark ? Colors.amber : Colors.amber,
                         foregroundColor:
                             isDark ? Colors.black : Colors.deepPurple.shade900,
-                        disabledBackgroundColor: Colors.grey.shade400,
+                        disabledBackgroundColor: isDark
+                            ? Colors.grey[600] // 다크모드에서 더 밝은 회색으로 변경
+                            : Colors.grey.shade400,
+                        disabledForegroundColor: isDark
+                            ? Colors.grey[300] // 다크모드에서 텍스트 색상을 더 밝게 변경
+                            : Colors.grey[700],
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
