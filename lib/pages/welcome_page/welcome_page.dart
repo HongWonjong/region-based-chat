@@ -21,9 +21,17 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Image.asset(
-            'assets/logo_soeasy.png',
-            height: 110,
+          title: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const WelcomePage()),
+              );
+            },
+            child: Image.asset(
+              'assets/logo_soeasy.png',
+              height: 110,
+            ),
           ),
           centerTitle: true,
           backgroundColor: Colors.white,
