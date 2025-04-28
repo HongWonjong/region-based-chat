@@ -1,12 +1,12 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:region_based_chat/pages/welcome_page/welcome_page.dart';
+import 'package:region_based_chat/providers/firebase_storage_provider.dart';
+import 'package:region_based_chat/providers/firebase_store_provider.dart';
 
 final nicknameProvider = StateProvider<String>((ref) => '');
 final isRegisteringProvider = StateProvider<bool>((ref) => false);
@@ -53,14 +53,15 @@ class RegisterPage extends ConsumerWidget {
 
     ///스토리지 연결 전이라 이미지 선택시 오류날수 있음 스토리지 연결되면 정상작동
     if (pickedFile != null) {
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('users/profileImages/${uid}.jpg');
+      final firebaseStorageProvidre = ref.read(firebaseStorageServiceProvider);
+
+      final storageRef = firebaseStorageProvidre.getProfileImageReference(uid);
+      firebaseStorageProvidre.putFilebyReference(storageRef, pickedFile.path);
       await storageRef.putFile(File(pickedFile.path));
-      profileImageUrl = await storageRef.getDownloadURL();
+      profileImageUrl = await firebaseStorageProvidre.getDownloadUrl(storageRef);
     }
 
-    await FirebaseFirestore.instance.collection('users').doc(uid).set({
+    await ref.read(firebaseStoreServiceProvider).setUsersByUid({
       'email': email,
       'username': nickname,
       'profileImageUrl': profileImageUrl,
@@ -71,10 +72,7 @@ class RegisterPage extends ConsumerWidget {
     });
 
     ref.read(isRegisteringProvider.notifier).state = false;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const WelcomePage()),
-    );
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const WelcomePage()));
   }
 
   Future<void> _pickImage(WidgetRef ref) async {
@@ -107,8 +105,7 @@ class RegisterPage extends ConsumerWidget {
             const SizedBox(height: 12),
             TextField(
               maxLength: 10,
-              onChanged: (value) =>
-                  ref.read(nicknameProvider.notifier).state = value,
+              onChanged: (value) => ref.read(nicknameProvider.notifier).state = value,
               decoration: const InputDecoration(
                 hintText: '예: 피터개발자',
               ),
