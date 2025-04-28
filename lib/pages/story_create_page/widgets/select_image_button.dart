@@ -139,6 +139,7 @@ class _SelectImageButtonState extends State<SelectImageButton> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
+        width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
         decoration: BoxDecoration(
           color: color.withOpacity(0.1),
