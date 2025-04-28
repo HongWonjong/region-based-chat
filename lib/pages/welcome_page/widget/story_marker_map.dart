@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'dart:developer';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../models/marker.dart';
-import '../util/marker_util.dart';
+import '../../../providers/marker_provider.dart';
 import '../util/polling_timer.dart';
 import 'focus_detector.dart';
-import '../../../providers/marker_provider.dart';
-import '../../../services/firebase_firestore_service.dart';
 
 class StoryMarkerMap extends ConsumerStatefulWidget {
   final DraggableScrollableController draggableController;

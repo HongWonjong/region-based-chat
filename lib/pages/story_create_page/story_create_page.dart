@@ -1,19 +1,20 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
 import '../../services/story_service.dart';
 import '../../widgets/custom_alert_dialog.dart';
-import 'widgets/input_fields.dart';
-import 'widgets/submit_button.dart';
 import 'widgets/category_selector.dart';
-import 'widgets/location_map_modal.dart';
+import 'widgets/input_fields.dart';
 import 'widgets/location_info_panel.dart';
+import 'widgets/location_map_modal.dart';
 import 'widgets/select_image_button.dart';
-import 'package:image_picker/image_picker.dart';
-import '../../main.dart';
+import 'widgets/submit_button.dart';
 
 class StoryCreatePage extends StatefulWidget {
   const StoryCreatePage({super.key});
