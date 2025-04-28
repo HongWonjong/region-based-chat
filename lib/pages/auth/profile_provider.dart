@@ -35,7 +35,7 @@ class ProfileNotifier extends StateNotifier<ProfileState> {
       final doc =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
-      final url = doc.data()?['profileImageUrlChu'] as String?;
+      final url = doc.data()?['profileImageUrl'] as String?;
       final username = doc.data()?['username'] as String?;
 
       state = ProfileState(
@@ -62,7 +62,7 @@ class ProfileNotifier extends StateNotifier<ProfileState> {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(uid)
-          .update({'profileImageUrlChu': url});
+          .update({'profileImageUrl': url});
 
       // 상태 업데이트
       state = ProfileState(profileImageUrl: url, username: state.username);
