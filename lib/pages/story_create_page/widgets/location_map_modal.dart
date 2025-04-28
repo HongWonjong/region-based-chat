@@ -45,24 +45,10 @@ class _LocationMapModalState extends State<LocationMapModal> {
     _mapController?.addOverlay(_marker!);
   }
 
-  // 지도 이동 버튼
-  void _moveToSeoul() {
-    if (_mapController != null) {
-      _mapController?.updateCamera(
-        NCameraUpdate.withParams(
-          target: NLatLng(37.5670135, 126.9783740),
-          zoom: 16,
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      // 원래 크기로 복원
       height: MediaQuery.of(context).size.height * 0.8,
-      // 둥근 모서리 복원
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -117,36 +103,6 @@ class _LocationMapModalState extends State<LocationMapModal> {
                       child: Text('선택'),
                     ),
                   ],
-                ),
-              ],
-            ),
-          ),
-
-          // 버튼 컨트롤러
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            color: Colors.white,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    '맵을 터치하여 위치를 선택하세요',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ),
-                // 맵 이동 버튼
-                ElevatedButton.icon(
-                  onPressed: _mapReady ? _moveToSeoul : null,
-                  icon: Icon(Icons.map, size: 16),
-                  label: Text('서울시청'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.withOpacity(0.7),
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  ),
                 ),
               ],
             ),
