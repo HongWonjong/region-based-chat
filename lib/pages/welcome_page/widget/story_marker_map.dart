@@ -28,9 +28,6 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    Future.delayed(Duration.zero, () {
-      _loadInitialMarkers();
-    });
   }
 
   @override
@@ -60,10 +57,6 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
     stopPollingTimer();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-  }
-
-  Future<void> _loadInitialMarkers() async {
-    startPollingTimer();
   }
 
   void _onMarkerTapped(Marker tappedMarker) {
@@ -100,6 +93,8 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
             setState(() {
               mapController = controller;
             });
+            ref.read(markerListProvider.notifier).fetchMarkers(mapController!, MediaQuery.of(context).size.height, _onMarkerTapped);
+            startPollingTimer();
           },
           onCameraChange: (_, __) {
             widget.draggableController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
