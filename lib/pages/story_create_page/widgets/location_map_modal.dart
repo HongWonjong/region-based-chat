@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 
 class LocationMapModal extends StatefulWidget {
@@ -17,6 +19,7 @@ class _LocationMapModalState extends State<LocationMapModal> {
   NaverMapController? _mapController;
   NMarker? _marker;
   NLatLng? _selectedLocation;
+  bool _mapReady = false;
 
   @override
   void initState() {
@@ -48,10 +51,7 @@ class _LocationMapModalState extends State<LocationMapModal> {
       height: MediaQuery.of(context).size.height * 0.8,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
-        ),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         children: [
@@ -107,54 +107,152 @@ class _LocationMapModalState extends State<LocationMapModal> {
 
           // 지도
           Expanded(
-            child: NaverMap(
-              options: NaverMapViewOptions(
-                initialCameraPosition: NCameraPosition(
-                  target: widget.initialLocation ??
-                      NLatLng(37.5666102, 126.9783881), // 서울시청 기본값
-                  zoom: 15,
+            child: Stack(
+              children: [
+                Material(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(16),
+                    bottomRight: Radius.circular(16),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: NaverMap(
+                    options: NaverMapViewOptions(
+                      initialCameraPosition: NCameraPosition(
+                        target: widget.initialLocation ??
+                            NLatLng(37.5666102, 126.9783881), // 서울시청 기본값
+                        zoom: 15,
+                      ),
+                      logoAlign: NLogoAlign.leftBottom,
+                      extent: NLatLngBounds(
+                        southWest: NLatLng(31.43, 122.37),
+                        northEast: NLatLng(44.35, 132.0),
+                      ),
+                      mapType: NMapType.basic,
+                      indoorEnable: true,
+                      scaleBarEnable: true,
+                      contentPadding: EdgeInsets.zero,
+                      nightModeEnable: false,
+                      locale: const Locale.fromSubtags(languageCode: 'ko'),
+                    ),
+                    onMapReady: (controller) {
+                      _mapController = controller;
+
+                      // 위치 추적 모드 해제
+                      controller
+                          .setLocationTrackingMode(NLocationTrackingMode.none);
+
+                      // 카메라 이동 시도
+                      Future.delayed(Duration(milliseconds: 300), () {
+                        controller.updateCamera(
+                          NCameraUpdate.withParams(
+                            target: widget.initialLocation ??
+                                NLatLng(37.5666102, 126.9783881),
+                            zoom: 15,
+                          ),
+                        );
+                      });
+
+                      if (widget.initialLocation != null) {
+                        _updateMarker(widget.initialLocation!);
+                      }
+
+                      setState(() {
+                        _mapReady = true;
+                      });
+
+                      // 햅틱 피드백 제공 - 지도가 준비되었음을 알림
+                      HapticFeedback.lightImpact();
+                    },
+                    onMapTapped: (point, latLng) {
+                      // 햅틱 피드백 제공 - 맵이 정상 작동함을 알림
+                      HapticFeedback.selectionClick();
+                      _onMapTap(point, latLng);
+                    },
+                  ),
                 ),
-                logoAlign: NLogoAlign.leftBottom,
-                extent: NLatLngBounds(
-                  southWest: NLatLng(31.43, 122.37),
-                  northEast: NLatLng(44.35, 132.0),
+
+                // 확대/축소 버튼
+                Positioned(
+                  right: 16,
+                  bottom: 16,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // 확대 버튼
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(8),
+                            topRight: Radius.circular(8),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          icon: Icon(Icons.add, color: Colors.black87),
+                          onPressed: () {
+                            if (_mapController != null) {
+                              _mapController!.updateCamera(
+                                NCameraUpdate.zoomIn(),
+                              );
+                            }
+                          },
+                          padding: EdgeInsets.all(12),
+                          constraints: BoxConstraints(),
+                          iconSize: 24,
+                        ),
+                      ),
+
+                      // 구분선
+                      Container(
+                        height: 1,
+                        color: Colors.grey.withOpacity(0.3),
+                        width: 48,
+                      ),
+
+                      // 축소 버튼
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(8),
+                            bottomRight: Radius.circular(8),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          icon: Icon(Icons.remove, color: Colors.black87),
+                          onPressed: () {
+                            if (_mapController != null) {
+                              _mapController!.updateCamera(
+                                NCameraUpdate.zoomOut(),
+                              );
+                            }
+                          },
+                          padding: EdgeInsets.all(12),
+                          constraints: BoxConstraints(),
+                          iconSize: 24,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              onMapReady: (controller) {
-                _mapController = controller;
-                if (widget.initialLocation != null) {
-                  _updateMarker(widget.initialLocation!);
-                }
-              },
-              onMapTapped: _onMapTap,
+              ],
             ),
           ),
-
-          // 하단 정보 표시
-          if (_selectedLocation != null)
-            Container(
-              padding: EdgeInsets.all(16),
-              color: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '선택한 위치: ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    '위도: ${_selectedLocation!.latitude.toStringAsFixed(6)}\n경도: ${_selectedLocation!.longitude.toStringAsFixed(6)}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ],
-              ),
-            ),
         ],
       ),
     );

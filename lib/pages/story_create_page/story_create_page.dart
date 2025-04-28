@@ -156,12 +156,14 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
 
   // 위치 선택 모달 표시
   Future<void> _showLocationPickerModal() async {
-    final NLatLng? result = await showModalBottomSheet<NLatLng>(
+    final NLatLng? result = await showDialog<NLatLng>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => LocationMapModal(
-        initialLocation: _selectedLocation,
+      builder: (context) => Dialog(
+        insetPadding: EdgeInsets.all(0), // 여백 제거
+        backgroundColor: Colors.transparent,
+        child: LocationMapModal(
+          initialLocation: _selectedLocation,
+        ),
       ),
     );
 
