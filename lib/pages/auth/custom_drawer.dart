@@ -117,6 +117,7 @@ class CustomDrawer extends ConsumerWidget {
                   title: Text('서비스 소개'),
                 ),
               ),
+              const Divider(),
               const SizedBox(height: 20),
               if (user != null)
                 ListTile(
