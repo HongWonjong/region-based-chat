@@ -45,13 +45,12 @@ class _LocationMapModalState extends State<LocationMapModal> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.8,
+      // 전체 화면 크기로 변경
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      // 모서리 둥글게 제거
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
-        ),
       ),
       child: Column(
         children: [
@@ -60,10 +59,6 @@ class _LocationMapModalState extends State<LocationMapModal> {
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withAlpha(26),
@@ -105,28 +100,90 @@ class _LocationMapModalState extends State<LocationMapModal> {
             ),
           ),
 
-          // 지도
+          // 지도 - 남은 공간 전체를 채우도록 변경
           Expanded(
-            child: NaverMap(
-              options: NaverMapViewOptions(
-                initialCameraPosition: NCameraPosition(
-                  target: widget.initialLocation ??
-                      NLatLng(37.5666102, 126.9783881), // 서울시청 기본값
-                  zoom: 15,
+            child: Stack(
+              children: [
+                NaverMap(
+                  options: NaverMapViewOptions(
+                    initialCameraPosition: NCameraPosition(
+                      target: widget.initialLocation ??
+                          NLatLng(37.5666102, 126.9783881), // 서울시청 기본값
+                      zoom: 15,
+                    ),
+                    logoAlign: NLogoAlign.leftBottom,
+                    extent: NLatLngBounds(
+                      southWest: NLatLng(31.43, 122.37),
+                      northEast: NLatLng(44.35, 132.0),
+                    ),
+                    mapType: NMapType.basic,
+                    indoorEnable: true,
+                    scaleBarEnable: true,
+                    nightModeEnable: false,
+                  ),
+                  onMapReady: (controller) {
+                    _mapController = controller;
+                    controller
+                        .setLocationTrackingMode(NLocationTrackingMode.none);
+
+                    if (widget.initialLocation != null) {
+                      _updateMarker(widget.initialLocation!);
+                    }
+                  },
+                  onMapTapped: _onMapTap,
                 ),
-                logoAlign: NLogoAlign.leftBottom,
-                extent: NLatLngBounds(
-                  southWest: NLatLng(31.43, 122.37),
-                  northEast: NLatLng(44.35, 132.0),
+                // 서울시청 이동 버튼
+                Positioned(
+                  bottom: 80,
+                  right: 16,
+                  child: InkWell(
+                    onTap: () {
+                      _mapController?.updateCamera(
+                        NCameraUpdate.withParams(
+                          target: NLatLng(37.5670135, 126.9783740),
+                          zoom: 16,
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.location_city,
+                              color: Colors.white, size: 16),
+                          SizedBox(width: 4),
+                          Text(
+                            '서울시청으로 이동',
+                            style: TextStyle(fontSize: 12, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              onMapReady: (controller) {
-                _mapController = controller;
-                if (widget.initialLocation != null) {
-                  _updateMarker(widget.initialLocation!);
-                }
-              },
-              onMapTapped: _onMapTap,
+                // 드래그 안내 메시지
+                Positioned(
+                  bottom: 16,
+                  right: 16,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      '화면을 터치하여 위치를 선택하세요',
+                      style: TextStyle(fontSize: 12, color: Colors.black87),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 
