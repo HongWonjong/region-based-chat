@@ -59,7 +59,6 @@ class _WelcomePageState extends State<WelcomePage> {
           centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),
           actions: [
-            // ThemeToggleButton(),
             IconButton(
               icon: const Icon(Icons.edit_note, color: Colors.white),
               onPressed: () {
