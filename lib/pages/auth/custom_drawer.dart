@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:region_based_chat/pages/auth/service_info_page.dart';
-import 'package:region_based_chat/pages/auth/widgets/google_sign_in_button.dart';
-import 'package:region_based_chat/pages/story_create_page/story_create_page.dart';
+import 'service_info_page.dart';
+import 'widgets/google_sign_in_button.dart';
+import '../story_create_page/story_create_page.dart';
 import 'auth_provider.dart';
 import 'profile_provider.dart';
 import 'dart:io';

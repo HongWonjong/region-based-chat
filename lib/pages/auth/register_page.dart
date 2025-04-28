@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:region_based_chat/pages/welcome_page/welcome_page.dart';
+import '../welcome_page/welcome_page.dart';
 
 final nicknameProvider = StateProvider<String>((ref) => '');
 final isRegisteringProvider = StateProvider<bool>((ref) => false);

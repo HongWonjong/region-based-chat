@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-import 'package:region_based_chat/models/marker.dart';
+import '../../../models/marker.dart';
 
 class MarkerUtils {
   static NMarker convertToNMarker(Marker marker) {
