@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/story_service.dart';
 import '../../widgets/custom_alert_dialog.dart';
-import 'widgets/select_image_button.dart';
 import 'widgets/input_fields.dart';
 import 'widgets/submit_button.dart';
 import 'widgets/category_selector.dart';
@@ -327,19 +326,6 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                               onCategoryChanged: _selectCategory,
                               categories: CategoryOption.defaultCategories,
                             ),
-                          ),
-                        ),
-
-                        SizedBox(height: 24),
-
-                        // 사진 첨부 섹션 (향후 개발을 위한 주석)
-                        _buildSectionTitle('사진 첨부', Icons.photo_camera),
-                        SizedBox(height: 16),
-
-                        _buildCard(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8),
-                            child: SelectImageButton(),
                           ),
                         ),
 
