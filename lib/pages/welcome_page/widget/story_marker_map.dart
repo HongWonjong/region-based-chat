@@ -101,8 +101,10 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
               mapController = controller;
             });
           },
-          onCameraChange: (_, __) {
-            widget.draggableController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          onCameraChange: (NCameraUpdateReason reason, __) {
+            if (reason != NCameraUpdateReason.developer) {
+              widget.draggableController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+            }
           },
           onMapTapped: (_, __) {
             widget.draggableController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);

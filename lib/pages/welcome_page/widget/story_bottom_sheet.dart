@@ -17,9 +17,9 @@ class StoryBottomSheet extends ConsumerWidget {
       controller: draggableController,
       initialChildSize: 0.05,
       minChildSize: 0.05,
-      maxChildSize: 0.6,
+      maxChildSize: 0.8,
       snap: true,
-      snapSizes: [0.05, 0.6],
+      snapSizes: [0.05, 0.6, 0.8],
       builder: (BuildContext context, scrollController) {
         return Container(
           clipBehavior: Clip.hardEdge,
