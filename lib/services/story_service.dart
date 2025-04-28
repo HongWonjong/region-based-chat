@@ -54,7 +54,7 @@ class Story {
       createdBy: map['createdBy'],
       createdAt: map['createdAt'] as String,
       type: StoryType.values.firstWhere(
-        (e) => e.toString().split('.').last == map['type'],
+            (e) => e.toString().split('.').last == map['type'],
         orElse: () => StoryType.minorIncident,
       ),
       imageUrls: List<String>.from(map['imageUrls'] ?? []),
@@ -122,7 +122,7 @@ class StoryService {
           .map((doc) => Story.fromMap(doc.data()))
           .where(
             (story) => story.longitude >= minLng && story.longitude <= maxLng,
-          )
+      )
           .toList();
 
       return stories;
