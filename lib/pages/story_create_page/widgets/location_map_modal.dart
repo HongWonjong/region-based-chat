@@ -108,7 +108,7 @@ class _LocationMapModalState extends State<LocationMapModal> {
             ),
           ),
 
-          // 지도
+          // 지도,
           Expanded(
             child: Material(
               color: Colors.transparent,
