@@ -44,7 +44,7 @@ class _WelcomePageState extends State<WelcomePage> {
             children: [
               Image.asset(
                 'assets/logo_soeasy.png',
-                height: 136,
+                height: 100,
               ),
               const SizedBox(width: 8),
             ],
