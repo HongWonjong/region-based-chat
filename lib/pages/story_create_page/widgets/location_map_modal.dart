@@ -39,13 +39,18 @@ class _LocationMapModalState extends State<LocationMapModal> {
       _mapController?.deleteOverlay(_marker!.info);
     }
 
-    // 보라색 마커로 변경
+    // 마커 생성 및 스타일 지정
     _marker = NMarker(
       id: 'selected_location',
       position: position,
-      icon: NOverlayImage.fromAssetImage(
-          'assets/images/marker_purple.png'), // 추가된 경우
+      icon: NOverlayImage.fromAssetImage('assets/marker_black.png'),
     );
+
+    // 마커 크기 설정
+    _marker!.setSize(Size(20, 30));
+
+    // 마커 색상 설정 (보라색)
+    _marker!.setIconTintColor(Colors.deepPurple);
 
     _mapController?.addOverlay(_marker!);
   }
