@@ -61,29 +61,21 @@ class _WelcomePageState extends State<WelcomePage> {
           centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),
           actions: [
-            // 로그인 상태에 따라 다른 버튼 표시
-            if (isLoggedIn)
-              IconButton(
-                icon: const Icon(Icons.edit_note),
-                onPressed: () {
-                  // 스토리 작성 페이지로 이동
+            IconButton(
+              icon: const Icon(Icons.edit_note),
+              onPressed: () {
+                // 스토리 작성 페이지로 이동
+                if (isLoggedIn) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const StoryCreatePage(),
                     ),
                   );
-                },
-                tooltip: '소문 작성하기',
-              )
-            else
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: () {
-                  // 지도 새로고침 기능
-                },
-                tooltip: '지도 새로고침',
-              ),
+                }
+              },
+              tooltip: '소문 작성하기',
+            )
           ],
         ),
         drawer: const CustomDrawer(), // 로그인 드로어,
