@@ -115,302 +115,310 @@ class _ChatPageState extends ConsumerState<ChatPage> {
           // 주석 해제 시 assets 폴더에 chat_background.png 파일 추가 필요
           // image: BackgroundStyles.chatBackgroundImage,
         ),
-        child: CustomScrollView(
-          slivers: [
-            // 앱바
-            SliverAppBar(
-              expandedHeight: 70.0,
-              floating: false,
-              pinned: true,
-              backgroundColor: AppBarStyles.appBarBackgroundColor,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => Navigator.pop(context),
-                color: AppBarStyles.appBarIconTheme.color,
-              ),
-              flexibleSpace: FlexibleSpaceBar(
-                title: chatAsync.when(
-                  data: (chat) => Text(
-                    chat != null
-                        ? '${chat.title} (${chat.participants.length})'
-                        : '로딩 중...',
-                    style: AppBarStyles.appBarTitleStyle,
-                  ),
-                  loading: () => const Text(
-                    '로딩 중...',
-                    style: AppBarStyles.appBarTitleStyle,
-                  ),
-                  error: (error, stack) => Text(
-                    '오류 발생: $error',
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: CustomScrollView(
+            slivers: [
+              // 앱바
+              SliverAppBar(
+                expandedHeight: 70.0,
+                floating: false,
+                pinned: true,
+                backgroundColor: AppBarStyles.appBarBackgroundColor,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.pop(context),
+                  color: AppBarStyles.appBarIconTheme.color,
                 ),
-                background: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // 그라데이션 배경
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            AppBarStyles.appBarGradientStart,
-                            AppBarStyles.appBarGradientEnd,
-                          ],
-                        ),
+                flexibleSpace: FlexibleSpaceBar(
+                  title: chatAsync.when(
+                    data: (chat) => Text(
+                      chat != null
+                          ? '${chat.title} (${chat.participants.length})'
+                          : '로딩 중...',
+                      style: AppBarStyles.appBarTitleStyle,
+                    ),
+                    loading: () => const Text(
+                      '로딩 중...',
+                      style: AppBarStyles.appBarTitleStyle,
+                    ),
+                    error: (error, stack) => Text(
+                      '오류 발생: $error',
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
                       ),
                     ),
-                    // 시각적 효과를 위한 원형 장식
-                    Positioned(
-                      right: -20,
-                      top: -20,
-                      child: Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(0.1),
-                        ),
-                      ),
-                    ),
-                    // 하단 정보 영역
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        height: 2,
+                  ),
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      // 그라데이션 배경
+                      Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
                             colors: [
-                              Colors.transparent,
-                              Colors.white.withOpacity(0.3),
-                              Colors.transparent,
+                              AppBarStyles.appBarGradientStart,
+                              AppBarStyles.appBarGradientEnd,
                             ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.info_outline),
-                  onPressed: () {
-                    // 채팅방 정보 화면으로 이동
-                  },
-                  color: Colors.white,
-                ),
-              ],
-            ),
-
-            // 채팅 메시지 리스트
-            SliverToBoxAdapter(
-              child: messages.isEmpty
-                  ? Container(
-                      height: MediaQuery.of(context).size.height - 160,
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.chat_bubble_outline,
-                              size: 48,
-                              color: Colors.grey[400],
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              '아직 메시지가 없습니다.\n첫 메시지를 보내보세요!',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
+                      // 시각적 효과를 위한 원형 장식
+                      Positioned(
+                        right: -20,
+                        top: -20,
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withOpacity(0.1),
+                          ),
                         ),
                       ),
-                    )
-                  : Container(
-                      height: MediaQuery.of(context).size.height - 160,
-                      padding: const EdgeInsets.all(16),
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        reverse: true,
-                        itemCount: messages.length,
-                        itemBuilder: (context, index) {
-                          final message = messages[index];
-                          final isMe = message.senderId == user.uid;
+                      // 하단 정보 영역
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          height: 2,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.transparent,
+                                Colors.white.withOpacity(0.3),
+                                Colors.transparent,
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.info_outline),
+                    onPressed: () {
+                      // 채팅방 정보 화면으로 이동
+                    },
+                    color: Colors.white,
+                  ),
+                ],
+              ),
 
-                          // 날짜 변경 여부 확인 (날짜 구분선 표시용)
-                          bool isNewDay = false;
-                          if (index == messages.length - 1) {
-                            isNewDay = true;
-                          } else {
-                            final currentDate = DateFormat('yyyy-MM-dd')
-                                .format(message.timestamp);
-                            final previousDate = DateFormat('yyyy-MM-dd')
-                                .format(messages[index + 1].timestamp);
-                            isNewDay = currentDate != previousDate;
-                          }
-
-                          return Column(
+              // 채팅 메시지 리스트
+              SliverToBoxAdapter(
+                child: messages.isEmpty
+                    ? Container(
+                        height: MediaQuery.of(context).size.height - 160,
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              // 날짜 구분선
-                              if (isNewDay)
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 6),
-                                    child: Text(
-                                      DateFormat('yyyy년 MM월 dd일')
-                                          .format(message.timestamp),
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[700],
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                              // 메시지 버블
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 16.0),
-                                child: Row(
-                                  mainAxisAlignment: isMe
-                                      ? MainAxisAlignment.end
-                                      : MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    if (!isMe) ...[
-                                      FutureBuilder<String?>(
-                                        future: ref
-                                            .read(chatRepositoryProvider)
-                                            .getProfileImageUrl(
-                                                message.senderId),
-                                        builder: (context, snapshot) {
-                                          return CircleAvatar(
-                                            radius: 16,
-                                            backgroundColor: Colors.grey[200],
-                                            backgroundImage: snapshot.data !=
-                                                    null
-                                                ? NetworkImage(snapshot.data!)
-                                                : null,
-                                            child: snapshot.data == null
-                                                ? const Icon(Icons.person,
-                                                    size: 18,
-                                                    color: Colors.grey)
-                                                : null,
-                                          );
-                                        },
-                                      ),
-                                      const SizedBox(width: 8),
-                                    ],
-                                    Column(
-                                      crossAxisAlignment: isMe
-                                          ? CrossAxisAlignment.end
-                                          : CrossAxisAlignment.start,
-                                      children: [
-                                        if (!isMe)
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 4, bottom: 4),
-                                            child: Text(
-                                              message.senderName,
-                                              style: MessageCardStyles
-                                                  .senderNameStyle,
-                                            ),
-                                          ),
-
-                                        // 메시지 내용과 시간을 가로로 배치
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            // 시간 (내 메시지일 경우 왼쪽)
-                                            if (isMe)
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 8),
-                                                child: Text(
-                                                  DateFormat('HH:mm').format(
-                                                      message.timestamp),
-                                                  style: MessageCardStyles
-                                                      .timeTextStyle,
-                                                ),
-                                              ),
-
-                                            // 메시지 버블
-                                            _buildMessageCard(
-                                              context,
-                                              message: message,
-                                              isMe: isMe,
-                                            ),
-
-                                            // 시간 (상대방 메시지일 경우 오른쪽)
-                                            if (!isMe)
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8),
-                                                child: Text(
-                                                  DateFormat('HH:mm').format(
-                                                      message.timestamp),
-                                                  style: MessageCardStyles
-                                                      .timeTextStyle,
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    if (isMe) ...[
-                                      const SizedBox(width: 8),
-                                      FutureBuilder<String?>(
-                                        future: ref
-                                            .read(chatRepositoryProvider)
-                                            .getProfileImageUrl(user.uid),
-                                        builder: (context, snapshot) {
-                                          return CircleAvatar(
-                                            radius: 16,
-                                            backgroundColor: Colors.purple[100],
-                                            backgroundImage: snapshot.data !=
-                                                    null
-                                                ? NetworkImage(snapshot.data!)
-                                                : null,
-                                            child: snapshot.data == null
-                                                ? const Icon(Icons.person,
-                                                    size: 18,
-                                                    color: Colors.deepPurple)
-                                                : null,
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ],
+                              Icon(
+                                Icons.chat_bubble_outline,
+                                size: 48,
+                                color: Colors.grey[400],
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                '아직 메시지가 없습니다.\n첫 메시지를 보내보세요!',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 16,
                                 ),
                               ),
                             ],
-                          );
-                        },
+                          ),
+                        ),
+                      )
+                    : Container(
+                        height: MediaQuery.of(context).size.height - 160,
+                        padding: const EdgeInsets.all(16),
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          reverse: true,
+                          itemCount: messages.length,
+                          itemBuilder: (context, index) {
+                            final message = messages[index];
+                            final isMe = message.senderId == user.uid;
+
+                            // 날짜 변경 여부 확인 (날짜 구분선 표시용)
+                            bool isNewDay = false;
+                            if (index == messages.length - 1) {
+                              isNewDay = true;
+                            } else {
+                              final currentDate = DateFormat('yyyy-MM-dd')
+                                  .format(message.timestamp);
+                              final previousDate = DateFormat('yyyy-MM-dd')
+                                  .format(messages[index + 1].timestamp);
+                              isNewDay = currentDate != previousDate;
+                            }
+
+                            return Column(
+                              children: [
+                                // 날짜 구분선
+                                if (isNewDay)
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 6),
+                                      child: Text(
+                                        DateFormat('yyyy년 MM월 dd일')
+                                            .format(message.timestamp),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[700],
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                // 메시지 버블
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 16.0),
+                                  child: Row(
+                                    mainAxisAlignment: isMe
+                                        ? MainAxisAlignment.end
+                                        : MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      if (!isMe) ...[
+                                        FutureBuilder<String?>(
+                                          future: ref
+                                              .read(chatRepositoryProvider)
+                                              .getProfileImageUrl(
+                                                  message.senderId),
+                                          builder: (context, snapshot) {
+                                            return CircleAvatar(
+                                              radius: 16,
+                                              backgroundColor: Colors.grey[200],
+                                              backgroundImage: snapshot.data !=
+                                                      null
+                                                  ? NetworkImage(snapshot.data!)
+                                                  : null,
+                                              child: snapshot.data == null
+                                                  ? const Icon(Icons.person,
+                                                      size: 18,
+                                                      color: Colors.grey)
+                                                  : null,
+                                            );
+                                          },
+                                        ),
+                                        const SizedBox(width: 8),
+                                      ],
+                                      Column(
+                                        crossAxisAlignment: isMe
+                                            ? CrossAxisAlignment.end
+                                            : CrossAxisAlignment.start,
+                                        children: [
+                                          if (!isMe)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 4, bottom: 4),
+                                              child: Text(
+                                                message.senderName,
+                                                style: MessageCardStyles
+                                                    .senderNameStyle,
+                                              ),
+                                            ),
+
+                                          // 메시지 내용과 시간을 가로로 배치
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              // 시간 (내 메시지일 경우 왼쪽)
+                                              if (isMe)
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 8),
+                                                  child: Text(
+                                                    DateFormat('HH:mm').format(
+                                                        message.timestamp),
+                                                    style: MessageCardStyles
+                                                        .timeTextStyle,
+                                                  ),
+                                                ),
+
+                                              // 메시지 버블
+                                              _buildMessageCard(
+                                                context,
+                                                message: message,
+                                                isMe: isMe,
+                                              ),
+
+                                              // 시간 (상대방 메시지일 경우 오른쪽)
+                                              if (!isMe)
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8),
+                                                  child: Text(
+                                                    DateFormat('HH:mm').format(
+                                                        message.timestamp),
+                                                    style: MessageCardStyles
+                                                        .timeTextStyle,
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      if (isMe) ...[
+                                        const SizedBox(width: 8),
+                                        FutureBuilder<String?>(
+                                          future: ref
+                                              .read(chatRepositoryProvider)
+                                              .getProfileImageUrl(user.uid),
+                                          builder: (context, snapshot) {
+                                            return CircleAvatar(
+                                              radius: 16,
+                                              backgroundColor:
+                                                  Colors.purple[100],
+                                              backgroundImage: snapshot.data !=
+                                                      null
+                                                  ? NetworkImage(snapshot.data!)
+                                                  : null,
+                                              child: snapshot.data == null
+                                                  ? const Icon(Icons.person,
+                                                      size: 18,
+                                                      color: Colors.deepPurple)
+                                                  : null,
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
                       ),
-                    ),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
 
