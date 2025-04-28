@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:region_based_chat/pages/auth/service_info_page.dart';
 import 'package:region_based_chat/pages/auth/widgets/google_sign_in_button.dart';
+import 'package:region_based_chat/pages/chat_list/chat_list_page.dart';
+
 import 'package:region_based_chat/pages/story_create_page/story_create_page.dart';
 import 'auth_provider.dart';
 import 'profile_provider.dart';
@@ -11,15 +13,12 @@ import '../../style/style.dart';
 
 class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({super.key});
-
   // 이미지 선택 및 업로드
   Future<void> _pickAndUploadImage(BuildContext context, WidgetRef ref) async {
     final user = ref.read(authProvider);
     if (user == null) return;
-
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
     if (pickedFile != null) {
       try {
         await ref
@@ -40,7 +39,6 @@ class CustomDrawer extends ConsumerWidget {
         user != null ? ref.watch(profileProvider(user.uid)) : null;
     final profileImageUrl = profileState?.profileImageUrl;
     final username = profileState?.username;
-
     return Drawer(
       child: Column(
         children: [
@@ -140,7 +138,6 @@ class CustomDrawer extends ConsumerWidget {
                       ],
                     ),
                   ),
-
                   // 로그인 버튼 (로그인하지 않은 경우에만 표시)
                   if (user == null)
                     Padding(
@@ -156,7 +153,6 @@ class CustomDrawer extends ConsumerWidget {
               ),
             ),
           ),
-
           // 메뉴 항목들
           Expanded(
             child: Container(
@@ -178,10 +174,20 @@ class CustomDrawer extends ConsumerWidget {
                           );
                         },
                       ),
-
+                    _buildMenuItem(
+                      icon: Icons.chat,
+                      title: "채팅방 목록",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ChatListPage(),
+                          ),
+                        );
+                      },
+                    ),
                     // 메뉴 구분선
                     const Divider(height: 1),
-
                     // 서비스 소개 메뉴
                     _buildMenuItem(
                       icon: Icons.info_outline,
@@ -195,10 +201,8 @@ class CustomDrawer extends ConsumerWidget {
                         );
                       },
                     ),
-
                     // 메뉴 구분선
                     const Divider(height: 1),
-
                     // 로그아웃 메뉴 (로그인한 경우만)
                     if (user != null)
                       _buildMenuItem(
@@ -219,7 +223,6 @@ class CustomDrawer extends ConsumerWidget {
               ),
             ),
           ),
-
           // 하단 앱 버전 정보
           Container(
             width: double.infinity,

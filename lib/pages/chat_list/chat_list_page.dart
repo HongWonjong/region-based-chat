@@ -68,14 +68,3 @@ class ChatListPage extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-//1. 브랜치 만들기
-//2. ChatListPage에 UI 구현
-//3. git add
-//4. git commit
-//5. 브랜치 푸시
-//6. Pull Request 날리기
