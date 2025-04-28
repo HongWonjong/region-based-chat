@@ -213,7 +213,7 @@ class StoryBottomSheet extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
               ),
             ),
           ],
