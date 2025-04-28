@@ -20,7 +20,8 @@ class StoryMarkerMap extends ConsumerStatefulWidget {
   StoryMarkerMapState createState() => StoryMarkerMapState();
 }
 
-class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBindingObserver {
+class StoryMarkerMapState extends ConsumerState<StoryMarkerMap>
+    with WidgetsBindingObserver {
   NaverMapController? mapController;
   final PollingTimer pollingTimer = PollingTimer();
 
@@ -47,7 +48,8 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
 
   void startPollingTimer() {
     pollingTimer.start(const Duration(seconds: 5), () {
-      ref.read(markerListProvider.notifier).fetchMarkers(mapController!, MediaQuery.of(context).size.height, _onMarkerTapped);
+      ref.read(markerListProvider.notifier).fetchMarkers(
+          mapController!, MediaQuery.of(context).size.height, _onMarkerTapped);
     });
   }
 
@@ -68,15 +70,18 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
 
   void _onMarkerTapped(Marker tappedMarker) {
     log("마커 탭 감지");
-    widget.draggableController.animateTo(0.6, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    widget.draggableController.animateTo(0.6,
+        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     ref.read(selectedMarkerProvider.notifier).state = tappedMarker; // 상태 업데이트
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Stack(
       children: [
-        _customNaverMap(),
+        _customNaverMap(isDark),
         _customNaverMapZoom(context),
       ],
     );
@@ -90,7 +95,7 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
     );
   }
 
-  FocusDetector _customNaverMap() {
+  FocusDetector _customNaverMap(bool isDark) {
     return FocusDetector(
         focusOnCallback: () => startPollingTimer(),
         focusOffCallback: () => stopPollingTimer(),
@@ -103,18 +108,24 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
           },
           onCameraChange: (NCameraUpdateReason reason, __) {
             if (reason != NCameraUpdateReason.developer) {
-              widget.draggableController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+              widget.draggableController.animateTo(0,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut);
             }
           },
           onMapTapped: (_, __) {
-            widget.draggableController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+            widget.draggableController.animateTo(0,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut);
           },
-          options: const NaverMapViewOptions(
-            liteModeEnable: true,
-            initialCameraPosition: NCameraPosition(
+          options: NaverMapViewOptions(
+            liteModeEnable: false,
+            initialCameraPosition: const NCameraPosition(
               target: NLatLng(37.5, 127),
               zoom: 12,
             ),
+            nightModeEnable: isDark, // 다크모드 상태에 따라 야간 모드 활성화
+            mapType: NMapType.navi, // 항상 네비 타입으로 설정
           ),
         ));
   }
