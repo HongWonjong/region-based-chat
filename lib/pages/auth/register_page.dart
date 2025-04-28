@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:region_based_chat/pages/welcome_page/welcome_page.dart';
 import 'package:region_based_chat/providers/marker_provider.dart';
+import 'package:region_based_chat/style/style.dart';
 
 final nicknameProvider = StateProvider<String>((ref) => '');
 final isRegisteringProvider = StateProvider<bool>((ref) => false);
@@ -18,30 +19,23 @@ class RegisterPage extends ConsumerWidget {
 
   Future<void> _submit(BuildContext context, WidgetRef ref) async {
     final nickname = ref.read(nicknameProvider).trim();
-
-    // 닉네임 유효성 검사
     final validNickname = RegExp(r'^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]+$');
 
     if (nickname.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("닉네임을 입력해주세요.")),
-      );
+      _showSnackBar(context, "닉네임을 입력해주세요.");
       return;
     }
 
     if (nickname.length > 10) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("닉네임은 10자 이하로 입력해주세요.")),
-      );
+      _showSnackBar(context, "닉네임은 10자 이하로 입력해주세요.");
       return;
     }
 
     if (!validNickname.hasMatch(nickname)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("닉네임은 특수문자를 제외하고 입력해주세요.")),
-      );
+      _showSnackBar(context, "닉네임은 특수문자를 제외하고 입력해주세요.");
       return;
     }
+
     final docs = (await FirebaseFirestore.instance
             .collection('users')
             .where('username', isEqualTo: nickname)
@@ -50,10 +44,8 @@ class RegisterPage extends ConsumerWidget {
         .docs;
 
     if (docs.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("이미 사용중인 닉네임입니다. 다른 닉네임을 입력해주세요.")),
-      );
-      return; // 닉네임이 이미 존재하면 여기서 함수 종료
+      _showSnackBar(context, "이미 사용중인 닉네임입니다. 다른 닉네임을 입력해주세요.");
+      return;
     }
 
     ref.read(isRegisteringProvider.notifier).state = true;
@@ -65,11 +57,9 @@ class RegisterPage extends ConsumerWidget {
     String profileImageUrl = "";
     final pickedFile = ref.read(profileImageProvider);
 
-    ///스토리지 연결 전이라 이미지 선택시 오류날수 있음 스토리지 연결되면 정상작동
     if (pickedFile != null) {
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('users/profileImages/${uid}.jpg');
+      final storageRef =
+          FirebaseStorage.instance.ref().child('users/profileImages/$uid.jpg');
       await storageRef.putFile(File(pickedFile.path));
       profileImageUrl = await storageRef.getDownloadURL();
     }
@@ -85,11 +75,20 @@ class RegisterPage extends ConsumerWidget {
     });
 
     ref.read(isRegisteringProvider.notifier).state = false;
-    ref.invalidate(markerListProvider); //  Provider 초기화
+    ref.invalidate(markerListProvider);
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const WelcomePage()),
     );
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    });
   }
 
   Future<void> _pickImage(WidgetRef ref) async {
@@ -107,8 +106,13 @@ class RegisterPage extends ConsumerWidget {
     final profileImage = ref.watch(profileImageProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('회원가입')),
-      body: Padding(
+      appBar: AppBar(
+        backgroundColor: AppBarStyles.appBarBackgroundColor,
+        title: const Text('회원가입', style: AppBarStyles.appBarTitleStyle),
+        iconTheme: AppBarStyles.appBarIconTheme,
+      ),
+      backgroundColor: BackgroundStyles.chatBackgroundColor,
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,23 +123,31 @@ class RegisterPage extends ConsumerWidget {
                 style: TextStyle(fontSize: 16),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             TextField(
               maxLength: 10,
               onChanged: (value) =>
                   ref.read(nicknameProvider.notifier).state = value,
-              decoration: const InputDecoration(
+              decoration: TextFieldStyles.textFieldDecoration.copyWith(
                 hintText: '예: 피터개발자',
               ),
             ),
             const SizedBox(height: 24),
             Row(
               children: [
-                ElevatedButton(
-                  onPressed: () => _pickImage(ref),
-                  child: const Text('프로필 이미지 선택'),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ButtonStyles.imageButtonBackgroundColor,
+                      padding: ButtonStyles.buttonPadding,
+                      elevation: ButtonStyles.buttonElevation,
+                    ),
+                    onPressed: () => _pickImage(ref),
+                    child: const Text('프로필 이미지 선택',
+                        style: TextStyle(color: Colors.white)),
+                  ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 if (profileImage != null)
                   CircleAvatar(
                     backgroundImage: FileImage(File(profileImage.path)),
@@ -143,13 +155,19 @@ class RegisterPage extends ConsumerWidget {
                   ),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 36),
             Center(
               child: isLoading
                   ? const CircularProgressIndicator()
                   : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: ButtonStyles.buttonPadding,
+                        backgroundColor: ButtonStyles.buttonBackgroundColor,
+                        elevation: ButtonStyles.buttonElevation,
+                      ),
                       onPressed: () => _submit(context, ref),
-                      child: const Text('등록하기'),
+                      child: const Text('등록하기',
+                          style: TextStyle(color: Colors.white)),
                     ),
             ),
           ],
