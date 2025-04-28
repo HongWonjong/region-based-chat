@@ -153,11 +153,11 @@ class _LocationMapModalState extends State<LocationMapModal> {
                         southWest: NLatLng(31.43, 122.37),
                         northEast: NLatLng(44.35, 132.0),
                       ),
-                      mapType: NMapType.basic,
+                      mapType: isDark ? NMapType.navi : NMapType.basic,
                       indoorEnable: true,
                       scaleBarEnable: true,
                       contentPadding: EdgeInsets.zero,
-                      nightModeEnable: isDark, // 다크모드에서는 네이버맵도 야간모드 활성화
+                      nightModeEnable: isDark,
                       locale: const Locale.fromSubtags(languageCode: 'ko'),
                     ),
                     onMapReady: (controller) {
