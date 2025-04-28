@@ -20,16 +20,15 @@ class _SelectImageButtonState extends State<SelectImageButton> {
   final List<XFile> _selectedImages = [];
   bool _isExpanded = false;
 
-  Future<void> _pickImage(ImageSource source) async {
+  Future<void> _pickMultipleImages() async {
     try {
-      final XFile? pickedFile = await _picker.pickImage(
-        source: source,
+      final List<XFile> pickedFiles = await _picker.pickMultiImage(
         imageQuality: 85, // 이미지 품질 조정
       );
 
-      if (pickedFile != null) {
+      if (pickedFiles.isNotEmpty) {
         setState(() {
-          _selectedImages.add(pickedFile);
+          _selectedImages.addAll(pickedFiles);
           _isExpanded = true;
         });
 
@@ -62,25 +61,13 @@ class _SelectImageButtonState extends State<SelectImageButton> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 사진 선택 버튼
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            // 카메라로 촬영 버튼
-            _buildSelectButton(
-              icon: Icons.camera_alt,
-              label: '사진 촬영',
-              color: Colors.deepPurple.shade500,
-              onTap: () => _pickImage(ImageSource.camera),
-            ),
-
-            // 갤러리에서 선택 버튼
-            _buildSelectButton(
-              icon: Icons.photo_library,
-              label: '갤러리에서 선택',
-              color: Colors.deepPurple.shade700,
-              onTap: () => _pickImage(ImageSource.gallery),
-            ),
-          ],
+        Center(
+          child: _buildSelectButton(
+            icon: Icons.photo_library,
+            label: '갤러리에서 여러 사진 선택',
+            color: Colors.deepPurple.shade700,
+            onTap: _pickMultipleImages,
+          ),
         ),
 
         // 선택된 이미지가 있을 경우 표시
