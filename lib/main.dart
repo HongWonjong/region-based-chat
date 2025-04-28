@@ -56,26 +56,4 @@ class MyApp extends ConsumerWidget {
   }
 }
 
-// 테마 토글 위젯 예시 (원하는 곳에 배치)
-class ThemeToggleButton extends ConsumerWidget {
-  const ThemeToggleButton({super.key});
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeModeProvider);
-    return IconButton(
-      icon: Icon(
-        themeMode == ThemeMode.dark
-            ? Icons.dark_mode
-            : themeMode == ThemeMode.light
-                ? Icons.light_mode
-                : Icons.brightness_auto,
-      ),
-      tooltip: '다크모드 전환',
-      onPressed: () {
-        ref.read(themeModeProvider.notifier).state =
-            themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
-      },
-    );
-  }
-}
