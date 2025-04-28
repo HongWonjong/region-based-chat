@@ -34,6 +34,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
         Navigator.pushReplacementNamed(context, '/login');
       }
       _focusNode.requestFocus();
+      _scrollToBottom(); // 초기 로드 시 최하단으로 스크롤
     });
   }
 
@@ -48,7 +49,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
+        0.0,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
@@ -63,9 +64,18 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     }
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      await ref
-          .read(chatNotifierProvider(ChatParams(widget.markerId)).notifier)
-          .sendImage(image);
+      try {
+        await ref
+            .read(chatNotifierProvider(ChatParams(widget.markerId)).notifier)
+            .sendImage(image);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToBottom(); // 이미지 업로드 후 최하단으로 스크롤
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('이미지 업로드 실패: $e')),
+        );
+      }
     }
   }
 
@@ -83,8 +93,10 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     final chatAsync = ref.watch(chatProvider(params));
 
     ref.listen(chatNotifierProvider(params), (previous, next) {
-      if (next.length > (previous?.length ?? 0)) {
-        _scrollToBottom();
+      if (next.length != (previous?.length ?? 0)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToBottom(); // 메시지 목록 변경 시 최하단으로 스크롤
+        });
       }
     });
 
@@ -96,14 +108,28 @@ class _ChatPageState extends ConsumerState<ChatPage> {
         ),
         title: chatAsync.when(
           data: (chat) => Text(
-            chat?.title ?? '로딩 중...',
+            chat != null
+                ? '${chat.title}  ( ${chat.participants.length} )'
+                : '로딩 중...',
             style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          loading: () => const Text(
+            '로딩 중...',
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
-          loading: () => const Text('로딩 중...'),
-          error: (error, stack) => const Text('오류 발생'),
+          error: (error, stack) => Text(
+            '오류 발생: $error',
+            style: const TextStyle(
+              fontSize: 18,
+              color: Colors.red,
+            ),
+          ),
         ),
       ),
       body: Column(
@@ -115,6 +141,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
               controller: _scrollController,
               padding: const EdgeInsets.all(16),
               itemCount: messages.length,
+              reverse: true, // 리스트 역순 렌더링
               itemBuilder: (context, index) {
                 final message = messages[index];
                 final isMe = message.senderId == user.uid;
@@ -132,6 +159,12 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                               .read(chatRepositoryProvider)
                               .getProfileImageUrl(message.senderId),
                           builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return const CircleAvatar(
+                                radius: 20,
+                                child: Icon(Icons.error),
+                              );
+                            }
                             return CircleAvatar(
                               radius: 20,
                               backgroundImage: snapshot.data != null
@@ -168,8 +201,9 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color:
-                              isMe ? Colors.blue[100] : Colors.grey[200],
+                              color: isMe
+                                  ? Colors.blue[100]
+                                  : Colors.grey[200],
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: message.type == 'image'
@@ -178,6 +212,9 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                               width: 200,
                               height: 200,
                               fit: BoxFit.cover,
+                              // 추천: cached_network_image 사용 시
+                              // placeholder: CircularProgressIndicator(),
+                              // errorWidget: Icon(Icons.error),
                             )
                                 : Text(
                               message.message,
@@ -202,6 +239,12 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                               .read(chatRepositoryProvider)
                               .getProfileImageUrl(user.uid),
                           builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return const CircleAvatar(
+                                radius: 20,
+                                child: Icon(Icons.error),
+                              );
+                            }
                             return CircleAvatar(
                               radius: 20,
                               backgroundImage: snapshot.data != null
@@ -246,11 +289,20 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                   icon: const Icon(Icons.send),
                   onPressed: () {
                     if (_controller.text.isNotEmpty) {
-                      ref
-                          .read(chatNotifierProvider(params).notifier)
-                          .sendMessage(_controller.text, 'text');
-                      _controller.clear();
-                      _focusNode.requestFocus();
+                      try {
+                        ref
+                            .read(chatNotifierProvider(params).notifier)
+                            .sendMessage(_controller.text, 'text');
+                        _controller.clear();
+                        _focusNode.requestFocus();
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _scrollToBottom(); // 메시지 전송 후 최하단으로 스크롤
+                        });
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('메시지 전송 실패: $e')),
+                        );
+                      }
                     }
                   },
                 ),
