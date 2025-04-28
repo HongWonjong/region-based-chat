@@ -285,6 +285,10 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                       children: [
                         SizedBox(height: 20),
 
+                        // 위치 정보 섹션
+                        _buildSectionTitle('위치 정보', Icons.place),
+                        SizedBox(height: 16),
+
                         // 위치 정보 패널
                         LocationInfoPanel(
                           selectedLocation: _selectedLocation,
