@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../models/chat.dart';
 import '../models/message.dart';
 import '../pages/auth/auth_provider.dart';
 import '../repository/chat_repository.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ChatParams {
   final String markerId;
