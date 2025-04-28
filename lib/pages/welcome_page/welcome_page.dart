@@ -22,7 +22,7 @@ class _WelcomePageState extends State<WelcomePage> {
     return Scaffold(
         appBar: AppBar(
           title: Image.asset(
-            'assets/logo_soeasy.png', // 네 로고 이미지 경로
+            'assets/logo_soeasy.png',
             height: 110,
           ),
           centerTitle: true,
