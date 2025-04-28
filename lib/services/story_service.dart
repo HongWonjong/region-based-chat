@@ -13,7 +13,7 @@ class Story {
   final String description;
   final double latitude;
   final double longitude;
-  final String createdBy;
+  final String createdBy; // 이제 이 필드가 사용자 닉네임을 저장
   final String createdAt; // ISO 8601 문자열로 유지
   final StoryType type;
   final List<String> imageUrls;
@@ -54,7 +54,7 @@ class Story {
       createdBy: map['createdBy'],
       createdAt: map['createdAt'] as String,
       type: StoryType.values.firstWhere(
-            (e) => e.toString().split('.').last == map['type'],
+        (e) => e.toString().split('.').last == map['type'],
         orElse: () => StoryType.minorIncident,
       ),
       imageUrls: List<String>.from(map['imageUrls'] ?? []),
@@ -72,7 +72,7 @@ class StoryService {
     required String description,
     required double latitude,
     required double longitude,
-    required String userId,
+    required String userId, // 이제 이 매개변수가 사용자 닉네임을 받음
     required StoryType type,
     List<String> imageUrls = const [],
   }) async {
@@ -87,7 +87,7 @@ class StoryService {
         description: description,
         latitude: latitude,
         longitude: longitude,
-        createdBy: userId,
+        createdBy: userId, // 사용자 닉네임 저장
         createdAt: DateTime.now().toUtc().toIso8601String(),
         type: type,
         imageUrls: imageUrls,
@@ -122,7 +122,7 @@ class StoryService {
           .map((doc) => Story.fromMap(doc.data()))
           .where(
             (story) => story.longitude >= minLng && story.longitude <= maxLng,
-      )
+          )
           .toList();
 
       return stories;

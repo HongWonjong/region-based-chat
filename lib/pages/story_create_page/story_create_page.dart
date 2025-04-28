@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/story_service.dart';
 import '../../widgets/custom_alert_dialog.dart';
 import 'widgets/select_image_button.dart';
@@ -90,12 +92,30 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
     });
 
     try {
+      // 현재 사용자 가져오기
+      final User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        throw Exception("로그인이 필요합니다");
+      }
+
+      // Firestore에서 사용자 정보 가져오기 (닉네임 포함)
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
+
+      if (!userDoc.exists) {
+        throw Exception("사용자 정보를 찾을 수 없습니다");
+      }
+
+      final String userName = userDoc.data()?['username'] ?? '';
+
       final String storyId = await _storyService.createStory(
         title: _titleController.text,
         description: _contentController.text,
         latitude: _selectedLocation!.latitude,
         longitude: _selectedLocation!.longitude,
-        userId: "user123", // 실제 사용자 ID로 대체 필요
+        userId: userName, // 이제 닉네임을 userId로 전달
         type: _getStoryTypeFromIndex(_selectedCategoryIndex),
         // imageUrls는 이미지 업로드 후 URL 배열로 대체 필요
       );
