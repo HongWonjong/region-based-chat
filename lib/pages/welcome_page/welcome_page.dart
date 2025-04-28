@@ -49,7 +49,6 @@ class _WelcomePageState extends State<WelcomePage> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(width: 30),
               Image.asset(
                 'assets/logo_soeasy.png',
                 height: 110,
@@ -60,7 +59,7 @@ class _WelcomePageState extends State<WelcomePage> {
           centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),
           actions: [
-            ThemeToggleButton(),
+            // ThemeToggleButton(),
             IconButton(
               icon: const Icon(Icons.edit_note, color: Colors.white),
               onPressed: () {
