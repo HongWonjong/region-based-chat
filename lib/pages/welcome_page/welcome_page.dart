@@ -24,6 +24,7 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     final bool isLoggedIn = FirebaseAuth.instance.currentUser != null;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
         appBar: AppBar(
@@ -33,10 +34,15 @@ class _WelcomePageState extends State<WelcomePage> {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  AppBarStyles.appBarGradientStart,
-                  AppBarStyles.appBarGradientEnd,
-                ],
+                colors: isDark
+                    ? [
+                        Colors.black,
+                        Colors.grey[850]!,
+                      ]
+                    : [
+                        AppBarStyles.appBarGradientStart,
+                        AppBarStyles.appBarGradientEnd,
+                      ],
               ),
             ),
           ),
@@ -46,8 +52,9 @@ class _WelcomePageState extends State<WelcomePage> {
               const SizedBox(width: 30),
               Image.asset(
                 'assets/logo_soeasy.png',
-                height: 100,
+                height: 110,
               ),
+              const SizedBox(width: 8),
             ],
           ),
           centerTitle: true,
@@ -55,7 +62,7 @@ class _WelcomePageState extends State<WelcomePage> {
           actions: [
             ThemeToggleButton(),
             IconButton(
-              icon: const Icon(Icons.edit_note),
+              icon: const Icon(Icons.edit_note, color: Colors.white),
               onPressed: () {
                 // 스토리 작성 페이지로 이동
                 if (isLoggedIn) {
