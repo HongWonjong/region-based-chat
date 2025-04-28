@@ -86,7 +86,7 @@ class _WelcomePageState extends State<WelcomePage> {
               ),
           ],
         ),
-        drawer: const CustomDrawer(), // 로그인 드로어
+        drawer: const CustomDrawer(), // 로그인 드로어,
         body: Stack(
           children: [
             StoryMarkerMap(draggableController: draggableController),
