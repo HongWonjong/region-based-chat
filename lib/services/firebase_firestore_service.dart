@@ -5,7 +5,7 @@ class FirebaseFirestoreService {
 
   FirebaseFirestoreService(this.firestore);
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> fetchMarkers() async {
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getMarkers() async {
     final snapshot = await firestore.collection('markers').get();
     return snapshot.docs;
   }

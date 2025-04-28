@@ -22,11 +22,7 @@ class StoryMarkerMap extends ConsumerStatefulWidget {
 
 class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBindingObserver {
   NaverMapController? mapController;
-  final Set<NMarker> currentMarkers = {};
-  List<Marker> previousMarkers = [];
   final PollingTimer pollingTimer = PollingTimer();
-
-  final FirebaseFirestoreService firestoreService = FirebaseFirestoreService(FirebaseFirestore.instance);
 
   @override
   void initState() {
@@ -51,7 +47,7 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
 
   void startPollingTimer() {
     pollingTimer.start(const Duration(seconds: 5), () {
-      ref.read(markerListProvider.notifier).fetchMarkers();
+      ref.read(markerListProvider.notifier).fetchMarkers(mapController!, MediaQuery.of(context).size.height, _onMarkerTapped);
     });
   }
 
@@ -67,13 +63,6 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
   }
 
   Future<void> _loadInitialMarkers() async {
-    final initialMarkers = await firestoreService.fetchMarkers();
-    MarkerUtils.updateMapMarkers(
-        mapController: mapController!,
-        currentMarkers: currentMarkers,
-        newMarkers: initialMarkers.map((doc) => Marker.fromFirestore(doc)).toList(),
-        onMarkerTapped: _onMarkerTapped,
-        context: context);
     startPollingTimer();
   }
 
@@ -113,12 +102,13 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
             });
           },
           onCameraChange: (_, __) {
-            widget.draggableController.animateTo(0.05, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+            widget.draggableController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
           },
           onMapTapped: (_, __) {
-            widget.draggableController.animateTo(0.05, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+            widget.draggableController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
           },
           options: const NaverMapViewOptions(
+            liteModeEnable: true,
             initialCameraPosition: NCameraPosition(
               target: NLatLng(37.5, 127),
               zoom: 12,
