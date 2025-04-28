@@ -43,11 +43,11 @@ class _WelcomePageState extends State<WelcomePage> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(width: 30),
               Image.asset(
                 'assets/logo_soeasy.png',
                 height: 100,
               ),
-              const SizedBox(width: 8),
             ],
           ),
           centerTitle: true,
