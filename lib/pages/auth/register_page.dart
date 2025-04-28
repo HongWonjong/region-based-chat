@@ -41,6 +41,19 @@ class RegisterPage extends ConsumerWidget {
       );
       return;
     }
+    final docs = (await FirebaseFirestore.instance
+            .collection('users')
+            .where('username', isEqualTo: nickname)
+            .limit(1)
+            .get())
+        .docs;
+
+    if (docs.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("이미 사용중인 닉네임입니다. 다른 닉네임을 입력해주세요.")),
+      );
+      return; // 닉네임이 이미 존재하면 여기서 함수 종료
+    }
 
     ref.read(isRegisteringProvider.notifier).state = true;
 
