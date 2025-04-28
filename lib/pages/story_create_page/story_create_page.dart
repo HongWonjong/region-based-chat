@@ -177,94 +177,268 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            '소문내기',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          actions: [
-            // 위치 선택 버튼을 앱바 액션으로 이동
-            Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: IconButton(
-                icon: Icon(
-                  Icons.location_on,
-                  color: _selectedLocation != null
-                      ? Colors.blue
-                      : Colors.grey[600],
-                  size: 28,
+    return Scaffold(
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Stack(
+          children: [
+            // 배경 그라데이션
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.deepPurple.shade50,
+                    Colors.white,
+                  ],
+                  stops: [0.0, 0.3],
                 ),
-                onPressed: _showLocationPickerModal,
-                tooltip: _selectedLocation != null ? '위치 변경' : '위치 추가',
               ),
             ),
-          ],
-        ),
-        body: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 사진 추가 버튼 (위치 버튼 제거)
-                    SelectImageButton(),
 
-                    // 위치 정보 패널 (항상 표시, 선택하지 않았을 때는 회색으로)
-                    LocationInfoPanel(
-                      selectedLocation: _selectedLocation,
-                      onEditPressed: _showLocationPickerModal,
+            // 콘텐츠
+            CustomScrollView(
+              slivers: [
+                // 앱바
+                SliverAppBar(
+                  expandedHeight: 120.0,
+                  floating: false,
+                  pinned: true,
+                  backgroundColor: Colors.deepPurple,
+                  flexibleSpace: FlexibleSpaceBar(
+                    title: Text(
+                      '소문내기',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
                     ),
-                    SizedBox(height: 16),
-                    // 입력 필드
-                    InputFields(
-                      titleController: _titleController,
-                      contentController: _contentController,
-                      onTitleChanged: (_) => _checkFormValidity(),
-                      onContentChanged: (_) => _checkFormValidity(),
+                    background: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // 그라데이션 배경
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.deepPurple.shade800,
+                                Colors.deepPurple.shade500,
+                              ],
+                            ),
+                          ),
+                        ),
+                        // 장식 패턴
+                        Positioned(
+                          right: -20,
+                          top: -20,
+                          child: Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withOpacity(0.1),
+                            ),
+                          ),
+                        ),
+                        // 앱 아이콘 - 메가폰
+                        Positioned(
+                          right: 20,
+                          bottom: 20,
+                          child: Icon(
+                            Icons.campaign,
+                            size: 36,
+                            color: Colors.amber,
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 24),
-
-                    CategorySelector(
-                      selectedIndex: _selectedCategoryIndex,
-                      onCategoryChanged: _selectCategory,
-                      categories: CategoryOption.defaultCategories,
+                  ),
+                  actions: [
+                    // 위치 선택 버튼
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.location_on,
+                          color: _selectedLocation != null
+                              ? Colors.amber
+                              : Colors.white70,
+                          size: 28,
+                        ),
+                        onPressed: _showLocationPickerModal,
+                        tooltip: _selectedLocation != null ? '위치 변경' : '위치 추가',
+                      ),
                     ),
-
-                    // 제출 버튼
-                    SizedBox(height: 32),
-                    SubmitButton(
-                      onPressed:
-                          _isFormValid && !_isLoading ? _saveStory : null,
-                      text: '소문내기',
-                    ),
-                    SizedBox(height: 24),
                   ],
                 ),
-              ),
+
+                // 메인 콘텐츠
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 20),
+
+                        // 위치 정보 패널
+                        LocationInfoPanel(
+                          selectedLocation: _selectedLocation,
+                          onEditPressed: _showLocationPickerModal,
+                        ),
+                        SizedBox(height: 24),
+
+                        // 제목 섹션
+                        _buildSectionTitle('소문 내용', Icons.edit_note),
+                        SizedBox(height: 16),
+
+                        // 입력 필드를 카드로 감싸기
+                        _buildCard(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: InputFields(
+                              titleController: _titleController,
+                              contentController: _contentController,
+                              onTitleChanged: (_) => _checkFormValidity(),
+                              onContentChanged: (_) => _checkFormValidity(),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 24),
+
+                        // 카테고리 선택 섹션
+                        _buildSectionTitle('카테고리 선택', Icons.category),
+                        SizedBox(height: 16),
+
+                        _buildCard(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: CategorySelector(
+                              selectedIndex: _selectedCategoryIndex,
+                              onCategoryChanged: _selectCategory,
+                              categories: CategoryOption.defaultCategories,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 24),
+
+                        // 사진 첨부 섹션 (향후 개발을 위한 주석)
+                        _buildSectionTitle('사진 첨부', Icons.photo_camera),
+                        SizedBox(height: 16),
+
+                        _buildCard(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: SelectImageButton(),
+                          ),
+                        ),
+
+                        SizedBox(height: 40),
+
+                        // 소문내기 버튼
+                        SubmitButton(
+                          onPressed:
+                              _isFormValid && !_isLoading ? _saveStory : null,
+                          text: '소문내기',
+                        ),
+
+                        SizedBox(height: 40),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
+
             // 로딩 인디케이터
             if (_isLoading)
               Container(
-                color: Colors.black.withAlpha(100),
+                color: Colors.black.withOpacity(0.5),
                 child: Center(
-                  child: CircularProgressIndicator(),
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          '소문 등록 중...',
+                          style: TextStyle(
+                            color: Colors.deepPurple,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
           ],
         ),
       ),
+    );
+  }
+
+  // 섹션 제목 위젯
+  Widget _buildSectionTitle(String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          color: Colors.deepPurple,
+          size: 26,
+        ),
+        SizedBox(width: 10),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.deepPurple.shade800,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // 카드 위젯
+  Widget _buildCard({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: child,
     );
   }
 }
