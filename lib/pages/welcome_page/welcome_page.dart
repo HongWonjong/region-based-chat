@@ -11,7 +11,8 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  final DraggableScrollableController draggableController = DraggableScrollableController();
+  final DraggableScrollableController draggableController =
+      DraggableScrollableController();
 
   bool isBottomSheetOpen = false;
   bool isMarkerTapped = false;
@@ -19,10 +20,20 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          title: Image.asset(
+            'assets/logo_soeasy.png', // 네 로고 이미지 경로
+            height: 110,
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+        ),
         drawer: const CustomDrawer(), // 로그인 드로어
         body: Stack(
-          children: [StoryMarkerMap(draggableController: draggableController), StoryBottomSheet(draggableController: draggableController)],
+          children: [
+            StoryMarkerMap(draggableController: draggableController),
+            StoryBottomSheet(draggableController: draggableController)
+          ],
         ));
   }
 }
