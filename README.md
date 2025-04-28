@@ -113,7 +113,7 @@
 프로필 이미지와 채팅 이미지는 Firebase Storage에 저장됩니다. 아래는 파일 경로 구조입니다:
 
 ```
-프로필 이미지: users/<user_uid>/profile.jpg
+프로필 이미지: users/profileImages/<user_uid>.jpg 
 채팅 이미지: chats/<marker_id>/messages/<message_id>/image.jpg
 ```
 
