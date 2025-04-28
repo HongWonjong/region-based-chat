@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:region_based_chat/pages/auth/widgets/google_sign_in_button.dart';
-import 'package:region_based_chat/pages/auth/widgets/show_register_prompt.dart';
 import 'package:region_based_chat/pages/story_create_page/story_create_page.dart';
 import 'auth_provider.dart';
+import 'profile_provider.dart';
 import 'dart:io';
 
 class CustomDrawer extends ConsumerWidget {
@@ -20,9 +20,7 @@ class CustomDrawer extends ConsumerWidget {
 
     if (pickedFile != null) {
       try {
-        await ref.read(authProvider.notifier).uploadProfileImage(pickedFile);
-        // 업로드 후 UI 갱신을 위해 authProvider 무효화
-        ref.invalidate(authProvider);
+        await ref.read(profileProvider(user.uid).notifier).uploadProfileImage(pickedFile);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('프로필 이미지 업로드 실패: $e')),
@@ -34,7 +32,8 @@ class CustomDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider);
-    final auth = ref.read(authProvider.notifier);
+    final profileState = user != null ? ref.watch(profileProvider(user.uid)) : null;
+    final profileImageUrl = profileState?.profileImageUrl;
 
     return Drawer(
       child: Container(
@@ -55,7 +54,7 @@ class CustomDrawer extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   GoogleSignInButton(
-                    onPressed: () => auth.signInWithGoogle(context),
+                    onPressed: () => ref.read(authProvider.notifier).signInWithGoogle(context),
                   ),
                 ],
               )
@@ -65,19 +64,14 @@ class CustomDrawer extends ConsumerWidget {
                   // 프로필 이미지
                   GestureDetector(
                     onTap: () => _pickAndUploadImage(context, ref),
-                    child: FutureBuilder<String?>(
-                      future: auth.getProfileImageUrl(),
-                      builder: (context, snapshot) {
-                        return CircleAvatar(
-                          radius: 40,
-                          backgroundImage: snapshot.hasData
-                              ? NetworkImage(snapshot.data!)
-                              : null,
-                          child: snapshot.hasData
-                              ? null
-                              : const Icon(Icons.person, size: 40),
-                        );
-                      },
+                    child: CircleAvatar(
+                      radius: 40,
+                      backgroundImage: profileImageUrl != null
+                          ? NetworkImage(profileImageUrl)
+                          : null,
+                      child: profileImageUrl != null
+                          ? null
+                          : const Icon(Icons.person, size: 40),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -109,7 +103,13 @@ class CustomDrawer extends ConsumerWidget {
                 ListTile(
                   leading: const Icon(Icons.logout),
                   title: const Text("로그아웃"),
-                  onTap: () => ref.read(authProvider.notifier).signOut(),
+                  onTap: () async {
+                    await ref.read(authProvider.notifier).signOut();
+                    // 로그아웃 시 profileProvider 초기화
+                    if (user.uid != null) {
+                      ref.invalidate(profileProvider(user.uid));
+                    }
+                  },
                 ),
             ],
           ),

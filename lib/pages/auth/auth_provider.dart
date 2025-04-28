@@ -1,12 +1,8 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:region_based_chat/pages/welcome_page/welcome_page.dart';
 
 final authProvider = StateNotifierProvider<AuthNotifier, User?>((ref) {
@@ -15,45 +11,6 @@ final authProvider = StateNotifierProvider<AuthNotifier, User?>((ref) {
 
 class AuthNotifier extends StateNotifier<User?> {
   AuthNotifier() : super(FirebaseAuth.instance.currentUser);
-
-  // 프로필 이미지 업로드
-  Future<void> uploadProfileImage(XFile image) async {
-    final user = state;
-    if (user == null) return;
-
-    try {
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('users/profileImages/${user.uid}.jpg');
-      await ref.putFile(File(image.path));
-      final url = await ref.getDownloadURL();
-
-      // Firestore에 프로필 이미지 URL 저장 (선택 사항)
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .update({'profileImageUrlChu': url});
-    } catch (e) {
-      print('프로필 이미지 업로드 실패: $e');
-      throw Exception('프로필 이미지 업로드 실패: $e');
-    }
-  }
-
-  // 프로필 이미지 URL 가져오기
-  Future<String?> getProfileImageUrl() async {
-    final user = state;
-    if (user == null) return null;
-
-    try {
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('users/profileImages/${user.uid}.jpg');
-      return await ref.getDownloadURL();
-    } catch (e) {
-      print('프로필 이미지 URL 가져오기 실패: $e');
-      return null; // 이미지가 없는 경우
-    }
-  }
 
   Future<void> signInWithGoogle(BuildContext context) async {
     try {
@@ -85,13 +42,12 @@ class AuthNotifier extends StateNotifier<User?> {
       );
 
       await FirebaseAuth.instance.signInWithCredential(credential);
-      final currentUser = FirebaseAuth.instance.currentUser;
       state = FirebaseAuth.instance.currentUser;
 
       print('로그인 성공: ${state?.email}');
 
       /// 파이어스토어에 해당 uid 문서 있는지 확인
-      final uid = currentUser!.uid;
+      final uid = state!.uid;
       final doc =
       await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final nickname = doc.data()?['username'];
