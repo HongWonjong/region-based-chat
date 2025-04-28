@@ -10,15 +10,36 @@ class ChatRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  // 채팅방 조회 또는 생성
   Future<Chat> getOrCreateChat(String markerId, String userId, String userName) async {
     final chatRef = _firestore.collection('markers').doc(markerId).collection('Chats');
+    final chatDocRef = chatRef.doc('default'); // 'default' 문서 참조
     final querySnapshot = await chatRef.get();
 
+    // 유저의 joinedMarkers 업데이트 함수
+    Future<void> updateUserJoinedMarkers(String userId, String markerId) async {
+      final userRef = _firestore.collection('users').doc(userId);
+      await userRef.update({
+        'joinedMarkers': FieldValue.arrayUnion([markerId]),
+      });
+    }
+
     if (querySnapshot.docs.isNotEmpty) {
-      // 첫 번째 채팅방 반환 (마커당 채팅방 하나라고 가정)
+      // 기존 채팅방이 있는 경우
       final doc = querySnapshot.docs.first;
-      return Chat.fromJson(doc.data());
+      final chatData = doc.data();
+
+      // participants에 userId가 없으면 추가
+      if (!chatData['participants'].contains(userId)) {
+        await chatDocRef.update({
+          'participants': FieldValue.arrayUnion([userId]),
+        });
+        // 유저의 joinedMarkers에 markerId 추가
+        await updateUserJoinedMarkers(userId, markerId);
+      }
+
+      // 업데이트된 채팅 데이터 반환
+      final updatedDoc = await chatDocRef.get();
+      return Chat.fromJson(updatedDoc.data()!);
     } else {
       // 마커 문서에서 title 조회
       String title = '알 수 없는 제목';
@@ -31,7 +52,7 @@ class ChatRepository {
         print('Error fetching marker title: $e');
       }
 
-      // 채팅방 생성
+      // 새로운 채팅방 생성
       final newChat = Chat(
         markerId: markerId,
         title: title,
@@ -42,7 +63,11 @@ class ChatRepository {
         lastMessageTime: DateTime.now(),
         lastMessageSender: '',
       );
-      await chatRef.doc('default').set(newChat.toJson()); // chatId는 'default'로 고정
+      await chatDocRef.set(newChat.toJson());
+
+      // 유저의 joinedMarkers에 markerId 추가
+      await updateUserJoinedMarkers(userId, markerId);
+
       return newChat;
     }
   }
@@ -55,7 +80,7 @@ class ChatRepository {
         .collection('Chats')
         .doc('default')
         .collection('Messages')
-        .orderBy('timestamp', descending: false)
+        .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
         .map((doc) => Message.fromJson(doc.data()))
