@@ -147,6 +147,7 @@ class CustomAlertDialog extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
+                    Navigator.of(context).pop();
                     if (onConfirm != null) {
                       onConfirm!();
                     }
