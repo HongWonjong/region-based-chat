@@ -38,10 +38,20 @@ class _LocationMapModalState extends State<LocationMapModal> {
     if (_marker != null) {
       _mapController?.deleteOverlay(_marker!.info);
     }
+
+    // 마커 생성 및 스타일 지정
     _marker = NMarker(
       id: 'selected_location',
       position: position,
+      icon: NOverlayImage.fromAssetImage('assets/marker_black.png'),
     );
+
+    // 마커 크기 설정
+    _marker!.setSize(Size(20, 30));
+
+    // 마커 색상 설정 (보라색)
+    _marker!.setIconTintColor(Colors.deepPurple);
+
     _mapController?.addOverlay(_marker!);
   }
 
@@ -59,18 +69,11 @@ class _LocationMapModalState extends State<LocationMapModal> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.deepPurple,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(26),
-                  blurRadius: 4,
-                  offset: Offset(0, 1),
-                ),
-              ],
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -80,12 +83,16 @@ class _LocationMapModalState extends State<LocationMapModal> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
                 Row(
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white.withOpacity(0.9),
+                      ),
                       child: Text('취소'),
                     ),
                     SizedBox(width: 8),
@@ -94,10 +101,19 @@ class _LocationMapModalState extends State<LocationMapModal> {
                           ? () => Navigator.pop(context, _selectedLocation)
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.amber,
+                        foregroundColor: Colors.deepPurple.shade900,
+                        disabledBackgroundColor: Colors.grey.shade400,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
-                      child: Text('선택'),
+                      child: Text(
+                        '선택',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -107,16 +123,16 @@ class _LocationMapModalState extends State<LocationMapModal> {
 
           // 지도
           Expanded(
-            child: Stack(
-              children: [
-                Material(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(16),
-                    bottomRight: Radius.circular(16),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: NaverMap(
+            child: Material(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Stack(
+                children: [
+                  NaverMap(
                     options: NaverMapViewOptions(
                       initialCameraPosition: NCameraPosition(
                         target: widget.initialLocation ??
@@ -161,96 +177,94 @@ class _LocationMapModalState extends State<LocationMapModal> {
                         _mapReady = true;
                       });
 
-                      // 햅틱 피드백 제공 - 지도가 준비되었음을 알림
                       HapticFeedback.lightImpact();
                     },
                     onMapTapped: (point, latLng) {
-                      // 햅틱 피드백 제공 - 맵이 정상 작동함을 알림
                       HapticFeedback.selectionClick();
                       _onMapTap(point, latLng);
                     },
                   ),
-                ),
 
-                // 확대/축소 버튼
-                Positioned(
-                  right: 16,
-                  bottom: 16,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // 확대 버튼
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(8),
-                            topRight: Radius.circular(8),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
+                  // 확대/축소 버튼
+                  Positioned(
+                    right: 16,
+                    bottom: 16,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // 확대 버튼
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                              topRight: Radius.circular(8),
                             ),
-                          ],
-                        ),
-                        child: IconButton(
-                          icon: Icon(Icons.add, color: Colors.black87),
-                          onPressed: () {
-                            if (_mapController != null) {
-                              _mapController!.updateCamera(
-                                NCameraUpdate.zoomIn(),
-                              );
-                            }
-                          },
-                          padding: EdgeInsets.all(12),
-                          constraints: BoxConstraints(),
-                          iconSize: 24,
-                        ),
-                      ),
-
-                      // 구분선
-                      Container(
-                        height: 1,
-                        color: Colors.grey.withOpacity(0.3),
-                        width: 48,
-                      ),
-
-                      // 축소 버튼
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(8),
-                            bottomRight: Radius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 4,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
+                          child: IconButton(
+                            icon: Icon(Icons.add, color: Colors.deepPurple),
+                            onPressed: () {
+                              if (_mapController != null) {
+                                _mapController!.updateCamera(
+                                  NCameraUpdate.zoomIn(),
+                                );
+                              }
+                            },
+                            padding: EdgeInsets.all(12),
+                            constraints: BoxConstraints(),
+                            iconSize: 24,
+                          ),
+                        ),
+
+                        // 구분선
+                        Container(
+                          height: 1,
+                          color: Colors.grey.withOpacity(0.3),
+                          width: 48,
+                        ),
+
+                        // 축소 버튼
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(8),
+                              bottomRight: Radius.circular(8),
                             ),
-                          ],
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 4,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: IconButton(
+                            icon: Icon(Icons.remove, color: Colors.deepPurple),
+                            onPressed: () {
+                              if (_mapController != null) {
+                                _mapController!.updateCamera(
+                                  NCameraUpdate.zoomOut(),
+                                );
+                              }
+                            },
+                            padding: EdgeInsets.all(12),
+                            constraints: BoxConstraints(),
+                            iconSize: 24,
+                          ),
                         ),
-                        child: IconButton(
-                          icon: Icon(Icons.remove, color: Colors.black87),
-                          onPressed: () {
-                            if (_mapController != null) {
-                              _mapController!.updateCamera(
-                                NCameraUpdate.zoomOut(),
-                              );
-                            }
-                          },
-                          padding: EdgeInsets.all(12),
-                          constraints: BoxConstraints(),
-                          iconSize: 24,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
