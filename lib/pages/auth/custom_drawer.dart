@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:region_based_chat/pages/auth/service_info_page.dart';
 import 'package:region_based_chat/pages/auth/widgets/google_sign_in_button.dart';
 import 'package:region_based_chat/pages/story_create_page/story_create_page.dart';
+import '../chat_list_page/chat_list_page.dart';
 import 'auth_provider.dart';
 import 'profile_provider.dart';
 import 'dart:io';
@@ -178,6 +179,24 @@ class CustomDrawer extends ConsumerWidget {
                           );
                         },
                       ),
+
+                    // 채팅방 목록 메뉴
+                    _buildMenuItem(
+                      icon: Icons.chat,
+                      title: "채팅방 목록",
+                      onTap: () {
+                        final markerId = user?.uid; // 사용자 UID 가져오기
+                        if (markerId != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                              const ChatListPage(), // myMarkerId 파라미터 제거
+                            ),
+                          );
+                        }
+                      },
+                    ),
 
                     // 메뉴 구분선
                     const Divider(height: 1),
