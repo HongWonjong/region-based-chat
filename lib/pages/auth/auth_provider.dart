@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 import '../welcome_page/welcome_page.dart';
+import '../../providers/marker_provider.dart'; // 추가됨
 
 final authProvider = StateNotifierProvider<AuthNotifier, User?>((ref) {
   return AuthNotifier();
@@ -13,14 +13,13 @@ final authProvider = StateNotifierProvider<AuthNotifier, User?>((ref) {
 class AuthNotifier extends StateNotifier<User?> {
   AuthNotifier() : super(FirebaseAuth.instance.currentUser);
 
-  Future<void> signInWithGoogle(BuildContext context) async {
+  Future<void> signInWithGoogle(BuildContext context, WidgetRef ref) async {
+    // ref 추가됨
     try {
       final googleSignIn = GoogleSignIn(
         scopes: ['email'],
       );
-
       final isSignedIn = await googleSignIn.isSignedIn();
-
       GoogleSignInAccount? googleUser;
 
       if (isSignedIn) {
@@ -41,7 +40,6 @@ class AuthNotifier extends StateNotifier<User?> {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-
       await FirebaseAuth.instance.signInWithCredential(credential);
       state = FirebaseAuth.instance.currentUser;
 
@@ -54,6 +52,7 @@ class AuthNotifier extends StateNotifier<User?> {
       final nickname = doc.data()?['username'];
 
       if (doc.exists && nickname != null && nickname != "") {
+        ref.invalidate(markerListProvider); // 보완됨
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const WelcomePage()),
@@ -71,14 +70,11 @@ class AuthNotifier extends StateNotifier<User?> {
 
   Future<void> signOut() async {
     final googleSignIn = GoogleSignIn(scopes: ['email']);
-
     try {
       await googleSignIn.disconnect(); // 세션 초기화
     } catch (_) {}
-
     await googleSignIn.signOut(); // 구글 계정 로그아웃
     await FirebaseAuth.instance.signOut(); // Firebase 로그아웃
-
     state = null;
     print('로그아웃 완료');
   }
