@@ -9,4 +9,8 @@ class FirebaseFirestoreService {
     final snapshot = await firestore.collection('markers').get();
     return snapshot.docs;
   }
+
+  Future<void> setUsersByUid(Map<String, dynamic> userInfo) async {
+    await firestore.collection('users').doc(userInfo['uid']).set(userInfo);
+  }
 }
