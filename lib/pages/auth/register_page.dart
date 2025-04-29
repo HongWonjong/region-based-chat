@@ -1,13 +1,13 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../welcome_page/welcome_page.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:region_based_chat/pages/welcome_page/welcome_page.dart';
+import 'package:region_based_chat/providers/marker_provider.dart';
 
 final nicknameProvider = StateProvider<String>((ref) => '');
 final isRegisteringProvider = StateProvider<bool>((ref) => false);
@@ -43,6 +43,21 @@ class RegisterPage extends ConsumerWidget {
       return;
     }
 
+    // 닉네임 중복 체크 로직 추가
+    final docs = (await FirebaseFirestore.instance
+            .collection('users')
+            .where('username', isEqualTo: nickname)
+            .limit(1)
+            .get())
+        .docs;
+
+    if (docs.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("이미 사용중인 닉네임입니다. 다른 닉네임을 입력해주세요.")),
+      );
+      return;
+    }
+
     ref.read(isRegisteringProvider.notifier).state = true;
 
     final user = FirebaseAuth.instance.currentUser;
@@ -72,6 +87,8 @@ class RegisterPage extends ConsumerWidget {
     });
 
     ref.read(isRegisteringProvider.notifier).state = false;
+    ref.invalidate(markerListProvider); // Provider 초기화 보완
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const WelcomePage()),
