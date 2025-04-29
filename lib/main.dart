@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:region_based_chat/pages/auth/register_page.dart';
-import 'package:region_based_chat/pages/welcome_page/welcome_page.dart';
+
 import 'firebase_options.dart';
+import 'pages/auth/register_page.dart';
+import 'pages/welcome_page/welcome_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
   } catch (e) {
     print('Firebase 초기화 실패: $e');
   }
@@ -26,14 +28,27 @@ Future<void> _initNaverMap() async {
   await FlutterNaverMap().init(clientId: xNcpApigwApiKeyId);
 }
 
-class MyApp extends StatelessWidget {
+final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
+
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        brightness: Brightness.light,
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.deepPurple, brightness: Brightness.dark),
+        brightness: Brightness.dark,
+      ),
+      themeMode: themeMode,
       home: const WelcomePage(),
       routes: {
         '/register': (_) => const RegisterPage(),
@@ -41,3 +56,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+

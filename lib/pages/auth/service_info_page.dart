@@ -5,7 +5,10 @@ class ServiceIntroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: isDark ? Colors.grey[900] : Colors.white,
       body: CustomScrollView(
         slivers: [
           // 애니메이션 효과가 있는 앱바
@@ -13,7 +16,7 @@ class ServiceIntroPage extends StatelessWidget {
             expandedHeight: 200.0,
             floating: false,
             pinned: true,
-            backgroundColor: Colors.deepPurple,
+            backgroundColor: isDark ? Colors.black : Colors.deepPurple,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 '소이지',
@@ -32,10 +35,15 @@ class ServiceIntroPage extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.deepPurple.shade800,
-                          Colors.deepPurple.shade500,
-                        ],
+                        colors: isDark
+                            ? [
+                                Colors.black,
+                                Colors.grey[850]!,
+                              ]
+                            : [
+                                Colors.deepPurple.shade800,
+                                Colors.deepPurple.shade500,
+                              ],
                       ),
                     ),
                   ),
@@ -57,7 +65,7 @@ class ServiceIntroPage extends StatelessWidget {
                     child: Icon(
                       Icons.campaign,
                       size: 80,
-                      color: Colors.yellow,
+                      color: isDark ? Colors.amber : Colors.yellow,
                     ),
                   ),
                 ],
@@ -75,7 +83,7 @@ class ServiceIntroPage extends StatelessWidget {
                   SizedBox(height: 30),
 
                   // 소이지란?
-                  _buildSectionTitle('소이지란?', Icons.bubble_chart),
+                  _buildSectionTitle('소이지란?', Icons.bubble_chart, isDark),
                   SizedBox(height: 16),
                   _buildCard(
                     child: Column(
@@ -86,7 +94,9 @@ class ServiceIntroPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.deepPurple.shade800,
+                            color: isDark
+                                ? Colors.amber[200]
+                                : Colors.deepPurple.shade800,
                           ),
                         ),
                         SizedBox(height: 10),
@@ -96,16 +106,18 @@ class ServiceIntroPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 15,
                             height: 1.5,
+                            color: isDark ? Colors.white : Colors.black87,
                           ),
                         ),
                       ],
                     ),
+                    isDark: isDark,
                   ),
 
                   SizedBox(height: 30),
 
                   // 주요 기능
-                  _buildSectionTitle('주요 기능', Icons.stars),
+                  _buildSectionTitle('주요 기능', Icons.stars, isDark),
                   SizedBox(height: 16),
 
                   // 기능 카드 1
@@ -114,6 +126,7 @@ class ServiceIntroPage extends StatelessWidget {
                     color: Colors.redAccent,
                     title: '내 위치에 핀 찍기',
                     description: '사건/이벤트를 지도에 바로 등록하세요!',
+                    isDark: isDark,
                   ),
                   SizedBox(height: 15),
 
@@ -123,15 +136,19 @@ class ServiceIntroPage extends StatelessWidget {
                     color: Colors.blueAccent,
                     title: '실시간 대화',
                     description: '같은 핀(마커) 사람들과 바로 채팅하세요!',
+                    isDark: isDark,
                   ),
                   SizedBox(height: 15),
 
                   // 기능 카드 3
                   _buildFeatureCard(
                     icon: Icons.person,
-                    color: Colors.greenAccent.shade700,
+                    color: isDark
+                        ? Colors.greenAccent
+                        : Colors.greenAccent.shade700,
                     title: '내 프로필 꾸미기',
                     description: '프로필 이미지로 나를 표현해요!',
+                    isDark: isDark,
                   ),
                   SizedBox(height: 15),
 
@@ -141,33 +158,37 @@ class ServiceIntroPage extends StatelessWidget {
                     color: Colors.orangeAccent,
                     title: '초고속 서버',
                     description: 'Firebase로 빠르고 안전한 연결!',
+                    isDark: isDark,
                   ),
 
                   SizedBox(height: 30),
 
                   // 추천 대상
-                  _buildSectionTitle('이런 분들에게 추천!', Icons.favorite),
+                  _buildSectionTitle('이런 분들에게 추천!', Icons.favorite, isDark),
                   SizedBox(height: 16),
                   _buildCard(
                     child: Column(
                       children: [
-                        _buildRecommendationItem('동네 소식이 궁금한 분'),
-                        _buildRecommendationItem('이웃들과 소통하고 싶은 분'),
-                        _buildRecommendationItem('빠르게 사건을 공유하고 싶은 분'),
-                        _buildRecommendationItem('지역 커뮤니티를 만들고 싶은 분'),
+                        _buildRecommendationItem('동네 소식이 궁금한 분', isDark),
+                        _buildRecommendationItem('이웃들과 소통하고 싶은 분', isDark),
+                        _buildRecommendationItem('빠르게 사건을 공유하고 싶은 분', isDark),
+                        _buildRecommendationItem('지역 커뮤니티를 만들고 싶은 분', isDark),
                         SizedBox(height: 10),
                         Text(
                           '소이지와 함께, 이웃이 더 가까워집니다! 🏡💖',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.deepPurple.shade700,
+                            color: isDark
+                                ? Colors.amber
+                                : Colors.deepPurple.shade700,
                             fontStyle: FontStyle.italic,
                           ),
                           textAlign: TextAlign.center,
                         ),
                       ],
                     ),
+                    isDark: isDark,
                   ),
 
                   SizedBox(height: 40),
@@ -177,14 +198,15 @@ class ServiceIntroPage extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
+                        backgroundColor:
+                            isDark ? Colors.deepPurple[700] : Colors.deepPurple,
                         foregroundColor: Colors.white,
                         padding:
                             EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        elevation: 5,
+                        elevation: isDark ? 3 : 5,
                       ),
                       child: Text(
                         '소이지 시작하기',
@@ -207,12 +229,12 @@ class ServiceIntroPage extends StatelessWidget {
   }
 
   // 섹션 제목 위젯
-  Widget _buildSectionTitle(String title, IconData icon) {
+  Widget _buildSectionTitle(String title, IconData icon, bool isDark) {
     return Row(
       children: [
         Icon(
           icon,
-          color: Colors.deepPurple,
+          color: isDark ? Colors.amber : Colors.deepPurple,
           size: 28,
         ),
         SizedBox(width: 10),
@@ -221,7 +243,7 @@ class ServiceIntroPage extends StatelessWidget {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.deepPurple.shade800,
+            color: isDark ? Colors.amber[200] : Colors.deepPurple.shade800,
           ),
         ),
       ],
@@ -229,18 +251,20 @@ class ServiceIntroPage extends StatelessWidget {
   }
 
   // 카드 위젯
-  Widget _buildCard({required Widget child}) {
+  Widget _buildCard({required Widget child, bool isDark = false}) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? Colors.grey[850] : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 6,
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.2),
+            spreadRadius: isDark ? 0 : 1,
+            blurRadius: isDark ? 4 : 6,
             offset: Offset(0, 3),
           ),
         ],
@@ -255,18 +279,21 @@ class ServiceIntroPage extends StatelessWidget {
     required Color color,
     required String title,
     required String description,
+    bool isDark = false,
   }) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? Colors.grey[850] : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 6,
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.2),
+            spreadRadius: isDark ? 0 : 1,
+            blurRadius: isDark ? 4 : 6,
             offset: Offset(0, 3),
           ),
         ],
@@ -277,7 +304,7 @@ class ServiceIntroPage extends StatelessWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withOpacity(isDark ? 0.2 : 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -296,7 +323,7 @@ class ServiceIntroPage extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
                 SizedBox(height: 4),
@@ -304,7 +331,7 @@ class ServiceIntroPage extends StatelessWidget {
                   description,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.black54,
+                    color: isDark ? Colors.grey[300] : Colors.black54,
                   ),
                 ),
               ],
@@ -316,14 +343,14 @@ class ServiceIntroPage extends StatelessWidget {
   }
 
   // 추천 아이템 위젯
-  Widget _buildRecommendationItem(String text) {
+  Widget _buildRecommendationItem(String text, bool isDark) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
           Icon(
             Icons.check_circle,
-            color: Colors.deepPurple,
+            color: isDark ? Colors.amber : Colors.deepPurple,
             size: 20,
           ),
           SizedBox(width: 10),
@@ -331,7 +358,7 @@ class ServiceIntroPage extends StatelessWidget {
             text,
             style: TextStyle(
               fontSize: 15,
-              color: Colors.black87,
+              color: isDark ? Colors.white : Colors.black87,
             ),
           ),
         ],

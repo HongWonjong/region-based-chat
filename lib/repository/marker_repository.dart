@@ -1,5 +1,5 @@
-import 'package:region_based_chat/models/marker.dart';
-import 'package:region_based_chat/services/firebase_firestore_service.dart';
+import '../models/marker.dart';
+import '../services/firebase_firestore_service.dart';
 
 class MarkerRepository {
   final FirebaseFirestoreService firebaseFirestoreService;
