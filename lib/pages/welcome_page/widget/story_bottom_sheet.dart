@@ -5,8 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:region_based_chat/models/marker.dart';
 import 'package:region_based_chat/pages/chat_page/chat_page.dart';
 import 'package:region_based_chat/pages/welcome_page/util/date_onvert.dart';
+import 'package:region_based_chat/providers/firebase_storage_provider.dart';
 import 'package:region_based_chat/providers/marker_provider.dart';
 import 'package:region_based_chat/services/firebase_storage.dart';
+import 'package:region_based_chat/style/style.dart';
 
 class StoryBottomSheet extends ConsumerWidget {
   final DraggableScrollableController draggableController;
@@ -56,44 +58,6 @@ class StoryBottomSheet extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    // 타이틀 바 (접었을 때만 보임)
-                    if (markerProvider != null)
-                      AnimatedBuilder(
-                        animation: draggableController,
-                        builder: (context, child) {
-                          final isCollapsed = draggableController.size <= 0.1;
-                          return AnimatedOpacity(
-                            duration: const Duration(milliseconds: 200),
-                            opacity: isCollapsed ? 1.0 : 0.0,
-                            child: isCollapsed
-                                ? Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.campaign,
-                                          color: AppBarStyles.appBarGradientStart,
-                                          size: 20,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            markerProvider.title,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : const SizedBox.shrink(),
-                          );
-                        },
-                      ),
                   ],
                 ),
               ),
@@ -159,21 +123,47 @@ class StoryBottomSheet extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppBarStyles.appBarGradientEnd.withOpacity(0.2),
-                    border: Border.all(
-                      color: AppBarStyles.appBarGradientEnd,
-                      width: 1.5,
-                    ),
+                FutureBuilder<String>(
+                  future: fireStorageProvider.getDownloadUrl(
+                    fireStorageProvider.getProfileImageReference(marker.uid),
                   ),
-                  height: 50,
-                  width: 50,
-                  child: const Icon(
-                    Icons.person,
-                    color: Color(0xFF5E35B1),
-                  ),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      // 로딩 중일 때 로딩 인디케이터 표시
+                      return const SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasError) {
+                      // 에러 발생 시 기본 이미지 또는 에러 메시지 표시
+                      return const SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: Icon(Icons.error, color: Colors.red),
+                      );
+                    } else if (snapshot.hasData) {
+                      // URL이 성공적으로 로드되었을 때 이미지 표시
+                      return ClipOval(
+                        child: Image.network(
+                          snapshot.data!,
+                          height: 50,
+                          width: 50,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(Icons.error, color: Colors.red);
+                          },
+                        ),
+                      );
+                    } else {
+                      // 데이터가 없을 경우 기본 이미지 표시
+                      return const SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: Icon(Icons.person, color: Colors.grey),
+                      );
+                    }
+                  },
                 ),
                 const SizedBox(width: 12),
                 Column(
