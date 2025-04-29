@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../main.dart';
 import '../../style/style.dart';
+import '../chat_list_page/chat_list_page.dart';
 import '../story_create_page/story_create_page.dart';
 import 'auth_provider.dart';
 import 'profile_provider.dart';
@@ -220,6 +221,20 @@ class CustomDrawer extends ConsumerWidget {
                         },
                         isDark: isDark,
                       ),
+
+                    _buildMenuItem(
+                      icon: Icons.edit_note,
+                      title: "채팅방 목록",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatListPage(),
+                          ),
+                        );
+                      },
+                      isDark: isDark,
+                    ),
 
                     // 메뉴 구분선
                     Divider(
