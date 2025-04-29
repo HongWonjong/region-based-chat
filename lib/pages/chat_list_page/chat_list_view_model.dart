@@ -2,10 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../models/chat_item.dart';
+import '../../models/chat_item_model.dart';
 
 
-class ChatListViewModel extends StateNotifier<List<ChatItem>> {
+
+class ChatListViewModel extends StateNotifier<List<ChatItemModel>> {
   ChatListViewModel() : super([]) {
     fetchChats();
   }
@@ -25,7 +26,7 @@ class ChatListViewModel extends StateNotifier<List<ChatItem>> {
       }
 
       // 각 markerId에 대해 Chats/default 문서 가져오기
-      final List<ChatItem> allChats = [];
+      final List<ChatItemModel> allChats = [];
       for (var markerId in joined) {
         try {
           final chatDoc = await _firestore
@@ -37,7 +38,7 @@ class ChatListViewModel extends StateNotifier<List<ChatItem>> {
 
           if (chatDoc.exists) {
             final data = chatDoc.data()!;
-            final chatItem = ChatItem(
+            final chatItem = ChatItemModel(
               id: markerId, // markerId를 채팅방 ID로 사용
               title: data['title'] ?? 'No Title',
               lastMessage: data['lastMessage'] ?? 'No Message',
