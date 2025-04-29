@@ -226,7 +226,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
               // 채팅 메시지 리스트
               SliverToBoxAdapter(
                 child: messages.isEmpty
-                    ? Container(
+                    ? SizedBox(
                         height: MediaQuery.of(context).size.height - 160,
                         child: Center(
                           child: Column(

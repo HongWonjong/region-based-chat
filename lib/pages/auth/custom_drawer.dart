@@ -273,10 +273,8 @@ class CustomDrawer extends ConsumerWidget {
                         onTap: () async {
                           await ref.read(authProvider.notifier).signOut();
                           // 로그아웃 시 profileProvider 초기화
-                          if (user.uid != null) {
-                            ref.invalidate(profileProvider(user.uid));
-                          }
-                        },
+                          ref.invalidate(profileProvider(user.uid));
+                                                },
                         isDark: isDark,
                       ),
                   ],

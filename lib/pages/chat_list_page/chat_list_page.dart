@@ -5,7 +5,7 @@ import 'chat_list_view_model.dart';
 import '../../style/style.dart';
 
 class ChatListPage extends ConsumerWidget {
-  const ChatListPage({Key? key}) : super(key: key);
+  const ChatListPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -73,7 +73,7 @@ class ChatListPage extends ConsumerWidget {
           // 채팅 리스트
           SliverToBoxAdapter(
             child: chats.isEmpty
-                ? Container(
+                ? SizedBox(
               height: MediaQuery.of(context).size.height - 160,
               child: Center(
                 child: Column(
