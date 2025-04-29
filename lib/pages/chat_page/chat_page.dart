@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../providers/chat_providers.dart';
 import '../../style/style.dart';
-import '../auth/auth_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class ChatPage extends ConsumerStatefulWidget {
   final String markerId;
@@ -72,9 +72,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       try {
-        await ref
-            .read(chatNotifierProvider(ChatParams(widget.markerId)).notifier)
-            .sendImage(image);
+        await ref.read(chatNotifierProvider(ChatParams(widget.markerId)).notifier).sendImage(image);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _scrollToBottom();
         });
@@ -109,12 +107,10 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     });
 
     return Scaffold(
-      backgroundColor:
-          isDark ? Colors.grey[900] : BackgroundStyles.chatBackgroundColor,
+      backgroundColor: isDark ? Colors.grey[900] : BackgroundStyles.chatBackgroundColor,
       body: Container(
         decoration: BoxDecoration(
-          color:
-              isDark ? Colors.grey[900] : BackgroundStyles.chatBackgroundColor,
+          color: isDark ? Colors.grey[900] : BackgroundStyles.chatBackgroundColor,
         ),
         child: GestureDetector(
           onTap: () {
@@ -127,8 +123,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                 expandedHeight: 70.0,
                 floating: false,
                 pinned: true,
-                backgroundColor:
-                    isDark ? Colors.black : AppBarStyles.appBarBackgroundColor,
+                backgroundColor: isDark ? Colors.black : AppBarStyles.appBarBackgroundColor,
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () => Navigator.pop(context),
@@ -137,9 +132,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                 flexibleSpace: FlexibleSpaceBar(
                   title: chatAsync.when(
                     data: (chat) => Text(
-                      chat != null
-                          ? '${chat.title} (${chat.participants.length})'
-                          : '로딩 중...',
+                      chat != null ? '${chat.title} (${chat.participants.length})' : '로딩 중...',
                       style: AppBarStyles.appBarTitleStyle,
                     ),
                     loading: () => const Text(
@@ -235,18 +228,14 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                               Icon(
                                 Icons.chat_bubble_outline,
                                 size: 48,
-                                color: isDark
-                                    ? Colors.grey[600]
-                                    : Colors.grey[400],
+                                color: isDark ? Colors.grey[600] : Colors.grey[400],
                               ),
                               const SizedBox(height: 16),
                               Text(
                                 '아직 메시지가 없습니다.\n첫 메시지를 보내보세요!',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: isDark
-                                      ? Colors.grey[400]
-                                      : Colors.grey[600],
+                                  color: isDark ? Colors.grey[400] : Colors.grey[600],
                                   fontSize: 16,
                                 ),
                               ),
@@ -270,10 +259,8 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                             if (index == messages.length - 1) {
                               isNewDay = true;
                             } else {
-                              final currentDate = DateFormat('yyyy-MM-dd')
-                                  .format(message.timestamp);
-                              final previousDate = DateFormat('yyyy-MM-dd')
-                                  .format(messages[index + 1].timestamp);
+                              final currentDate = DateFormat('yyyy-MM-dd').format(message.timestamp);
+                              final previousDate = DateFormat('yyyy-MM-dd').format(messages[index + 1].timestamp);
                               isNewDay = currentDate != previousDate;
                             }
 
@@ -282,25 +269,18 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                 // 날짜 구분선
                                 if (isNewDay)
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16),
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        color: isDark
-                                            ? Colors.grey[800]
-                                            : Colors.grey[300],
+                                        color: isDark ? Colors.grey[800] : Colors.grey[300],
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 6),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                       child: Text(
-                                        DateFormat('yyyy년 MM월 dd일')
-                                            .format(message.timestamp),
+                                        DateFormat('yyyy년 MM월 dd일').format(message.timestamp),
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: isDark
-                                              ? Colors.white70
-                                              : Colors.grey[700],
+                                          color: isDark ? Colors.white70 : Colors.grey[700],
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -311,33 +291,19 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 16.0),
                                   child: Row(
-                                    mainAxisAlignment: isMe
-                                        ? MainAxisAlignment.end
-                                        : MainAxisAlignment.start,
+                                    mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       if (!isMe) ...[
                                         FutureBuilder<String?>(
-                                          future: ref
-                                              .read(chatRepositoryProvider)
-                                              .getProfileImageUrl(
-                                                  message.senderId),
+                                          future: ref.read(chatRepositoryProvider).getProfileImageUrl(message.senderId),
                                           builder: (context, snapshot) {
                                             return CircleAvatar(
                                               radius: 16,
-                                              backgroundColor: isDark
-                                                  ? Colors.grey[700]
-                                                  : Colors.grey[200],
-                                              backgroundImage: snapshot.data !=
-                                                      null
-                                                  ? NetworkImage(snapshot.data!)
-                                                  : null,
+                                              backgroundColor: isDark ? Colors.grey[700] : Colors.grey[200],
+                                              backgroundImage: snapshot.data != null ? NetworkImage(snapshot.data!) : null,
                                               child: snapshot.data == null
-                                                  ? Icon(Icons.person,
-                                                      size: 18,
-                                                      color: isDark
-                                                          ? Colors.grey[400]
-                                                          : Colors.grey)
+                                                  ? Icon(Icons.person, size: 18, color: isDark ? Colors.grey[400] : Colors.grey)
                                                   : null,
                                             );
                                           },
@@ -345,22 +311,17 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                         const SizedBox(width: 8),
                                       ],
                                       Column(
-                                        crossAxisAlignment: isMe
-                                            ? CrossAxisAlignment.end
-                                            : CrossAxisAlignment.start,
+                                        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                                         children: [
                                           if (!isMe)
                                             Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 4, bottom: 4),
+                                              padding: const EdgeInsets.only(left: 4, bottom: 4),
                                               child: Text(
                                                 message.senderName,
                                                 style: TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.bold,
-                                                  color: isDark
-                                                      ? Colors.amber[200]
-                                                      : Colors.deepPurple[800],
+                                                  color: isDark ? Colors.amber[200] : Colors.deepPurple[800],
                                                   letterSpacing: 0.3,
                                                 ),
                                               ),
@@ -368,25 +329,18 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 
                                           // 메시지 내용과 시간을 가로로 배치
                                           Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
+                                            crossAxisAlignment: CrossAxisAlignment.end,
                                             children: [
                                               // 시간 (내 메시지일 경우 왼쪽)
                                               if (isMe)
                                                 Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 8),
+                                                  padding: const EdgeInsets.only(right: 8),
                                                   child: Text(
-                                                    DateFormat('HH:mm').format(
-                                                        message.timestamp),
+                                                    DateFormat('HH:mm').format(message.timestamp),
                                                     style: TextStyle(
                                                       fontSize: 10,
-                                                      color: isDark
-                                                          ? Colors.grey[400]
-                                                          : Colors.grey[600],
-                                                      fontWeight:
-                                                          FontWeight.w400,
+                                                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                                      fontWeight: FontWeight.w400,
                                                     ),
                                                   ),
                                                 ),
@@ -402,19 +356,13 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                               // 시간 (상대방 메시지일 경우 오른쪽)
                                               if (!isMe)
                                                 Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 8),
+                                                  padding: const EdgeInsets.only(left: 8),
                                                   child: Text(
-                                                    DateFormat('HH:mm').format(
-                                                        message.timestamp),
+                                                    DateFormat('HH:mm').format(message.timestamp),
                                                     style: TextStyle(
                                                       fontSize: 10,
-                                                      color: isDark
-                                                          ? Colors.grey[400]
-                                                          : Colors.grey[600],
-                                                      fontWeight:
-                                                          FontWeight.w400,
+                                                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                                      fontWeight: FontWeight.w400,
                                                     ),
                                                   ),
                                                 ),
@@ -425,26 +373,14 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                       if (isMe) ...[
                                         const SizedBox(width: 8),
                                         FutureBuilder<String?>(
-                                          future: ref
-                                              .read(chatRepositoryProvider)
-                                              .getProfileImageUrl(user.uid),
+                                          future: ref.read(chatRepositoryProvider).getProfileImageUrl(user.uid),
                                           builder: (context, snapshot) {
                                             return CircleAvatar(
                                               radius: 16,
-                                              backgroundColor: isDark
-                                                  ? Colors.deepPurple[800]
-                                                  : Colors.purple[100],
-                                              backgroundImage: snapshot.data !=
-                                                      null
-                                                  ? NetworkImage(snapshot.data!)
-                                                  : null,
+                                              backgroundColor: isDark ? Colors.deepPurple[800] : Colors.purple[100],
+                                              backgroundImage: snapshot.data != null ? NetworkImage(snapshot.data!) : null,
                                               child: snapshot.data == null
-                                                  ? Icon(Icons.person,
-                                                      size: 18,
-                                                      color: isDark
-                                                          ? Colors
-                                                              .deepPurple[200]
-                                                          : Colors.deepPurple)
+                                                  ? Icon(Icons.person, size: 18, color: isDark ? Colors.deepPurple[200] : Colors.deepPurple)
                                                   : null,
                                             );
                                           },
@@ -466,18 +402,12 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 
       // 하단 입력창
       bottomNavigationBar: Container(
-        padding: EdgeInsets.only(
-            left: 12,
-            right: 12,
-            top: 8,
-            bottom: 8 + MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 8 + MediaQuery.of(context).viewInsets.bottom),
         decoration: BoxDecoration(
           color: isDark ? Colors.grey[850] : Colors.white,
           boxShadow: [
             BoxShadow(
-              color: isDark
-                  ? Colors.black.withOpacity(0.3)
-                  : Colors.black.withOpacity(0.05),
+              color: isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.05),
               blurRadius: 8,
               spreadRadius: 1,
               offset: const Offset(0, -2),
@@ -491,17 +421,12 @@ class _ChatPageState extends ConsumerState<ChatPage> {
               Container(
                 margin: const EdgeInsets.only(right: 8),
                 decoration: BoxDecoration(
-                  color: (isDark
-                          ? Colors.deepPurple[300]!
-                          : ButtonStyles.imageButtonBackgroundColor)
-                      .withOpacity(0.15),
+                  color: (isDark ? Colors.deepPurple[300]! : ButtonStyles.imageButtonBackgroundColor).withOpacity(0.15),
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(
                   icon: const Icon(Icons.image_outlined),
-                  color: isDark
-                      ? Colors.deepPurple[200]
-                      : ButtonStyles.imageButtonBackgroundColor,
+                  color: isDark ? Colors.deepPurple[200] : ButtonStyles.imageButtonBackgroundColor,
                   onPressed: _pickAndSendImage,
                   tooltip: '이미지 첨부',
                   iconSize: 26,
@@ -520,9 +445,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                     focusNode: _focusNode,
                     decoration: InputDecoration(
                       hintText: '메시지를 입력하세요...',
-                      hintStyle: TextStyle(
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                          fontSize: 14),
+                      hintStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600], fontSize: 14),
                       border: OutlineInputBorder(
                         borderRadius: TextFieldStyles.textFieldBorderRadius,
                         borderSide: BorderSide.none,
@@ -532,18 +455,11 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                       fillColor: isDark ? Colors.grey[800] : Colors.white,
                       enabledBorder: OutlineInputBorder(
                         borderRadius: TextFieldStyles.textFieldBorderRadius,
-                        borderSide: BorderSide(
-                            color:
-                                isDark ? Colors.grey[700]! : Color(0xFFE0E0E0),
-                            width: 1),
+                        borderSide: BorderSide(color: isDark ? Colors.grey[700]! : Color(0xFFE0E0E0), width: 1),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: TextFieldStyles.textFieldBorderRadius,
-                        borderSide: BorderSide(
-                            color: isDark
-                                ? Colors.deepPurple[300]!
-                                : Color(0xFF9C27B0),
-                            width: 1.5),
+                        borderSide: BorderSide(color: isDark ? Colors.deepPurple[300]! : Color(0xFF9C27B0), width: 1.5),
                       ),
                     ),
                     style: TextStyle(
@@ -564,22 +480,14 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                 decoration: _isComposing
                     ? BoxDecoration(
                         gradient: LinearGradient(
-                          colors: isDark
-                              ? [
-                                  Colors.deepPurple[700]!,
-                                  Colors.deepPurple[900]!
-                                ]
-                              : [Color(0xFF9C27B0), Color(0xFF7B1FA2)],
+                          colors: isDark ? [Colors.deepPurple[700]!, Colors.deepPurple[900]!] : [Color(0xFF9C27B0), Color(0xFF7B1FA2)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         borderRadius: BorderRadius.circular(25),
                         boxShadow: [
                           BoxShadow(
-                            color: (isDark
-                                    ? Colors.deepPurple[900]!
-                                    : Color(0xFF7B1FA2))
-                                .withOpacity(0.3),
+                            color: (isDark ? Colors.deepPurple[900]! : Color(0xFF7B1FA2)).withOpacity(0.3),
                             spreadRadius: 1,
                             blurRadius: 4,
                             offset: Offset(0, 2),
@@ -595,15 +503,10 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                         ? () {
                             if (_controller.text.isNotEmpty) {
                               try {
-                                ref
-                                    .read(chatNotifierProvider(
-                                            ChatParams(widget.markerId))
-                                        .notifier)
-                                    .sendMessage(_controller.text, 'text');
+                                ref.read(chatNotifierProvider(ChatParams(widget.markerId)).notifier).sendMessage(_controller.text, 'text');
                                 _controller.clear();
                                 _focusNode.requestFocus();
-                                WidgetsBinding.instance
-                                    .addPostFrameCallback((_) {
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
                                   _scrollToBottom();
                                 });
                               } catch (e) {
@@ -643,13 +546,10 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     required bool isMe,
     required bool isDark,
   }) {
-    final myMessageColor =
-        isDark ? Colors.deepPurple[800] : MessageCardStyles.myMessageColor;
-    final otherMessageColor =
-        isDark ? Colors.grey[800] : MessageCardStyles.otherMessageColor;
+    final myMessageColor = isDark ? Colors.deepPurple[800] : MessageCardStyles.myMessageColor;
+    final otherMessageColor = isDark ? Colors.grey[800] : MessageCardStyles.otherMessageColor;
     final myTextColor = isDark ? Colors.white : MessageCardStyles.myTextColor;
-    final otherTextColor =
-        isDark ? Colors.white : MessageCardStyles.otherTextColor;
+    final otherTextColor = isDark ? Colors.white : MessageCardStyles.otherTextColor;
 
     return Container(
       constraints: BoxConstraints(
@@ -658,9 +558,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
       padding: MessageCardStyles.messagePadding,
       decoration: BoxDecoration(
         color: isMe ? myMessageColor : otherMessageColor,
-        borderRadius: isMe
-            ? MessageCardStyles.myMessageBorderRadius
-            : MessageCardStyles.otherMessageBorderRadius,
+        borderRadius: isMe ? MessageCardStyles.myMessageBorderRadius : MessageCardStyles.otherMessageBorderRadius,
         boxShadow: isDark ? [] : [MessageCardStyles.messageShadow],
       ),
       child: message.type == 'image'
@@ -686,21 +584,15 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                             child: Image.network(
                               message.message,
                               fit: BoxFit.contain,
-                              loadingBuilder:
-                                  (context, child, loadingProgress) {
+                              loadingBuilder: (context, child, loadingProgress) {
                                 if (loadingProgress == null) return child;
                                 return Center(
                                   child: CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes !=
-                                            null
-                                        ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                                         : null,
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      isDark
-                                          ? Colors.deepPurple[300]!
-                                          : Colors.deepPurple[400]!,
+                                      isDark ? Colors.deepPurple[300]! : Colors.deepPurple[400]!,
                                     ),
                                   ),
                                 );
@@ -725,13 +617,10 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                       child: Center(
                         child: CircularProgressIndicator(
                           value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
+                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                               : null,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            isDark
-                                ? Colors.deepPurple[300]!
-                                : Colors.deepPurple.shade300,
+                            isDark ? Colors.deepPurple[300]! : Colors.deepPurple.shade300,
                           ),
                         ),
                       ),

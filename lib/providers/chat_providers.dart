@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../models/chat_model.dart';
 import '../models/message_model.dart';
-import '../pages/auth/auth_provider.dart';
+import 'auth_provider.dart';
 import '../repository/chat_repository.dart';
 
 class ChatParams {
