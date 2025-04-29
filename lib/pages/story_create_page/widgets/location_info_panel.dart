@@ -13,18 +13,26 @@ class LocationInfoPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     // 위치가 선택되지 않은 경우의 패널
     if (selectedLocation == null) {
       return Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? Colors.grey[850] : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.deepPurple.shade100, width: 1.5),
+          border: Border.all(
+              color: isDark
+                  ? Colors.amber.withOpacity(0.3)
+                  : Colors.deepPurple.shade100,
+              width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: isDark
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.grey.withOpacity(0.2),
               spreadRadius: 1,
               blurRadius: 5,
               offset: Offset(0, 2),
@@ -37,12 +45,12 @@ class LocationInfoPanel extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: Colors.deepPurple.shade50,
+                color: isDark ? Colors.grey[800] : Colors.deepPurple.shade50,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.location_on,
-                color: Colors.deepPurple.shade300,
+                color: isDark ? Colors.amber[300] : Colors.deepPurple.shade300,
                 size: 28,
               ),
             ),
@@ -51,7 +59,8 @@ class LocationInfoPanel extends StatelessWidget {
               child: Text(
                 '위치를 선택해주세요',
                 style: TextStyle(
-                  color: Colors.deepPurple.shade300,
+                  color:
+                      isDark ? Colors.amber[300] : Colors.deepPurple.shade300,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -60,8 +69,10 @@ class LocationInfoPanel extends StatelessWidget {
             TextButton(
               onPressed: onEditPressed,
               style: TextButton.styleFrom(
-                backgroundColor: Colors.deepPurple.shade50,
-                foregroundColor: Colors.deepPurple,
+                backgroundColor: isDark
+                    ? Colors.amber.withOpacity(0.1)
+                    : Colors.deepPurple.shade50,
+                foregroundColor: isDark ? Colors.amber : Colors.deepPurple,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -84,12 +95,18 @@ class LocationInfoPanel extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? Colors.grey[850] : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.deepPurple.shade200, width: 1.5),
+        border: Border.all(
+            color: isDark
+                ? Colors.amber.withOpacity(0.5)
+                : Colors.deepPurple.shade200,
+            width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 5,
             offset: Offset(0, 2),
@@ -102,12 +119,12 @@ class LocationInfoPanel extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Colors.deepPurple.shade100,
+              color: isDark ? Colors.grey[800] : Colors.deepPurple.shade100,
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.location_on,
-              color: Colors.deepPurple,
+              color: isDark ? Colors.amber : Colors.deepPurple,
               size: 28,
             ),
           ),
@@ -119,7 +136,7 @@ class LocationInfoPanel extends StatelessWidget {
                 Text(
                   '선택된 위치',
                   style: TextStyle(
-                    color: Colors.deepPurple,
+                    color: isDark ? Colors.amber : Colors.deepPurple,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -128,7 +145,7 @@ class LocationInfoPanel extends StatelessWidget {
                 Text(
                   '위도: ${selectedLocation!.latitude.toStringAsFixed(6)}\n경도: ${selectedLocation!.longitude.toStringAsFixed(6)}',
                   style: TextStyle(
-                    color: Colors.grey[700],
+                    color: isDark ? Colors.grey[400] : Colors.grey[700],
                     fontSize: 12,
                   ),
                 ),
@@ -139,8 +156,10 @@ class LocationInfoPanel extends StatelessWidget {
           TextButton(
             onPressed: onEditPressed,
             style: TextButton.styleFrom(
-              backgroundColor: Colors.deepPurple.shade50,
-              foregroundColor: Colors.deepPurple,
+              backgroundColor: isDark
+                  ? Colors.amber.withOpacity(0.1)
+                  : Colors.deepPurple.shade50,
+              foregroundColor: isDark ? Colors.amber : Colors.deepPurple,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),

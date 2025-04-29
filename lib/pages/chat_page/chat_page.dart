@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+
 import '../../providers/chat_providers.dart';
 import '../../style/style.dart';
 import '../auth/auth_provider.dart';
@@ -97,6 +98,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     final params = ChatParams(widget.markerId);
     final messages = ref.watch(chatNotifierProvider(params));
     final chatAsync = ref.watch(chatProvider(params));
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     ref.listen(chatNotifierProvider(params), (previous, next) {
       if (next.length != (previous?.length ?? 0)) {
@@ -107,13 +109,12 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     });
 
     return Scaffold(
-      backgroundColor: BackgroundStyles.chatBackgroundColor,
+      backgroundColor:
+          isDark ? Colors.grey[900] : BackgroundStyles.chatBackgroundColor,
       body: Container(
         decoration: BoxDecoration(
-          color: BackgroundStyles.chatBackgroundColor,
-          // 배경 이미지 추가
-          // 주석 해제 시 assets 폴더에 chat_background.png 파일 추가 필요
-          // image: BackgroundStyles.chatBackgroundImage,
+          color:
+              isDark ? Colors.grey[900] : BackgroundStyles.chatBackgroundColor,
         ),
         child: GestureDetector(
           onTap: () {
@@ -126,7 +127,8 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                 expandedHeight: 70.0,
                 floating: false,
                 pinned: true,
-                backgroundColor: AppBarStyles.appBarBackgroundColor,
+                backgroundColor:
+                    isDark ? Colors.black : AppBarStyles.appBarBackgroundColor,
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () => Navigator.pop(context),
@@ -162,10 +164,15 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [
-                              AppBarStyles.appBarGradientStart,
-                              AppBarStyles.appBarGradientEnd,
-                            ],
+                            colors: isDark
+                                ? [
+                                    Colors.black,
+                                    Colors.grey[850]!,
+                                  ]
+                                : [
+                                    AppBarStyles.appBarGradientStart,
+                                    AppBarStyles.appBarGradientEnd,
+                                  ],
                           ),
                         ),
                       ),
@@ -228,14 +235,18 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                               Icon(
                                 Icons.chat_bubble_outline,
                                 size: 48,
-                                color: Colors.grey[400],
+                                color: isDark
+                                    ? Colors.grey[600]
+                                    : Colors.grey[400],
                               ),
                               const SizedBox(height: 16),
                               Text(
                                 '아직 메시지가 없습니다.\n첫 메시지를 보내보세요!',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: Colors.grey[600],
+                                  color: isDark
+                                      ? Colors.grey[400]
+                                      : Colors.grey[600],
                                   fontSize: 16,
                                 ),
                               ),
@@ -275,7 +286,9 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                         vertical: 16),
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        color: Colors.grey[300],
+                                        color: isDark
+                                            ? Colors.grey[800]
+                                            : Colors.grey[300],
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       padding: const EdgeInsets.symmetric(
@@ -285,7 +298,9 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                             .format(message.timestamp),
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: Colors.grey[700],
+                                          color: isDark
+                                              ? Colors.white70
+                                              : Colors.grey[700],
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -310,15 +325,19 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                           builder: (context, snapshot) {
                                             return CircleAvatar(
                                               radius: 16,
-                                              backgroundColor: Colors.grey[200],
+                                              backgroundColor: isDark
+                                                  ? Colors.grey[700]
+                                                  : Colors.grey[200],
                                               backgroundImage: snapshot.data !=
                                                       null
                                                   ? NetworkImage(snapshot.data!)
                                                   : null,
                                               child: snapshot.data == null
-                                                  ? const Icon(Icons.person,
+                                                  ? Icon(Icons.person,
                                                       size: 18,
-                                                      color: Colors.grey)
+                                                      color: isDark
+                                                          ? Colors.grey[400]
+                                                          : Colors.grey)
                                                   : null,
                                             );
                                           },
@@ -336,8 +355,14 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                                   left: 4, bottom: 4),
                                               child: Text(
                                                 message.senderName,
-                                                style: MessageCardStyles
-                                                    .senderNameStyle,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: isDark
+                                                      ? Colors.amber[200]
+                                                      : Colors.deepPurple[800],
+                                                  letterSpacing: 0.3,
+                                                ),
                                               ),
                                             ),
 
@@ -355,8 +380,14 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                                   child: Text(
                                                     DateFormat('HH:mm').format(
                                                         message.timestamp),
-                                                    style: MessageCardStyles
-                                                        .timeTextStyle,
+                                                    style: TextStyle(
+                                                      fontSize: 10,
+                                                      color: isDark
+                                                          ? Colors.grey[400]
+                                                          : Colors.grey[600],
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
                                                   ),
                                                 ),
 
@@ -365,6 +396,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                                 context,
                                                 message: message,
                                                 isMe: isMe,
+                                                isDark: isDark,
                                               ),
 
                                               // 시간 (상대방 메시지일 경우 오른쪽)
@@ -376,8 +408,14 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                                   child: Text(
                                                     DateFormat('HH:mm').format(
                                                         message.timestamp),
-                                                    style: MessageCardStyles
-                                                        .timeTextStyle,
+                                                    style: TextStyle(
+                                                      fontSize: 10,
+                                                      color: isDark
+                                                          ? Colors.grey[400]
+                                                          : Colors.grey[600],
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
                                                   ),
                                                 ),
                                             ],
@@ -393,16 +431,20 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                           builder: (context, snapshot) {
                                             return CircleAvatar(
                                               radius: 16,
-                                              backgroundColor:
-                                                  Colors.purple[100],
+                                              backgroundColor: isDark
+                                                  ? Colors.deepPurple[800]
+                                                  : Colors.purple[100],
                                               backgroundImage: snapshot.data !=
                                                       null
                                                   ? NetworkImage(snapshot.data!)
                                                   : null,
                                               child: snapshot.data == null
-                                                  ? const Icon(Icons.person,
+                                                  ? Icon(Icons.person,
                                                       size: 18,
-                                                      color: Colors.deepPurple)
+                                                      color: isDark
+                                                          ? Colors
+                                                              .deepPurple[200]
+                                                          : Colors.deepPurple)
                                                   : null,
                                             );
                                           },
@@ -430,10 +472,12 @@ class _ChatPageState extends ConsumerState<ChatPage> {
             top: 8,
             bottom: 8 + MediaQuery.of(context).viewInsets.bottom),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? Colors.grey[850] : Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: isDark
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.black.withOpacity(0.05),
               blurRadius: 8,
               spreadRadius: 1,
               offset: const Offset(0, -2),
@@ -447,13 +491,17 @@ class _ChatPageState extends ConsumerState<ChatPage> {
               Container(
                 margin: const EdgeInsets.only(right: 8),
                 decoration: BoxDecoration(
-                  color:
-                      ButtonStyles.imageButtonBackgroundColor.withOpacity(0.15),
+                  color: (isDark
+                          ? Colors.deepPurple[300]!
+                          : ButtonStyles.imageButtonBackgroundColor)
+                      .withOpacity(0.15),
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(
                   icon: const Icon(Icons.image_outlined),
-                  color: ButtonStyles.imageButtonBackgroundColor,
+                  color: isDark
+                      ? Colors.deepPurple[200]
+                      : ButtonStyles.imageButtonBackgroundColor,
                   onPressed: _pickAndSendImage,
                   tooltip: '이미지 첨부',
                   iconSize: 26,
@@ -465,12 +513,42 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: TextFieldStyles.textFieldBorderRadius,
-                    boxShadow: [TextFieldStyles.textFieldShadow],
+                    boxShadow: isDark ? [] : [TextFieldStyles.textFieldShadow],
                   ),
                   child: TextField(
                     controller: _controller,
                     focusNode: _focusNode,
-                    decoration: TextFieldStyles.textFieldDecoration,
+                    decoration: InputDecoration(
+                      hintText: '메시지를 입력하세요...',
+                      hintStyle: TextStyle(
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          fontSize: 14),
+                      border: OutlineInputBorder(
+                        borderRadius: TextFieldStyles.textFieldBorderRadius,
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: TextFieldStyles.textFieldPadding,
+                      filled: true,
+                      fillColor: isDark ? Colors.grey[800] : Colors.white,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: TextFieldStyles.textFieldBorderRadius,
+                        borderSide: BorderSide(
+                            color:
+                                isDark ? Colors.grey[700]! : Color(0xFFE0E0E0),
+                            width: 1),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: TextFieldStyles.textFieldBorderRadius,
+                        borderSide: BorderSide(
+                            color: isDark
+                                ? Colors.deepPurple[300]!
+                                : Color(0xFF9C27B0),
+                            width: 1.5),
+                      ),
+                    ),
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
                     textCapitalization: TextCapitalization.sentences,
                     minLines: 1,
                     maxLines: 5,
@@ -483,8 +561,32 @@ class _ChatPageState extends ConsumerState<ChatPage> {
               // 전송 버튼
               AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                decoration:
-                    _isComposing ? ButtonStyles.sendButtonDecoration : null,
+                decoration: _isComposing
+                    ? BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: isDark
+                              ? [
+                                  Colors.deepPurple[700]!,
+                                  Colors.deepPurple[900]!
+                                ]
+                              : [Color(0xFF9C27B0), Color(0xFF7B1FA2)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(25),
+                        boxShadow: [
+                          BoxShadow(
+                            color: (isDark
+                                    ? Colors.deepPurple[900]!
+                                    : Color(0xFF7B1FA2))
+                                .withOpacity(0.3),
+                            spreadRadius: 1,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      )
+                    : null,
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
@@ -516,7 +618,11 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                       padding: const EdgeInsets.all(12.0),
                       child: Icon(
                         Icons.send_rounded,
-                        color: _isComposing ? Colors.white : Colors.grey[400],
+                        color: _isComposing
+                            ? Colors.white
+                            : isDark
+                                ? Colors.grey[600]
+                                : Colors.grey[400],
                         size: 24,
                       ),
                     ),
@@ -535,20 +641,27 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     BuildContext context, {
     required dynamic message,
     required bool isMe,
+    required bool isDark,
   }) {
+    final myMessageColor =
+        isDark ? Colors.deepPurple[800] : MessageCardStyles.myMessageColor;
+    final otherMessageColor =
+        isDark ? Colors.grey[800] : MessageCardStyles.otherMessageColor;
+    final myTextColor = isDark ? Colors.white : MessageCardStyles.myTextColor;
+    final otherTextColor =
+        isDark ? Colors.white : MessageCardStyles.otherTextColor;
+
     return Container(
       constraints: BoxConstraints(
         maxWidth: MediaQuery.of(context).size.width * 0.65,
       ),
       padding: MessageCardStyles.messagePadding,
       decoration: BoxDecoration(
-        color: isMe
-            ? MessageCardStyles.myMessageColor
-            : MessageCardStyles.otherMessageColor,
+        color: isMe ? myMessageColor : otherMessageColor,
         borderRadius: isMe
             ? MessageCardStyles.myMessageBorderRadius
             : MessageCardStyles.otherMessageBorderRadius,
-        boxShadow: [MessageCardStyles.messageShadow],
+        boxShadow: isDark ? [] : [MessageCardStyles.messageShadow],
       ),
       child: message.type == 'image'
           ? ClipRRect(
@@ -584,6 +697,11 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                                 .cumulativeBytesLoaded /
                                             loadingProgress.expectedTotalBytes!
                                         : null,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      isDark
+                                          ? Colors.deepPurple[300]!
+                                          : Colors.deepPurple[400]!,
+                                    ),
                                   ),
                                 );
                               },
@@ -611,7 +729,9 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                   loadingProgress.expectedTotalBytes!
                               : null,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.deepPurple.shade300,
+                            isDark
+                                ? Colors.deepPurple[300]!
+                                : Colors.deepPurple.shade300,
                           ),
                         ),
                       ),
@@ -624,9 +744,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
               message.message,
               style: TextStyle(
                 fontSize: 15,
-                color: isMe
-                    ? MessageCardStyles.myTextColor
-                    : MessageCardStyles.otherTextColor,
+                color: isMe ? myTextColor : otherTextColor,
               ),
             ),
     );

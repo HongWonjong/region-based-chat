@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:region_based_chat/pages/auth/profile_provider.dart';
+import 'package:region_based_chat/pages/auth/profile_provider.dart'; 
 import 'package:region_based_chat/pages/welcome_page/welcome_page.dart';
 import 'package:region_based_chat/providers/marker_provider.dart';
 import 'package:region_based_chat/style/style.dart'; // 스타일 적용
@@ -76,8 +76,8 @@ class RegisterPage extends ConsumerWidget {
     });
 
     ref.read(isRegisteringProvider.notifier).state = false;
-    ref.invalidate(markerListProvider);
-    ref.invalidate(profileProvider(uid));
+    ref.invalidate(markerListProvider); 
+    ref.invalidate(profileProvider(uid)); 
 
     Navigator.pushReplacement(
       context,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 
@@ -49,18 +48,21 @@ class _LocationMapModalState extends State<LocationMapModal> {
     // 마커 크기 설정
     _marker!.setSize(Size(20, 30));
 
-    // 마커 색상 설정 (보라색)
-    _marker!.setIconTintColor(Colors.deepPurple);
+    // 마커 색상 설정 (테마에 따라 보라색 또는 황색)
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    _marker!.setIconTintColor(isDark ? Colors.amber : Colors.deepPurple);
 
     _mapController?.addOverlay(_marker!);
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? Colors.grey[900] : Colors.white,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -69,7 +71,7 @@ class _LocationMapModalState extends State<LocationMapModal> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.deepPurple,
+              color: isDark ? Colors.black : Colors.deepPurple,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -101,9 +103,15 @@ class _LocationMapModalState extends State<LocationMapModal> {
                           ? () => Navigator.pop(context, _selectedLocation)
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber,
-                        foregroundColor: Colors.deepPurple.shade900,
-                        disabledBackgroundColor: Colors.grey.shade400,
+                        backgroundColor: isDark ? Colors.amber : Colors.amber,
+                        foregroundColor:
+                            isDark ? Colors.black : Colors.deepPurple.shade900,
+                        disabledBackgroundColor: isDark
+                            ? Colors.grey[600] // 다크모드에서 더 밝은 회색으로 변경
+                            : Colors.grey.shade400,
+                        disabledForegroundColor: isDark
+                            ? Colors.grey[300] // 다크모드에서 텍스트 색상을 더 밝게 변경
+                            : Colors.grey[700],
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -144,11 +152,11 @@ class _LocationMapModalState extends State<LocationMapModal> {
                         southWest: NLatLng(31.43, 122.37),
                         northEast: NLatLng(44.35, 132.0),
                       ),
-                      mapType: NMapType.basic,
+                      mapType: isDark ? NMapType.navi : NMapType.basic,
                       indoorEnable: true,
                       scaleBarEnable: true,
                       contentPadding: EdgeInsets.zero,
-                      nightModeEnable: false,
+                      nightModeEnable: isDark,
                       locale: const Locale.fromSubtags(languageCode: 'ko'),
                     ),
                     onMapReady: (controller) {
@@ -195,7 +203,7 @@ class _LocationMapModalState extends State<LocationMapModal> {
                         // 확대 버튼
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: isDark ? Colors.grey[800] : Colors.white,
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(8),
                               topRight: Radius.circular(8),
@@ -209,7 +217,10 @@ class _LocationMapModalState extends State<LocationMapModal> {
                             ],
                           ),
                           child: IconButton(
-                            icon: Icon(Icons.add, color: Colors.deepPurple),
+                            icon: Icon(
+                              Icons.add,
+                              color: isDark ? Colors.amber : Colors.deepPurple,
+                            ),
                             onPressed: () {
                               if (_mapController != null) {
                                 _mapController!.updateCamera(
@@ -226,14 +237,16 @@ class _LocationMapModalState extends State<LocationMapModal> {
                         // 구분선
                         Container(
                           height: 1,
-                          color: Colors.grey.withOpacity(0.3),
+                          color: isDark
+                              ? Colors.grey[700]!.withOpacity(0.3)
+                              : Colors.grey.withOpacity(0.3),
                           width: 48,
                         ),
 
                         // 축소 버튼
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: isDark ? Colors.grey[800] : Colors.white,
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(8),
                               bottomRight: Radius.circular(8),
@@ -247,7 +260,10 @@ class _LocationMapModalState extends State<LocationMapModal> {
                             ],
                           ),
                           child: IconButton(
-                            icon: Icon(Icons.remove, color: Colors.deepPurple),
+                            icon: Icon(
+                              Icons.remove,
+                              color: isDark ? Colors.amber : Colors.deepPurple,
+                            ),
                             onPressed: () {
                               if (_mapController != null) {
                                 _mapController!.updateCamera(

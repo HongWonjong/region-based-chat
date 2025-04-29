@@ -57,6 +57,8 @@ class _SelectImageButtonState extends State<SelectImageButton> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -65,7 +67,8 @@ class _SelectImageButtonState extends State<SelectImageButton> {
           child: _buildSelectButton(
             icon: Icons.photo_library,
             label: '갤러리에서 여러 사진 선택',
-            color: Colors.deepPurple.shade700,
+            color: isDark ? Colors.amber : Colors.deepPurple.shade700,
+            isDark: isDark,
             onTap: _pickMultipleImages,
           ),
         ),
@@ -80,7 +83,8 @@ class _SelectImageButtonState extends State<SelectImageButton> {
                 '선택된 사진 ${_selectedImages.length}장',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.deepPurple.shade800,
+                  color:
+                      isDark ? Colors.amber[200] : Colors.deepPurple.shade800,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -93,12 +97,12 @@ class _SelectImageButtonState extends State<SelectImageButton> {
                 icon: Icon(
                   _isExpanded ? Icons.expand_less : Icons.expand_more,
                   size: 20,
-                  color: Colors.deepPurple,
+                  color: isDark ? Colors.amber : Colors.deepPurple,
                 ),
                 label: Text(
                   _isExpanded ? '접기' : '펼치기',
                   style: TextStyle(
-                    color: Colors.deepPurple,
+                    color: isDark ? Colors.amber : Colors.deepPurple,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -119,7 +123,7 @@ class _SelectImageButtonState extends State<SelectImageButton> {
                 scrollDirection: Axis.horizontal,
                 itemCount: _selectedImages.length,
                 itemBuilder: (context, index) {
-                  return _buildImageThumbnail(index);
+                  return _buildImageThumbnail(index, isDark);
                 },
               ),
             ),
@@ -134,6 +138,7 @@ class _SelectImageButtonState extends State<SelectImageButton> {
     required String label,
     required Color color,
     required VoidCallback onTap,
+    required bool isDark,
   }) {
     return InkWell(
       onTap: onTap,
@@ -142,10 +147,10 @@ class _SelectImageButtonState extends State<SelectImageButton> {
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: isDark ? color.withOpacity(0.2) : color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: color.withOpacity(0.2),
+            color: isDark ? color.withOpacity(0.5) : color.withOpacity(0.2),
             width: 1.5,
           ),
         ),
@@ -172,7 +177,12 @@ class _SelectImageButtonState extends State<SelectImageButton> {
     );
   }
 
-  Widget _buildImageThumbnail(int index) {
+  Widget _buildImageThumbnail(int index, bool isDark) {
+    final borderColor =
+        isDark ? Colors.amber.withOpacity(0.5) : Colors.deepPurple.shade100;
+    final closeIconColor = isDark ? Colors.amber : Colors.deepPurple;
+    final closeBackgroundColor = isDark ? Colors.grey[800] : Colors.white;
+
     return Stack(
       children: [
         Container(
@@ -181,7 +191,7 @@ class _SelectImageButtonState extends State<SelectImageButton> {
           margin: EdgeInsets.only(right: 8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.deepPurple.shade100, width: 2),
+            border: Border.all(color: borderColor, width: 2),
             image: DecorationImage(
               image: FileImage(File(_selectedImages[index].path)),
               fit: BoxFit.cover,
@@ -196,7 +206,7 @@ class _SelectImageButtonState extends State<SelectImageButton> {
             child: Container(
               padding: EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: closeBackgroundColor,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -208,7 +218,7 @@ class _SelectImageButtonState extends State<SelectImageButton> {
               ),
               child: Icon(
                 Icons.close,
-                color: Colors.deepPurple,
+                color: closeIconColor,
                 size: 16,
               ),
             ),
