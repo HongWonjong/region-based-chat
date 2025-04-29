@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:region_based_chat/models/marker.dart';
 import 'package:region_based_chat/pages/chat_page/chat_page.dart';
 import 'package:region_based_chat/pages/welcome_page/util/date_onvert.dart';
-import 'package:region_based_chat/providers/firebase_storage_provider.dart';
 import 'package:region_based_chat/providers/marker_provider.dart';
 import 'package:region_based_chat/services/firebase_storage.dart';
 
@@ -22,33 +21,95 @@ class StoryBottomSheet extends ConsumerWidget {
       controller: draggableController,
       initialChildSize: 0.05,
       minChildSize: 0.05,
-      maxChildSize: 0.6,
+      maxChildSize: 0.8,
       snap: true,
-      snapSizes: [0.05, 0.6],
+      snapSizes: [0.05, 0.8],
       builder: (BuildContext context, scrollController) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Container(
           clipBehavior: Clip.hardEdge,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+          decoration: BoxDecoration(
+            color: isDark ? Colors.grey[900] : Colors.white,
+            borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
+            boxShadow: [
+              BoxShadow(
+                color: isDark ? Colors.black.withOpacity(0.4) : Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                spreadRadius: 0,
+                offset: const Offset(0, -2),
+              ),
+            ],
           ),
           child: CustomScrollView(
             controller: scrollController,
             slivers: [
               SliverToBoxAdapter(
-                child: Center(
-                  child: Container(
-                    decoration: const BoxDecoration(color: Colors.black, borderRadius: BorderRadius.all(Radius.circular(10))),
-                    height: 4,
-                    width: 80,
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                  ),
+                child: Column(
+                  children: [
+                    // 드래그 핸들
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 12),
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    // 타이틀 바 (접었을 때만 보임)
+                    if (markerProvider != null)
+                      AnimatedBuilder(
+                        animation: draggableController,
+                        builder: (context, child) {
+                          final isCollapsed = draggableController.size <= 0.1;
+                          return AnimatedOpacity(
+                            duration: const Duration(milliseconds: 200),
+                            opacity: isCollapsed ? 1.0 : 0.0,
+                            child: isCollapsed
+                                ? Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.campaign,
+                                          color: AppBarStyles.appBarGradientStart,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            markerProvider.title,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                          );
+                        },
+                      ),
+                  ],
                 ),
               ),
               SliverPadding(
-                padding: EdgeInsets.all(30),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 sliver: SliverList.list(
-                  children: _content(markerProvider, context, fireStorageProvider),
+                  children: _content(markerProvider, context, fireStorageProvider, isDark),
+                ),
+              ),
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).padding.bottom),
+                  ],
                 ),
               ),
             ],
@@ -58,112 +119,233 @@ class StoryBottomSheet extends ConsumerWidget {
     );
   }
 
-  List<Widget> _content(Marker? marker, BuildContext context, FirebaseStorageService fireStorageProvider) {
+  // 소문 내용 렌더링
+  List<Widget> _content(Marker? marker, BuildContext context, FirebaseStorageService fireStorageProvider, bool isDark) {
     if (marker == null) {
-      return [Text("지도의 마커를 클릭해 다양한 소문들을 확인해보세요!")];
+      return [
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 30),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.touch_app,
+                  size: 48,
+                  color: Colors.grey[400],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "지도의 마커를 클릭해 다양한 소문들을 확인해보세요!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
+      ];
     }
 
     final List<Widget> widgets = [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              FutureBuilder<String>(
-                future: fireStorageProvider.getDownloadUrl(
-                  fireStorageProvider.getProfileImageReference(marker.uid),
+      // 작성자 정보 및 채팅 버튼
+      Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppBarStyles.appBarGradientEnd.withOpacity(0.2),
+                    border: Border.all(
+                      color: AppBarStyles.appBarGradientEnd,
+                      width: 1.5,
+                    ),
+                  ),
+                  height: 50,
+                  width: 50,
+                  child: const Icon(
+                    Icons.person,
+                    color: Color(0xFF5E35B1),
+                  ),
                 ),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (snapshot.hasError) {
-                    return const SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: Icon(Icons.error, color: Colors.red),
-                    );
-                  } else if (snapshot.hasData) {
-                    return ClipOval(
-                      child: Image.network(
-                        snapshot.data!,
-                        height: 50,
-                        width: 50,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.error, color: Colors.red);
-                        },
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      marker.createdBy,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
-                    );
-                  } else {
-                    return const SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: Icon(Icons.person, color: Colors.grey),
-                    );
-                  }
-                },
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      dateConvert(marker.createdAt),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppBarStyles.appBarGradientStart, AppBarStyles.appBarGradientEnd],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppBarStyles.appBarGradientStart.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
-              SizedBox(width: 10),
-              Text(marker.createdBy),
-            ],
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(24),
+                  onTap: () {
+                    final route = MaterialPageRoute(builder: (context) => ChatPage(markerId: marker.id));
+                    Navigator.push(context, route);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.chat_bubble_outlined,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          "채팅방 참여",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      // 구분선
+      Container(
+        height: 1,
+        color: isDark ? Colors.grey[800] : Colors.grey[200],
+        margin: const EdgeInsets.symmetric(vertical: 12),
+      ),
+
+      // 소문 제목과 카테고리를 한 행에 배치
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Text(
+              marker.title,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.amber[100] : Color(0xFF4A148C),
+              ),
+            ),
           ),
-          ElevatedButton.icon(
-            onPressed: () async {
-              final route = MaterialPageRoute(builder: (context) => ChatPage(markerId: marker.id));
-              Navigator.push(context, route);
-            },
-            icon: Icon(Icons.chat_bubble_outline, size: 18),
-            label: Text("채팅방 참여"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepPurple,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+          const SizedBox(width: 10),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: marker.type.color.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              marker.type.typeKor,
+              style: TextStyle(
+                color: marker.type.color,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
               ),
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
           ),
         ],
       ),
-      SizedBox(height: 10),
-      Divider(thickness: 2, color: Colors.grey[300]),
-      Text(marker.title, style: TextStyle(fontSize: 20)),
-      Row(
-        children: [
-          Text(marker.type.typeKor, style: TextStyle(color: Colors.grey[500])),
-          Text(" ${dateConvert(marker.createdAt)}", style: TextStyle(color: Colors.grey[500]))
-        ],
+      const SizedBox(height: 16),
+
+      // 소문 내용
+      Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.grey[850] : Colors.grey[50],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
+            width: 1,
+          ),
+        ),
+        child: Text(
+          marker.description,
+          style: TextStyle(
+            fontSize: 16,
+            height: 1.5,
+            color: isDark ? Colors.grey[100] : null,
+          ),
+        ),
       ),
-      SizedBox(height: 10),
-      Text(marker.description),
-      SizedBox(height: 20),
+      const SizedBox(height: 24),
     ];
 
+    // 이미지가 있는 경우
     if (marker.imageUrls.isNotEmpty) {
       widgets.add(
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '첨부된 사진 (${marker.imageUrls.length})',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.deepPurple,
-              ),
+            Row(
+              children: [
+                const Icon(
+                  Icons.photo_library,
+                  color: Color(0xFF7B1FA2),
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '첨부된 사진 (${marker.imageUrls.length})',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Color(0xFF7B1FA2),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 12),
             _buildImageGallery(marker.imageUrls, context),
           ],
         ),
       );
     }
 
-    widgets.add(SizedBox(height: 30));
+    widgets.add(const SizedBox(height: 30));
 
     return widgets;
   }
@@ -179,45 +361,74 @@ class StoryBottomSheet extends ConsumerWidget {
             onTap: () => _showFullScreenImage(context, imageUrls, index),
             child: Container(
               width: 200,
-              margin: EdgeInsets.only(right: 10),
+              margin: const EdgeInsets.only(right: 16),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 5,
-                    spreadRadius: 1,
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 8,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  imageUrls[index],
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                            : null,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+              child: Stack(
+                children: [
+                  // 이미지
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      imageUrls[index],
+                      fit: BoxFit.cover,
+                      width: 200,
+                      height: 200,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                : null,
+                            valueColor: AlwaysStoppedAnimation<Color>(AppBarStyles.appBarGradientStart),
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[200],
+                          width: 200,
+                          height: 200,
+                          child: const Center(
+                            child: Icon(
+                              Icons.error_outline,
+                              color: Colors.red,
+                              size: 32,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  // 확대 표시기
+                  Positioned(
+                    bottom: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        shape: BoxShape.circle,
                       ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[200],
-                      child: Center(
-                        child: Icon(
-                          Icons.error_outline,
-                          color: Colors.red,
-                        ),
+                      child: const Icon(
+                        Icons.zoom_in,
+                        color: Colors.white,
+                        size: 18,
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               ),
             ),
           );
@@ -235,27 +446,59 @@ class StoryBottomSheet extends ConsumerWidget {
           appBar: AppBar(
             backgroundColor: Colors.black,
             elevation: 0,
-            iconTheme: IconThemeData(color: Colors.white),
+            iconTheme: const IconThemeData(color: Colors.white),
+            title: Text(
+              '${initialIndex + 1} / ${imageUrls.length}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              ),
+            ),
           ),
           body: PageView.builder(
             itemCount: imageUrls.length,
             controller: PageController(initialPage: initialIndex),
+            onPageChanged: (index) {
+              // 페이지 인덱스 표시 업데이트
+              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    '${index + 1} / ${imageUrls.length}',
+                    textAlign: TextAlign.center,
+                  ),
+                  duration: const Duration(seconds: 1),
+                  backgroundColor: Colors.black54,
+                  behavior: SnackBarBehavior.floating,
+                  margin: const EdgeInsets.only(bottom: 20, left: 50, right: 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              );
+            },
             itemBuilder: (context, index) {
-              return Center(
-                child: InteractiveViewer(
-                  minScale: 0.5,
-                  maxScale: 3.0,
-                  child: Image.network(
-                    imageUrls[index],
-                    fit: BoxFit.contain,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      );
-                    },
+              return InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 3.0,
+                child: Center(
+                  child: Hero(
+                    tag: 'image_${imageUrls[index]}',
+                    child: Image.network(
+                      imageUrls[index],
+                      fit: BoxFit.contain,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                : null,
+                            valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               );
