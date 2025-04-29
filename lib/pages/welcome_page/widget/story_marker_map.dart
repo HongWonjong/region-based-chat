@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_naver_map/flutter_naver_map.dart'
-    hide NaverMapZoomControlWidget;
+import 'package:flutter_naver_map/flutter_naver_map.dart' hide NaverMapZoomControlWidget;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../models/marker.dart';
@@ -21,8 +20,7 @@ class StoryMarkerMap extends ConsumerStatefulWidget {
   StoryMarkerMapState createState() => StoryMarkerMapState();
 }
 
-class StoryMarkerMapState extends ConsumerState<StoryMarkerMap>
-    with WidgetsBindingObserver {
+class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBindingObserver {
   NaverMapController? mapController;
   final PollingTimer pollingTimer = PollingTimer();
 
@@ -49,8 +47,7 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap>
 
   void startPollingTimer() {
     pollingTimer.start(const Duration(seconds: 5), () {
-      ref.read(markerListProvider.notifier).fetchMarkers(
-          mapController!, MediaQuery.of(context).size.height, _onMarkerTapped);
+      ref.read(markerListProvider.notifier).fetchMarkers(mapController!, MediaQuery.of(context).size.height, _onMarkerTapped);
     });
   }
 
@@ -71,8 +68,7 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap>
 
   void _onMarkerTapped(Marker tappedMarker) {
     log("마커 탭 감지");
-    widget.draggableController.animateTo(0.6,
-        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    widget.draggableController.animateTo(0.6, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     ref.read(selectedMarkerProvider.notifier).state = tappedMarker; // 상태 업데이트
   }
 
@@ -109,15 +105,11 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap>
           },
           onCameraChange: (NCameraUpdateReason reason, __) {
             if (reason != NCameraUpdateReason.developer) {
-              widget.draggableController.animateTo(0,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut);
+              widget.draggableController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
             }
           },
           onMapTapped: (_, __) {
-            widget.draggableController.animateTo(0,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut);
+            widget.draggableController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
           },
           options: NaverMapViewOptions(
             liteModeEnable: false,

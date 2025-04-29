@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum StoryType {
@@ -57,7 +59,7 @@ class Story {
       createdBy: map['createdBy'],
       createdAt: map['createdAt'] as String,
       type: StoryType.values.firstWhere(
-            (e) => e.toString().split('.').last == map['type'],
+        (e) => e.toString().split('.').last == map['type'],
         orElse: () => StoryType.minorIncident,
       ),
       uid: map['uid'],
@@ -104,7 +106,7 @@ class StoryService {
 
       return docRef.id;
     } catch (e) {
-      print('스토리 생성 오류: $e');
+      log('스토리 생성 오류: $e');
       rethrow;
     }
   }
@@ -128,12 +130,12 @@ class StoryService {
           .map((doc) => Story.fromMap(doc.data()))
           .where(
             (story) => story.longitude >= minLng && story.longitude <= maxLng,
-      )
+          )
           .toList();
 
       return stories;
     } catch (e) {
-      print('스토리 조회 오류: $e');
+      log('스토리 조회 오류: $e');
       rethrow;
     }
   }
@@ -146,7 +148,7 @@ class StoryService {
 
       return querySnapshot.docs.map((doc) => Story.fromMap(doc.data())).toList();
     } catch (e) {
-      print('사용자 스토리 조회 오류: $e');
+      log('사용자 스토리 조회 오류: $e');
       rethrow;
     }
   }

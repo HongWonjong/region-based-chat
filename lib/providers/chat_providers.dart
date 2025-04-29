@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,9 +15,7 @@ class ChatParams {
   ChatParams(this.markerId);
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-          other is ChatParams && markerId == other.markerId;
+  bool operator ==(Object other) => identical(this, other) || other is ChatParams && markerId == other.markerId;
 
   @override
   int get hashCode => markerId.hashCode;
@@ -37,13 +37,10 @@ class ChatNotifier extends StateNotifier<List<Message>> {
     try {
       final user = _ref.read(authProvider);
       if (user == null) {
-        print('User not logged in');
+        log('User not logged in');
         return;
       }
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
       final userName = userDoc.data()?['username'] ?? 'Unknown';
 
       _chat = await _repository.getOrCreateChat(markerId, user.uid, userName);
@@ -51,7 +48,7 @@ class ChatNotifier extends StateNotifier<List<Message>> {
         state = messages;
       });
     } catch (e) {
-      print('Error loading data: $e');
+      log('Error loading data: $e');
     }
   }
 
@@ -59,13 +56,10 @@ class ChatNotifier extends StateNotifier<List<Message>> {
     try {
       final user = _ref.read(authProvider);
       if (user == null) {
-        print('User not logged in');
+        log('User not logged in');
         return;
       }
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
       final userName = userDoc.data()?['username'] ?? 'Unknown';
 
       final newMessage = Message(
@@ -79,7 +73,7 @@ class ChatNotifier extends StateNotifier<List<Message>> {
       );
       await _repository.sendMessage(markerId, newMessage);
     } catch (e) {
-      print('Error sending message: $e');
+      log('Error sending message: $e');
     }
   }
 
@@ -87,13 +81,10 @@ class ChatNotifier extends StateNotifier<List<Message>> {
     try {
       final user = _ref.read(authProvider);
       if (user == null) {
-        print('User not logged in');
+        log('User not logged in');
         return;
       }
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
       final userName = userDoc.data()?['username'] ?? 'Unknown';
 
       final messageId = DateTime.now().millisecondsSinceEpoch.toString(); // 임시 ID
@@ -109,16 +100,15 @@ class ChatNotifier extends StateNotifier<List<Message>> {
       );
       await _repository.sendMessage(markerId, newMessage);
     } catch (e) {
-      print('Error sending image: $e');
+      log('Error sending image: $e');
     }
   }
 }
 
 final chatRepositoryProvider = Provider((ref) => ChatRepository());
 
-final chatNotifierProvider =
-StateNotifierProvider.family<ChatNotifier, List<Message>, ChatParams>(
-      (ref, params) {
+final chatNotifierProvider = StateNotifierProvider.family<ChatNotifier, List<Message>, ChatParams>(
+  (ref, params) {
     final repository = ref.watch(chatRepositoryProvider);
     return ChatNotifier(repository, params.markerId, ref);
   },
@@ -128,10 +118,7 @@ final chatProvider = FutureProvider.family<Chat?, ChatParams>((ref, params) asyn
   final repository = ref.watch(chatRepositoryProvider);
   final user = ref.read(authProvider);
   if (user == null) return null;
-  final userDoc = await FirebaseFirestore.instance
-      .collection('users')
-      .doc(user.uid)
-      .get();
+  final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
   final userName = userDoc.data()?['username'] ?? 'Unknown';
   return await repository.getOrCreateChat(params.markerId, user.uid, userName);
 });

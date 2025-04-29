@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -12,10 +14,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   } catch (e) {
-    print('Firebase 초기화 실패: $e');
+    log('Firebase 초기화 실패: $e');
   }
   await _initNaverMap();
 
@@ -44,8 +45,7 @@ class MyApp extends ConsumerWidget {
         brightness: Brightness.light,
       ),
       darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.deepPurple, brightness: Brightness.dark),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.dark),
         brightness: Brightness.dark,
       ),
       themeMode: themeMode,
@@ -56,5 +56,3 @@ class MyApp extends ConsumerWidget {
     );
   }
 }
-
-

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -50,7 +51,7 @@ class ChatRepository {
           title = markerDoc.data()!['title'] ?? title;
         }
       } catch (e) {
-        print('Error fetching marker title: $e');
+        log('Error fetching marker title: $e');
       }
 
       // 새로운 채팅방 생성
@@ -83,18 +84,12 @@ class ChatRepository {
         .collection('Messages')
         .orderBy('timestamp', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => Message.fromJson(doc.data()))
-        .toList());
+        .map((snapshot) => snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList());
   }
 
   // 메시지 전송
   Future<void> sendMessage(String markerId, Message message) async {
-    final chatRef = _firestore
-        .collection('markers')
-        .doc(markerId)
-        .collection('Chats')
-        .doc('default');
+    final chatRef = _firestore.collection('markers').doc(markerId).collection('Chats').doc('default');
     final messageRef = chatRef.collection('Messages').doc();
 
     // 메시지 저장
@@ -124,7 +119,7 @@ class ChatRepository {
       final ref = _storage.ref().child('users/profileImages/$userId.jpg');
       return await ref.getDownloadURL();
     } catch (e) {
-      print('Error fetching profile image URL: $e');
+      log('Error fetching profile image URL: $e');
       return null; // 프로필 이미지가 없는 경우
     }
   }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -24,14 +26,14 @@ class AuthNotifier extends StateNotifier<User?> {
 
       if (isSignedIn) {
         googleUser = await googleSignIn.signInSilently();
-        print('기존 계정으로 자동 로그인 시도');
+        log('기존 계정으로 자동 로그인 시도');
       } else {
         googleUser = await googleSignIn.signIn();
-        print('로그인 창 표시됨');
+        log('로그인 창 표시됨');
       }
 
       if (googleUser == null) {
-        print('사용자가 로그인을 취소했거나 실패함');
+        log('사용자가 로그인을 취소했거나 실패함');
         return;
       }
 
@@ -43,12 +45,11 @@ class AuthNotifier extends StateNotifier<User?> {
       await FirebaseAuth.instance.signInWithCredential(credential);
       state = FirebaseAuth.instance.currentUser;
 
-      print('로그인 성공: ${state?.email}');
+      log('로그인 성공: ${state?.email}');
 
       /// 파이어스토어에 해당 uid 문서 있는지 확인
       final uid = state!.uid;
-      final doc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final nickname = doc.data()?['username'];
 
       if (doc.exists && nickname != null && nickname != "") {
@@ -61,7 +62,7 @@ class AuthNotifier extends StateNotifier<User?> {
         Navigator.pushReplacementNamed(context, '/register');
       }
     } catch (e) {
-      print("로그인 실패: $e");
+      log("로그인 실패: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("로그인 실패: $e")),
       );
@@ -76,6 +77,6 @@ class AuthNotifier extends StateNotifier<User?> {
     await googleSignIn.signOut(); // 구글 계정 로그아웃
     await FirebaseAuth.instance.signOut(); // Firebase 로그아웃
     state = null;
-    print('로그아웃 완료');
+    log('로그아웃 완료');
   }
 }
