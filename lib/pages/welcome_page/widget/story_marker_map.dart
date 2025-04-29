@@ -4,8 +4,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart' hide NaverMapZoomControlWidget;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:region_based_chat/models/story_model.dart';
 
-import '../../../models/marker.dart';
 import '../../../providers/marker_provider.dart';
 import '../util/polling_timer.dart';
 import 'focus_detector.dart';
@@ -66,10 +66,10 @@ class StoryMarkerMapState extends ConsumerState<StoryMarkerMap> with WidgetsBind
     startPollingTimer();
   }
 
-  void _onMarkerTapped(Marker tappedMarker) {
+  void _onMarkerTapped(StoryMarker tappedStory) {
     log("마커 탭 감지");
     widget.draggableController.animateTo(0.6, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-    ref.read(selectedMarkerProvider.notifier).state = tappedMarker; // 상태 업데이트
+    ref.read(selectedMarkerProvider.notifier).state = tappedStory; // 상태 업데이트
   }
 
   @override

@@ -122,7 +122,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
         imageUrls = await _uploadImages(_selectedImages);
       }
 
-      final String storyId = await _storyService.createStory(
+      await _storyService.createStory(
         title: _titleController.text,
         description: _contentController.text,
         latitude: _selectedLocation!.latitude,

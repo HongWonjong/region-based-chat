@@ -18,7 +18,6 @@ class _LocationMapModalState extends State<LocationMapModal> {
   NaverMapController? _mapController;
   NMarker? _marker;
   NLatLng? _selectedLocation;
-  bool _mapReady = false;
 
   @override
   void initState() {
@@ -99,13 +98,10 @@ class _LocationMapModalState extends State<LocationMapModal> {
                     ),
                     SizedBox(width: 8),
                     ElevatedButton(
-                      onPressed: _selectedLocation != null
-                          ? () => Navigator.pop(context, _selectedLocation)
-                          : null,
+                      onPressed: _selectedLocation != null ? () => Navigator.pop(context, _selectedLocation) : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: isDark ? Colors.amber : Colors.amber,
-                        foregroundColor:
-                            isDark ? Colors.black : Colors.deepPurple.shade900,
+                        foregroundColor: isDark ? Colors.black : Colors.deepPurple.shade900,
                         disabledBackgroundColor: isDark
                             ? Colors.grey[600] // 다크모드에서 더 밝은 회색으로 변경
                             : Colors.grey.shade400,
@@ -143,8 +139,7 @@ class _LocationMapModalState extends State<LocationMapModal> {
                   NaverMap(
                     options: NaverMapViewOptions(
                       initialCameraPosition: NCameraPosition(
-                        target: widget.initialLocation ??
-                            NLatLng(37.5666102, 126.9783881), // 서울시청 기본값
+                        target: widget.initialLocation ?? NLatLng(37.5666102, 126.9783881), // 서울시청 기본값
                         zoom: 15,
                       ),
                       logoAlign: NLogoAlign.leftBottom,
@@ -163,15 +158,13 @@ class _LocationMapModalState extends State<LocationMapModal> {
                       _mapController = controller;
 
                       // 위치 추적 모드 해제
-                      controller
-                          .setLocationTrackingMode(NLocationTrackingMode.none);
+                      controller.setLocationTrackingMode(NLocationTrackingMode.none);
 
                       // 카메라 이동 시도
                       Future.delayed(Duration(milliseconds: 300), () {
                         controller.updateCamera(
                           NCameraUpdate.withParams(
-                            target: widget.initialLocation ??
-                                NLatLng(37.5666102, 126.9783881),
+                            target: widget.initialLocation ?? NLatLng(37.5666102, 126.9783881),
                             zoom: 15,
                           ),
                         );
@@ -181,9 +174,7 @@ class _LocationMapModalState extends State<LocationMapModal> {
                         _updateMarker(widget.initialLocation!);
                       }
 
-                      setState(() {
-                        _mapReady = true;
-                      });
+                      setState(() {});
 
                       HapticFeedback.lightImpact();
                     },
@@ -237,9 +228,7 @@ class _LocationMapModalState extends State<LocationMapModal> {
                         // 구분선
                         Container(
                           height: 1,
-                          color: isDark
-                              ? Colors.grey[700]!.withOpacity(0.3)
-                              : Colors.grey.withOpacity(0.3),
+                          color: isDark ? Colors.grey[700]!.withOpacity(0.3) : Colors.grey.withOpacity(0.3),
                           width: 48,
                         ),
 

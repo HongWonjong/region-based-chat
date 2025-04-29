@@ -92,7 +92,6 @@ class RegisterPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final nickname = ref.watch(nicknameProvider);
     final isLoading = ref.watch(isRegisteringProvider);
     final profileImage = ref.watch(profileImageProvider);
 
