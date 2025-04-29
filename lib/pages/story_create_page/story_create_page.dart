@@ -389,25 +389,12 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                           ),
                           isDark: isDark,
                         ),
-
-                        SizedBox(height: 40),
-
                         // 이미지 선택 버튼 추가
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                '사진 첨부',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: isDark
-                                      ? Colors.amber[200]
-                                      : Colors.deepPurple.shade800,
-                                ),
-                              ),
                               SizedBox(height: 12),
                               SelectImageButton(
                                 onImagesSelected: (images) {
@@ -419,7 +406,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                             ],
                           ),
                         ),
-
+                        SizedBox(height: 20),
                         // 소문내기 버튼
                         SubmitButton(
                           onPressed:
