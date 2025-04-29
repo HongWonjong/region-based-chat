@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:region_based_chat/models/story_model.dart';
 import 'package:region_based_chat/pages/chat_page/chat_page.dart';
 import 'package:region_based_chat/pages/welcome_page/util/date_onvert.dart';
-import 'package:region_based_chat/providers/firebase_storage_provider.dart';
+import 'package:region_based_chat/providers/firebase/firebase_storage_provider.dart';
 import 'package:region_based_chat/providers/marker_provider.dart';
-import 'package:region_based_chat/services/firebase_storage.dart';
+import 'package:region_based_chat/services/firebase/firebase_storage_service.dart';
 import 'package:region_based_chat/style/style.dart';
 
 class StoryBottomSheet extends ConsumerWidget {

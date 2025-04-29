@@ -6,7 +6,7 @@ import 'package:region_based_chat/models/story_model.dart';
 
 import '../pages/welcome_page/util/marker_util.dart';
 import '../repository/marker_repository.dart';
-import 'firebase_store_provider.dart';
+import 'firebase/firebase_store_provider.dart';
 
 // 마커 리스트 상태 관리
 final markerListProvider = StateNotifierProvider<MarkerListNotifier, List<StoryMarkerModel>>((ref) {

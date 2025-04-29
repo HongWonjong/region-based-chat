@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-import '../../providers/chat_providers.dart';
+import '../../providers/chat_provider.dart';
 import '../../style/style.dart';
 import '../../providers/auth_provider.dart';
 
