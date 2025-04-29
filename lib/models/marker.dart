@@ -12,6 +12,7 @@ class Marker {
   final String createdAt;
   final StoryType type;
   final List<String> imageUrls;
+  final String uid;
 
   Marker({
     required this.id,
@@ -22,6 +23,7 @@ class Marker {
     required this.createdBy,
     required this.createdAt,
     required this.type,
+    required this.uid,
     this.imageUrls = const [],
   });
   factory Marker.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -29,18 +31,14 @@ class Marker {
     return Marker(
       id: data['id'] as String,
       title: data['title'] as String,
-      longitude: (data['longitude'] is int
-          ? (data['longitude'] as int).toDouble()
-          : data['longitude'] as double),
-      latitude: (data['latitude'] is int
-          ? (data['latitude'] as int).toDouble()
-          : data['latitude'] as double),
+      longitude: (data['longitude'] is int ? (data['longitude'] as int).toDouble() : data['longitude'] as double),
+      latitude: (data['latitude'] is int ? (data['latitude'] as int).toDouble() : data['latitude'] as double),
       description: data['description'] as String,
       createdBy: data['createdBy'] as String,
       createdAt: data['createdAt'] as String,
       type: StoryType.fromString(data['type'] as String),
-      imageUrls:
-          data['imageUrls'] != null ? List<String>.from(data['imageUrls']) : [],
+      uid: data['uid'],
+      imageUrls: data['imageUrls'] != null ? List<String>.from(data['imageUrls']) : [],
     );
   }
 
@@ -54,6 +52,7 @@ class Marker {
       'createdBy': createdBy,
       'createdAt': createdAt,
       'type': type.toJson(),
+      'uid': uid,
       'imageUrls': imageUrls,
     };
   }

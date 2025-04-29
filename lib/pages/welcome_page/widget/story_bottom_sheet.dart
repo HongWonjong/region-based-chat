@@ -1,9 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:region_based_chat/models/marker.dart';
 import 'package:region_based_chat/pages/chat_page/chat_page.dart';
 import 'package:region_based_chat/pages/welcome_page/util/date_onvert.dart';
+import 'package:region_based_chat/providers/firebase_storage_provider.dart';
 import 'package:region_based_chat/providers/marker_provider.dart';
+import 'package:region_based_chat/services/firebase_storage.dart';
 
 class StoryBottomSheet extends ConsumerWidget {
   final DraggableScrollableController draggableController;
@@ -13,6 +17,7 @@ class StoryBottomSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final markerProvider = ref.watch(selectedMarkerProvider);
+    final FirebaseStorageService fireStorageProvider = ref.read(firebaseStorageServiceProvider);
     return DraggableScrollableSheet(
       controller: draggableController,
       initialChildSize: 0.05,
@@ -43,7 +48,7 @@ class StoryBottomSheet extends ConsumerWidget {
               SliverPadding(
                 padding: EdgeInsets.all(30),
                 sliver: SliverList.list(
-                  children: _content(markerProvider, context),
+                  children: _content(markerProvider, context, fireStorageProvider),
                 ),
               ),
             ],
@@ -53,7 +58,7 @@ class StoryBottomSheet extends ConsumerWidget {
     );
   }
 
-  List<Widget> _content(Marker? marker, BuildContext context) {
+  List<Widget> _content(Marker? marker, BuildContext context, FirebaseStorageService fireStorageProvider) {
     if (marker == null) {
       return [Text("지도의 마커를 클릭해 다양한 소문들을 확인해보세요!")];
     }
@@ -64,18 +69,50 @@ class StoryBottomSheet extends ConsumerWidget {
         children: [
           Row(
             children: [
-              Container(
-                decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.blueAccent),
-                height: 50,
-                width: 50,
-                child: Icon(Icons.person),
+              FutureBuilder<String>(
+                future: fireStorageProvider.getDownloadUrl(
+                  fireStorageProvider.getProfileImageReference(marker.uid),
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasError) {
+                    return const SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: Icon(Icons.error, color: Colors.red),
+                    );
+                  } else if (snapshot.hasData) {
+                    return ClipOval(
+                      child: Image.network(
+                        snapshot.data!,
+                        height: 50,
+                        width: 50,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.error, color: Colors.red);
+                        },
+                      ),
+                    );
+                  } else {
+                    return const SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: Icon(Icons.person, color: Colors.grey),
+                    );
+                  }
+                },
               ),
               SizedBox(width: 10),
               Text(marker.createdBy),
             ],
           ),
           ElevatedButton.icon(
-            onPressed: () {
+            onPressed: () async {
               final route = MaterialPageRoute(builder: (context) => ChatPage(markerId: marker.id));
               Navigator.push(context, route);
             },

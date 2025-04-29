@@ -104,10 +104,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
       }
 
       // Firestore에서 사용자 정보 가져오기 (닉네임 포함)
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUser.uid)
-          .get();
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).get();
 
       if (!userDoc.exists) {
         throw Exception("사용자 정보를 찾을 수 없습니다");
@@ -128,6 +125,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
         longitude: _selectedLocation!.longitude,
         userId: userName,
         type: _getStoryTypeFromIndex(_selectedCategoryIndex),
+        uid: FirebaseAuth.instance.currentUser!.uid,
         imageUrls: imageUrls, // 업로드된 이미지 URL 전달
       );
 
@@ -161,13 +159,11 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
     try {
       for (int i = 0; i < images.length; i++) {
         XFile image = images[i];
-        final String timestamp =
-            DateTime.now().millisecondsSinceEpoch.toString();
+        final String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
         final String fileName = 'story_image_${timestamp}_$i.jpg';
 
         // 스토리지 참조 생성
-        final Reference storageRef =
-            storage.ref().child('story_images/$fileName');
+        final Reference storageRef = storage.ref().child('story_images/$fileName');
 
         // 이미지 파일 업로드
         final UploadTask uploadTask = storageRef.putFile(File(image.path));
@@ -215,8 +211,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
     }
   }
 
-  bool get _isFormValid =>
-      _isTitleValid && _isContentValid && _selectedLocation != null;
+  bool get _isFormValid => _isTitleValid && _isContentValid && _selectedLocation != null;
 
   @override
   Widget build(BuildContext context) {
@@ -307,9 +302,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                       child: IconButton(
                         icon: Icon(
                           Icons.location_on,
-                          color: _selectedLocation != null
-                              ? Colors.amber
-                              : Colors.white70,
+                          color: _selectedLocation != null ? Colors.amber : Colors.white70,
                           size: 28,
                         ),
                         onPressed: _showLocationPickerModal,
@@ -403,8 +396,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
 
                         // 소문내기 버튼
                         SubmitButton(
-                          onPressed:
-                              _isFormValid && !_isLoading ? _saveStory : null,
+                          onPressed: _isFormValid && !_isLoading ? _saveStory : null,
                           text: '소문내기',
                         ),
 
@@ -438,8 +430,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
                         ),
                         SizedBox(height: 16),
                         Text(

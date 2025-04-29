@@ -16,6 +16,7 @@ class Story {
   final String createdBy; // 이제 이 필드가 사용자 닉네임을 저장
   final String createdAt; // ISO 8601 문자열로 유지
   final StoryType type;
+  final String uid;
   final List<String> imageUrls;
 
   Story({
@@ -27,6 +28,7 @@ class Story {
     required this.createdBy,
     required this.createdAt,
     required this.type,
+    required this.uid,
     this.imageUrls = const [],
   });
 
@@ -40,6 +42,7 @@ class Story {
       'createdBy': createdBy,
       'createdAt': createdAt,
       'type': type.toString().split('.').last,
+      'uid': uid,
       'imageUrls': imageUrls,
     };
   }
@@ -57,6 +60,7 @@ class Story {
         (e) => e.toString().split('.').last == map['type'],
         orElse: () => StoryType.minorIncident,
       ),
+      uid: map['uid'],
       imageUrls: List<String>.from(map['imageUrls'] ?? []),
     );
   }
@@ -74,6 +78,7 @@ class StoryService {
     required double longitude,
     required String userId, // 이제 이 매개변수가 사용자 닉네임을 받음
     required StoryType type,
+    required String uid,
     List<String> imageUrls = const [],
   }) async {
     try {
@@ -90,6 +95,7 @@ class StoryService {
         createdBy: userId, // 사용자 닉네임 저장
         createdAt: DateTime.now().toUtc().toIso8601String(),
         type: type,
+        uid: uid,
         imageUrls: imageUrls,
       );
 
@@ -99,7 +105,7 @@ class StoryService {
       return docRef.id;
     } catch (e) {
       print('스토리 생성 오류: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -128,25 +134,20 @@ class StoryService {
       return stories;
     } catch (e) {
       print('스토리 조회 오류: $e');
-      throw e;
+      rethrow;
     }
   }
 
   // 특정 유저의 스토리 조회
   Future<List<Story>> getStoriesByUser(String userId) async {
     try {
-      final querySnapshot = await _firestore
-          .collection(_collection)
-          .where('createdBy', isEqualTo: userId)
-          .orderBy('createdAt', descending: true)
-          .get();
+      final querySnapshot =
+          await _firestore.collection(_collection).where('createdBy', isEqualTo: userId).orderBy('createdAt', descending: true).get();
 
-      return querySnapshot.docs
-          .map((doc) => Story.fromMap(doc.data()))
-          .toList();
+      return querySnapshot.docs.map((doc) => Story.fromMap(doc.data())).toList();
     } catch (e) {
       print('사용자 스토리 조회 오류: $e');
-      throw e;
+      rethrow;
     }
   }
 }
