@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:region_based_chat/enum/story_type_enum.dart';
 
 class StoryMarker {

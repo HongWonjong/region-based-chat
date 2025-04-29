@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -498,17 +497,5 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
       ),
       child: child,
     );
-  }
-
-  void _publishStory() {
-    // 스토리 발행 로직에 이미지 처리 추가
-    if (_selectedImages.isNotEmpty) {
-      // 이미지 처리 로직을 여기에 추가
-      log('첨부된 이미지 개수: ${_selectedImages.length}');
-      // 이미지 업로드 및 관련 처리를 위한 코드
-    }
-
-    // 기존 발행 로직
-    // ... existing code ...
   }
 }
