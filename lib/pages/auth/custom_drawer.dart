@@ -161,7 +161,7 @@ class CustomDrawer extends ConsumerWidget {
                       child: GoogleSignInButton(
                         onPressed: () => ref
                             .read(authProvider.notifier)
-                            .signInWithGoogle(context, ref),
+                            .signInWithGoogle(context),
                       ),
                     ),
                 ],

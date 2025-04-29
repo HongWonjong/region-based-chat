@@ -3,7 +3,11 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../welcome_page/welcome_page.dart';
 
 final nicknameProvider = StateProvider<String>((ref) => '');
 final isRegisteringProvider = StateProvider<bool>((ref) => false);
@@ -38,19 +42,6 @@ class RegisterPage extends ConsumerWidget {
       );
       return;
     }
-    final docs = (await FirebaseFirestore.instance
-            .collection('users')
-            .where('username', isEqualTo: nickname)
-            .limit(1)
-            .get())
-        .docs;
-
-    if (docs.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("이미 사용중인 닉네임입니다. 다른 닉네임을 입력해주세요.")),
-      );
-      return; // 닉네임이 이미 존재하면 여기서 함수 종료
-    }
 
     ref.read(isRegisteringProvider.notifier).state = true;
 
@@ -81,7 +72,6 @@ class RegisterPage extends ConsumerWidget {
     });
 
     ref.read(isRegisteringProvider.notifier).state = false;
-    ref.invalidate(markerListProvider); //  Provider 초기화
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const WelcomePage()),
