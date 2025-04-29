@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class _SelectImageButtonState extends State<SelectImageButton> {
       }
     } catch (e) {
       // 이미지 선택 오류 처리
-      debugPrint('이미지 선택 오류: $e');
+      log('이미지 선택 오류: $e');
     }
   }
 
@@ -83,8 +84,7 @@ class _SelectImageButtonState extends State<SelectImageButton> {
                 '선택된 사진 ${_selectedImages.length}장',
                 style: TextStyle(
                   fontSize: 14,
-                  color:
-                      isDark ? Colors.amber[200] : Colors.deepPurple.shade800,
+                  color: isDark ? Colors.amber[200] : Colors.deepPurple.shade800,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -117,7 +117,7 @@ class _SelectImageButtonState extends State<SelectImageButton> {
           // 선택된 이미지 그리드
           if (_isExpanded) ...[
             SizedBox(height: 12),
-            Container(
+            SizedBox(
               height: 120,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -178,8 +178,7 @@ class _SelectImageButtonState extends State<SelectImageButton> {
   }
 
   Widget _buildImageThumbnail(int index, bool isDark) {
-    final borderColor =
-        isDark ? Colors.amber.withOpacity(0.5) : Colors.deepPurple.shade100;
+    final borderColor = isDark ? Colors.amber.withOpacity(0.5) : Colors.deepPurple.shade100;
     final closeIconColor = isDark ? Colors.amber : Colors.deepPurple;
     final closeBackgroundColor = isDark ? Colors.grey[800] : Colors.white;
 

@@ -2,28 +2,28 @@ import 'dart:developer';
 
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:region_based_chat/models/story_model.dart';
 
-import '../models/marker.dart';
 import '../pages/welcome_page/util/marker_util.dart';
 import '../repository/marker_repository.dart';
-import 'firebase_store_provider.dart';
+import 'firebase/firebase_store_provider.dart';
 
 // 마커 리스트 상태 관리
-final markerListProvider = StateNotifierProvider<MarkerListNotifier, List<Marker>>((ref) {
+final markerListProvider = StateNotifierProvider<MarkerListNotifier, List<StoryMarkerModel>>((ref) {
   final markerRepository = ref.watch(markerRepositoryProvider); // MarkerRepository를 주입받음
   return MarkerListNotifier(markerRepository);
 });
 
 // 선택된 마커 상태 관리
-final selectedMarkerProvider = StateProvider<Marker?>((ref) => null);
+final selectedMarkerProvider = StateProvider<StoryMarkerModel?>((ref) => null);
 
 // 마커 리스트 상태 관리용 Notifier
-class MarkerListNotifier extends StateNotifier<List<Marker>> {
+class MarkerListNotifier extends StateNotifier<List<StoryMarkerModel>> {
   final MarkerRepository markerRepository;
 
   MarkerListNotifier(this.markerRepository) : super([]);
 
-  Future<void> fetchMarkers(NaverMapController controller, double positonCorrectionValue, Function(Marker) onMarkerTapped) async {
+  Future<void> fetchMarkers(NaverMapController controller, double positonCorrectionValue, Function(StoryMarkerModel) onMarkerTapped) async {
     log('fetch markers');
     final markers = await markerRepository.fetchMarkers(); // MarkerRepository에서 가져온 데이터
 
@@ -42,7 +42,7 @@ class MarkerListNotifier extends StateNotifier<List<Marker>> {
     state = markers;
   }
 
-  List<List<Marker>> _getNewAndRemovedMarkers(List<Marker> currentMarkers, List<Marker> newMarkers) {
+  List<List<StoryMarkerModel>> _getNewAndRemovedMarkers(List<StoryMarkerModel> currentMarkers, List<StoryMarkerModel> newMarkers) {
     final currentMarkerIds = currentMarkers.map((marker) => marker.id).toSet();
     final newMarkerIds = newMarkers.map((marker) => marker.id).toSet();
 

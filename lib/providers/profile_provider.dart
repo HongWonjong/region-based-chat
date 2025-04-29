@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,8 +15,7 @@ class ProfileState {
 }
 
 // profileProvider 정의
-final profileProvider =
-    StateNotifierProvider.family<ProfileNotifier, ProfileState, String?>(
+final profileProvider = StateNotifierProvider.family<ProfileNotifier, ProfileState, String?>(
   (ref, uid) => ProfileNotifier(uid),
 );
 
@@ -33,8 +33,7 @@ class ProfileNotifier extends StateNotifier<ProfileState> {
     if (uid == null) return;
 
     try {
-      final doc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
       final url = doc.data()?['profileImageUrl'] as String?;
       final username = doc.data()?['username'] as String?;
@@ -44,7 +43,7 @@ class ProfileNotifier extends StateNotifier<ProfileState> {
         username: username,
       );
     } catch (e) {
-      print('프로필 정보 로드 실패: $e');
+      log('프로필 정보 로드 실패: $e');
       state = ProfileState(profileImageUrl: null, username: null);
     }
   }
@@ -54,21 +53,17 @@ class ProfileNotifier extends StateNotifier<ProfileState> {
     if (uid == null) return;
 
     try {
-      final ref =
-          FirebaseStorage.instance.ref().child('users/profileImages/$uid.jpg');
+      final ref = FirebaseStorage.instance.ref().child('users/profileImages/$uid.jpg');
       await ref.putFile(File(image.path));
       final url = await ref.getDownloadURL();
 
       // Firestore에 프로필 이미지 URL 저장
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .update({'profileImageUrl': url});
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({'profileImageUrl': url});
 
       // 상태 업데이트
       state = ProfileState(profileImageUrl: url, username: state.username);
     } catch (e) {
-      print('프로필 이미지 업로드 실패: $e');
+      log('프로필 이미지 업로드 실패: $e');
       throw Exception('프로필 이미지 업로드 실패: $e');
     }
   }

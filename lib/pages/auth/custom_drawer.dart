@@ -6,8 +6,8 @@ import '../../main.dart';
 import '../../style/style.dart';
 import '../chat_list_page/chat_list_page.dart';
 import '../story_create_page/story_create_page.dart';
-import 'auth_provider.dart';
-import 'profile_provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/profile_provider.dart';
 import 'service_info_page.dart';
 import 'widgets/google_sign_in_button.dart';
 
@@ -24,9 +24,7 @@ class CustomDrawer extends ConsumerWidget {
 
     if (pickedFile != null) {
       try {
-        await ref
-            .read(profileProvider(user.uid).notifier)
-            .uploadProfileImage(pickedFile);
+        await ref.read(profileProvider(user.uid).notifier).uploadProfileImage(pickedFile);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('프로필 이미지 업로드 실패: $e')),
@@ -39,8 +37,7 @@ class CustomDrawer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final user = ref.watch(authProvider);
-    final profileState =
-        user != null ? ref.watch(profileProvider(user.uid)) : null;
+    final profileState = user != null ? ref.watch(profileProvider(user.uid)) : null;
     final profileImageUrl = profileState?.profileImageUrl;
     final username = profileState?.username;
 
@@ -76,9 +73,7 @@ class CustomDrawer extends ConsumerWidget {
                       children: [
                         // 프로필 이미지
                         GestureDetector(
-                          onTap: user != null
-                              ? () => _pickAndUploadImage(context, ref)
-                              : null,
+                          onTap: user != null ? () => _pickAndUploadImage(context, ref) : null,
                           child: Container(
                             width: 70,
                             height: 70,
@@ -86,8 +81,7 @@ class CustomDrawer extends ConsumerWidget {
                               shape: BoxShape.circle,
                               color: isDark ? Colors.grey[800] : Colors.white,
                               border: Border.all(
-                                color:
-                                    isDark ? Colors.grey[700]! : Colors.white,
+                                color: isDark ? Colors.grey[700]! : Colors.white,
                                 width: 2,
                               ),
                               boxShadow: [
@@ -104,21 +98,16 @@ class CustomDrawer extends ConsumerWidget {
                                   ? Image.network(
                                       profileImageUrl,
                                       fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) => Icon(
+                                      errorBuilder: (context, error, stackTrace) => Icon(
                                         Icons.person,
                                         size: 40,
-                                        color: isDark
-                                            ? Colors.amber
-                                            : Colors.deepPurple,
+                                        color: isDark ? Colors.amber : Colors.deepPurple,
                                       ),
                                     )
                                   : Icon(
                                       Icons.person,
                                       size: 40,
-                                      color: isDark
-                                          ? Colors.amber
-                                          : Colors.deepPurple,
+                                      color: isDark ? Colors.amber : Colors.deepPurple,
                                     ),
                             ),
                           ),
@@ -130,9 +119,7 @@ class CustomDrawer extends ConsumerWidget {
                             children: [
                               // 사용자 닉네임
                               Text(
-                                user == null
-                                    ? "게스트"
-                                    : username ?? user.displayName ?? "사용자",
+                                user == null ? "게스트" : username ?? user.displayName ?? "사용자",
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -157,12 +144,9 @@ class CustomDrawer extends ConsumerWidget {
                   // 로그인 버튼 (로그인하지 않은 경우에만 표시)
                   if (user == null)
                     Padding(
-                      padding:
-                          const EdgeInsets.only(top: 16, left: 20, right: 20),
+                      padding: const EdgeInsets.only(top: 16, left: 20, right: 20),
                       child: GoogleSignInButton(
-                        onPressed: () => ref
-                            .read(authProvider.notifier)
-                            .signInWithGoogle(context, ref),
+                        onPressed: () => ref.read(authProvider.notifier).signInWithGoogle(context, ref),
                       ),
                     ),
                 ],
@@ -190,8 +174,7 @@ class CustomDrawer extends ConsumerWidget {
                     value: isDark,
                     activeColor: Colors.amber,
                     onChanged: (value) {
-                      ref.read(themeModeProvider.notifier).state =
-                          value ? ThemeMode.dark : ThemeMode.light;
+                      ref.read(themeModeProvider.notifier).state = value ? ThemeMode.dark : ThemeMode.light;
                     },
                   ),
                 ],
@@ -273,9 +256,7 @@ class CustomDrawer extends ConsumerWidget {
                         onTap: () async {
                           await ref.read(authProvider.notifier).signOut();
                           // 로그아웃 시 profileProvider 초기화
-                          if (user.uid != null) {
-                            ref.invalidate(profileProvider(user.uid));
-                          }
+                          ref.invalidate(profileProvider(user.uid));
                         },
                         isDark: isDark,
                       ),
@@ -333,10 +314,8 @@ class CustomDrawer extends ConsumerWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        splashColor:
-            isDark ? Colors.grey[700] : Colors.deepPurple.withOpacity(0.1),
-        highlightColor:
-            isDark ? Colors.grey[800] : Colors.deepPurple.withOpacity(0.05),
+        splashColor: isDark ? Colors.grey[700] : Colors.deepPurple.withOpacity(0.1),
+        highlightColor: isDark ? Colors.grey[800] : Colors.deepPurple.withOpacity(0.05),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Row(

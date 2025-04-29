@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-
-import '../../../models/marker.dart';
+import 'package:region_based_chat/enum/story_type_enum.dart';
+import 'package:region_based_chat/models/story_model.dart';
 
 class MarkerUtils {
-  static NMarker convertToNMarker(Marker marker) {
+  static NMarker convertToNMarker(StoryMarkerModel story) {
     return NMarker(
-      id: marker.id,
-      position: NLatLng(marker.latitude, marker.longitude),
+      id: story.id,
+      position: NLatLng(story.latitude, story.longitude),
     );
   }
 
   static void updateMapMarkers(
       {required NaverMapController mapController,
-      required List<Marker> removedMarkers,
-      required List<Marker> addedMarkers,
-      required Function(Marker) onMarkerTapped,
+      required List<StoryMarkerModel> removedMarkers,
+      required List<StoryMarkerModel> addedMarkers,
+      required Function(StoryMarkerModel) onMarkerTapped,
       required double positonCorrectionValue}) {
     // 마커 제거
     for (var marker in removedMarkers) {
@@ -30,10 +30,10 @@ class MarkerUtils {
     }
   }
 
-  static void setMarkerVisual(Marker marker, NMarker nMarker) {
+  static void setMarkerVisual(StoryMarkerModel story, NMarker nMarker) {
     Color? color;
 
-    switch (marker.type) {
+    switch (story.type) {
       case StoryType.majorIncident:
         color = Colors.red;
         break;
@@ -52,8 +52,8 @@ class MarkerUtils {
     nMarker.setIconTintColor(color);
   }
 
-  static void setMarkerListener(
-      NMarker nMarker, NaverMapController mapController, double positonCorrectionValue, Function(Marker) onMarkerTapped, Marker marker) {
+  static void setMarkerListener(NMarker nMarker, NaverMapController mapController, double positonCorrectionValue,
+      Function(StoryMarkerModel) onMarkerTapped, StoryMarkerModel marker) {
     nMarker.setOnTapListener((NMarker tappedMarker) async {
       // 바텀 시트가 올라온 상태에서 지도 중간에 마커가 위치하기위한 좌표 보정
 

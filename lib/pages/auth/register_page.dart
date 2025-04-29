@@ -4,12 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:region_based_chat/pages/auth/profile_provider.dart';
 import 'package:region_based_chat/pages/welcome_page/welcome_page.dart';
-import 'package:region_based_chat/providers/firebase_storage_provider.dart';
-import 'package:region_based_chat/providers/firebase_store_provider.dart';
+import 'package:region_based_chat/providers/firebase/firebase_storage_provider.dart';
+import 'package:region_based_chat/providers/firebase/firebase_store_provider.dart';
 import 'package:region_based_chat/providers/marker_provider.dart';
+import 'package:region_based_chat/providers/profile_provider.dart';
 import 'package:region_based_chat/style/style.dart';
 
 final nicknameProvider = StateProvider<String>((ref) => '');
@@ -38,12 +37,7 @@ class RegisterPage extends ConsumerWidget {
       return;
     }
 
-    final docs = (await FirebaseFirestore.instance
-            .collection('users')
-            .where('username', isEqualTo: nickname)
-            .limit(1)
-            .get())
-        .docs;
+    final docs = (await FirebaseFirestore.instance.collection('users').where('username', isEqualTo: nickname).limit(1).get()).docs;
 
     if (docs.isNotEmpty) {
       _showSnackBar(context, "이미 사용중인 닉네임입니다. 다른 닉네임을 입력해주세요.");
@@ -65,8 +59,7 @@ class RegisterPage extends ConsumerWidget {
       final storageRef = firebaseStorageProvidre.getProfileImageReference(uid);
       firebaseStorageProvidre.putFilebyReference(storageRef, pickedFile.path);
       await storageRef.putFile(File(pickedFile.path));
-      profileImageUrl =
-          await firebaseStorageProvidre.getDownloadUrl(storageRef);
+      profileImageUrl = await firebaseStorageProvidre.getDownloadUrl(storageRef);
     }
 
     await ref.read(firebaseStoreServiceProvider).setUsersByUid({
@@ -82,8 +75,7 @@ class RegisterPage extends ConsumerWidget {
     ref.read(isRegisteringProvider.notifier).state = false;
     ref.invalidate(markerListProvider);
     ref.invalidate(profileProvider(uid));
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (_) => const WelcomePage()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const WelcomePage()));
   }
 
   void _showSnackBar(BuildContext context, String message) {
@@ -104,7 +96,6 @@ class RegisterPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final nickname = ref.watch(nicknameProvider);
     final isLoading = ref.watch(isRegisteringProvider);
     final profileImage = ref.watch(profileImageProvider);
 
@@ -129,8 +120,7 @@ class RegisterPage extends ConsumerWidget {
             const SizedBox(height: 16),
             TextField(
               maxLength: 10,
-              onChanged: (value) =>
-                  ref.read(nicknameProvider.notifier).state = value,
+              onChanged: (value) => ref.read(nicknameProvider.notifier).state = value,
               decoration: TextFieldStyles.textFieldDecoration.copyWith(
                 hintText: '예: 피터개발자',
               ),
@@ -146,8 +136,7 @@ class RegisterPage extends ConsumerWidget {
                       elevation: ButtonStyles.buttonElevation,
                     ),
                     onPressed: () => _pickImage(ref),
-                    child: const Text('프로필 이미지 선택',
-                        style: TextStyle(color: Colors.white)),
+                    child: const Text('프로필 이미지 선택', style: TextStyle(color: Colors.white)),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -169,8 +158,7 @@ class RegisterPage extends ConsumerWidget {
                         elevation: ButtonStyles.buttonElevation,
                       ),
                       onPressed: () => _submit(context, ref),
-                      child: const Text('등록하기',
-                          style: TextStyle(color: Colors.white)),
+                      child: const Text('등록하기', style: TextStyle(color: Colors.white)),
                     ),
             ),
           ],

@@ -1,13 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:region_based_chat/models/marker.dart';
+import 'package:region_based_chat/models/story_model.dart';
 import 'package:region_based_chat/pages/chat_page/chat_page.dart';
 import 'package:region_based_chat/pages/welcome_page/util/date_onvert.dart';
-import 'package:region_based_chat/providers/firebase_storage_provider.dart';
+import 'package:region_based_chat/providers/firebase/firebase_storage_provider.dart';
 import 'package:region_based_chat/providers/marker_provider.dart';
-import 'package:region_based_chat/services/firebase_storage.dart';
+import 'package:region_based_chat/services/firebase/firebase_storage_service.dart';
 import 'package:region_based_chat/style/style.dart';
 
 class StoryBottomSheet extends ConsumerWidget {
@@ -84,8 +82,8 @@ class StoryBottomSheet extends ConsumerWidget {
   }
 
   // 소문 내용 렌더링
-  List<Widget> _content(Marker? marker, BuildContext context, FirebaseStorageService fireStorageProvider, bool isDark) {
-    if (marker == null) {
+  List<Widget> _content(StoryMarkerModel? story, BuildContext context, FirebaseStorageService fireStorageProvider, bool isDark) {
+    if (story == null) {
       return [
         Center(
           child: Padding(
@@ -125,7 +123,7 @@ class StoryBottomSheet extends ConsumerWidget {
               children: [
                 FutureBuilder<String>(
                   future: fireStorageProvider.getDownloadUrl(
-                    fireStorageProvider.getProfileImageReference(marker.uid),
+                    fireStorageProvider.getProfileImageReference(story.uid),
                   ),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -170,7 +168,7 @@ class StoryBottomSheet extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      marker.createdBy,
+                      story.createdBy,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -178,7 +176,7 @@ class StoryBottomSheet extends ConsumerWidget {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      dateConvert(marker.createdAt),
+                      dateConvert(story.createdAt),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],
@@ -209,7 +207,7 @@ class StoryBottomSheet extends ConsumerWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(24),
                   onTap: () {
-                    final route = MaterialPageRoute(builder: (context) => ChatPage(markerId: marker.id));
+                    final route = MaterialPageRoute(builder: (context) => ChatPage(markerId: story.id));
                     Navigator.push(context, route);
                   },
                   child: Padding(
@@ -253,7 +251,7 @@ class StoryBottomSheet extends ConsumerWidget {
         children: [
           Expanded(
             child: Text(
-              marker.title,
+              story.title,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -265,13 +263,13 @@ class StoryBottomSheet extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: marker.type.color.withOpacity(0.2),
+              color: story.type.color.withOpacity(0.2),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
-              marker.type.typeKor,
+              story.type.typeKor,
               style: TextStyle(
-                color: marker.type.color,
+                color: story.type.color,
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
               ),
@@ -293,7 +291,7 @@ class StoryBottomSheet extends ConsumerWidget {
           ),
         ),
         child: Text(
-          marker.description,
+          story.description,
           style: TextStyle(
             fontSize: 16,
             height: 1.5,
@@ -305,7 +303,7 @@ class StoryBottomSheet extends ConsumerWidget {
     ];
 
     // 이미지가 있는 경우
-    if (marker.imageUrls.isNotEmpty) {
+    if (story.imageUrls.isNotEmpty) {
       widgets.add(
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,7 +317,7 @@ class StoryBottomSheet extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '첨부된 사진 (${marker.imageUrls.length})',
+                  '첨부된 사진 (${story.imageUrls.length})',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -329,7 +327,7 @@ class StoryBottomSheet extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 12),
-            _buildImageGallery(marker.imageUrls, context),
+            _buildImageGallery(story.imageUrls, context),
           ],
         ),
       );

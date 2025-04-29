@@ -1,13 +1,14 @@
-import '../models/marker.dart';
-import '../services/firebase_firestore_service.dart';
+import 'package:region_based_chat/models/story_model.dart';
+
+import '../services/firebase/firebase_firestore_service.dart';
 
 class MarkerRepository {
   final FirebaseFirestoreService firebaseFirestoreService;
 
   MarkerRepository(this.firebaseFirestoreService);
 
-  Future<List<Marker>> fetchMarkers() async {
+  Future<List<StoryMarkerModel>> fetchMarkers() async {
     final markers = await firebaseFirestoreService.getMarkers();
-    return markers.map((doc) => Marker.fromFirestore(doc)).toList();
+    return markers.map((doc) => StoryMarkerModel.fromMap(doc.data())).toList();
   }
 }

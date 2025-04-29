@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:region_based_chat/enum/story_type_enum.dart';
 
 import '../../services/story_service.dart';
 import '../../widgets/custom_alert_dialog.dart';
@@ -120,7 +121,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
         imageUrls = await _uploadImages(_selectedImages);
       }
 
-      final String storyId = await _storyService.createStory(
+      await _storyService.createStory(
         title: _titleController.text,
         description: _contentController.text,
         latitude: _selectedLocation!.latitude,
@@ -496,17 +497,5 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
       ),
       child: child,
     );
-  }
-
-  void _publishStory() {
-    // 스토리 발행 로직에 이미지 처리 추가
-    if (_selectedImages.isNotEmpty) {
-      // 이미지 처리 로직을 여기에 추가
-      print('첨부된 이미지 개수: ${_selectedImages.length}');
-      // 이미지 업로드 및 관련 처리를 위한 코드
-    }
-
-    // 기존 발행 로직
-    // ... existing code ...
   }
 }
