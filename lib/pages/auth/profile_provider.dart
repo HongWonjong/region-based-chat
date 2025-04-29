@@ -1,8 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 // ProfileState 클래스 정의
 class ProfileState {
@@ -35,7 +36,7 @@ class ProfileNotifier extends StateNotifier<ProfileState> {
       final doc =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
-      final url = doc.data()?['profileImageUrlChu'] as String?;
+      final url = doc.data()?['profileImageUrl'] as String?;
       final username = doc.data()?['username'] as String?;
 
       state = ProfileState(
@@ -62,7 +63,7 @@ class ProfileNotifier extends StateNotifier<ProfileState> {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(uid)
-          .update({'profileImageUrlChu': url});
+          .update({'profileImageUrl': url});
 
       // 상태 업데이트
       state = ProfileState(profileImageUrl: url, username: state.username);

@@ -1,18 +1,20 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
 import '../../services/story_service.dart';
 import '../../widgets/custom_alert_dialog.dart';
-import 'widgets/input_fields.dart';
-import 'widgets/submit_button.dart';
 import 'widgets/category_selector.dart';
-import 'widgets/location_map_modal.dart';
+import 'widgets/input_fields.dart';
 import 'widgets/location_info_panel.dart';
+import 'widgets/location_map_modal.dart';
 import 'widgets/select_image_button.dart';
-import 'package:image_picker/image_picker.dart';
+import 'widgets/submit_button.dart';
 
 class StoryCreatePage extends StatefulWidget {
   const StoryCreatePage({super.key});
@@ -220,6 +222,8 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
@@ -231,10 +235,15 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.deepPurple.shade50,
-                    Colors.white,
-                  ],
+                  colors: isDark
+                      ? [
+                          Colors.grey[900]!,
+                          Colors.grey[850]!,
+                        ]
+                      : [
+                          Colors.deepPurple.shade50,
+                          Colors.white,
+                        ],
                   stops: [0.0, 0.3],
                 ),
               ),
@@ -248,7 +257,8 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                   expandedHeight: 120.0,
                   floating: false,
                   pinned: true,
-                  backgroundColor: Colors.deepPurple,
+                  backgroundColor:
+                      isDark ? Colors.grey[900] : Colors.deepPurple,
                   flexibleSpace: FlexibleSpaceBar(
                     title: Text(
                       '소문내기',
@@ -267,10 +277,15 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                             gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.deepPurple.shade800,
-                                Colors.deepPurple.shade500,
-                              ],
+                              colors: isDark
+                                  ? [
+                                      Colors.black,
+                                      Colors.grey[850]!,
+                                    ]
+                                  : [
+                                      Colors.deepPurple.shade800,
+                                      Colors.deepPurple.shade500,
+                                    ],
                             ),
                           ),
                         ),
@@ -329,7 +344,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                         SizedBox(height: 20),
 
                         // 위치 정보 섹션
-                        _buildSectionTitle('위치 정보', Icons.place),
+                        _buildSectionTitle('위치 정보', Icons.place, isDark),
                         SizedBox(height: 16),
 
                         // 위치 정보 패널
@@ -340,7 +355,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                         SizedBox(height: 24),
 
                         // 제목 섹션
-                        _buildSectionTitle('소문 내용', Icons.edit_note),
+                        _buildSectionTitle('소문 내용', Icons.edit_note, isDark),
                         SizedBox(height: 16),
 
                         // 입력 필드를 카드로 감싸기
@@ -354,12 +369,13 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                               onContentChanged: (_) => _checkFormValidity(),
                             ),
                           ),
+                          isDark: isDark,
                         ),
 
                         SizedBox(height: 24),
 
                         // 카테고리 선택 섹션
-                        _buildSectionTitle('카테고리 선택', Icons.category),
+                        _buildSectionTitle('카테고리 선택', Icons.category, isDark),
                         SizedBox(height: 16),
 
                         _buildCard(
@@ -371,24 +387,14 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                               categories: CategoryOption.defaultCategories,
                             ),
                           ),
+                          isDark: isDark,
                         ),
-
-                        SizedBox(height: 40),
-
                         // 이미지 선택 버튼 추가
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                '사진 첨부',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.deepPurple.shade800,
-                                ),
-                              ),
                               SizedBox(height: 12),
                               SelectImageButton(
                                 onImagesSelected: (images) {
@@ -400,7 +406,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                             ],
                           ),
                         ),
-
+                        SizedBox(height: 20),
                         // 소문내기 버튼
                         SubmitButton(
                           onPressed:
@@ -424,7 +430,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                   child: Container(
                     padding: EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: isDark ? Colors.grey[800] : Colors.white,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
@@ -438,14 +444,14 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              isDark ? Colors.amberAccent : Colors.deepPurple),
                         ),
                         SizedBox(height: 16),
                         Text(
                           '소문 등록 중...',
                           style: TextStyle(
-                            color: Colors.deepPurple,
+                            color: isDark ? Colors.white : Colors.deepPurple,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -461,12 +467,12 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
   }
 
   // 섹션 제목 위젯
-  Widget _buildSectionTitle(String title, IconData icon) {
+  Widget _buildSectionTitle(String title, IconData icon, bool isDark) {
     return Row(
       children: [
         Icon(
           icon,
-          color: Colors.deepPurple,
+          color: isDark ? Colors.amber : Colors.deepPurple,
           size: 26,
         ),
         SizedBox(width: 10),
@@ -475,7 +481,7 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.deepPurple.shade800,
+            color: isDark ? Colors.amber[200] : Colors.deepPurple.shade800,
           ),
         ),
       ],
@@ -483,15 +489,17 @@ class _StoryCreatePageState extends State<StoryCreatePage> {
   }
 
   // 카드 위젯
-  Widget _buildCard({required Widget child}) {
+  Widget _buildCard({required Widget child, bool isDark = false}) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? Colors.grey[850] : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: isDark
+                ? Colors.black.withOpacity(0.4)
+                : Colors.grey.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 5,
             offset: Offset(0, 2),

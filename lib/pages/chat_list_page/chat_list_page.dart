@@ -10,9 +10,10 @@ class ChatListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chats = ref.watch(chatListProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: BackgroundStyles.chatBackgroundColor,
+      backgroundColor: isDark ? Colors.grey[900] : BackgroundStyles.chatBackgroundColor,
       body: CustomScrollView(
         slivers: [
           // 앱바
@@ -20,11 +21,15 @@ class ChatListPage extends ConsumerWidget {
             expandedHeight: 70.0,
             floating: false,
             pinned: true,
-            backgroundColor: AppBarStyles.appBarBackgroundColor,
+            backgroundColor: isDark ? Colors.grey[850] : AppBarStyles.appBarBackgroundColor,
             flexibleSpace: FlexibleSpaceBar(
-              title: const Text(
+              title: Text(
                 '채팅방',
-                style: AppBarStyles.appBarTitleStyle,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.white,
+                ),
               ),
               background: Stack(
                 fit: StackFit.expand,
@@ -35,14 +40,19 @@ class ChatListPage extends ConsumerWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [
+                        colors: isDark
+                            ? [
+                          Colors.black,
+                          Colors.grey[850]!,
+                        ]
+                            : [
                           AppBarStyles.appBarGradientStart,
                           AppBarStyles.appBarGradientEnd,
                         ],
                       ),
                     ),
                   ),
-                  // 장식용 원형 요소 추가해보기
+                  // 장식용 원형 요소
                   Positioned(
                     right: -20,
                     top: -20,
@@ -51,7 +61,7 @@ class ChatListPage extends ConsumerWidget {
                       height: 100,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.1),
+                        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.1),
                       ),
                     ),
                   ),
@@ -72,13 +82,13 @@ class ChatListPage extends ConsumerWidget {
                     Icon(
                       Icons.chat_bubble_outline,
                       size: 48,
-                      color: Colors.grey[400],
+                      color: isDark ? Colors.grey[600] : Colors.grey[400],
                     ),
                     const SizedBox(height: 16),
                     Text(
                       '채팅방이 없습니다.',
                       style: TextStyle(
-                        color: Colors.grey[600],
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -94,11 +104,11 @@ class ChatListPage extends ConsumerWidget {
               separatorBuilder: (_, __) => Divider(
                 thickness: 0.5,
                 height: 0.5,
-                color: Colors.grey.withOpacity(0.3),
+                color: isDark ? Colors.grey[700] : Colors.grey.withOpacity(0.3),
               ),
               itemBuilder: (context, index) {
                 final chat = chats[index];
-                return _buildChatTile(context, chat);
+                return _buildChatTile(context, chat, isDark);
               },
             ),
           ),
@@ -107,7 +117,7 @@ class ChatListPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildChatTile(BuildContext context, dynamic chat) {
+  Widget _buildChatTile(BuildContext context, dynamic chat, bool isDark) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -120,11 +130,11 @@ class ChatListPage extends ConsumerWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? Colors.grey[850] : Colors.white,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.05),
               blurRadius: 8,
               spreadRadius: 1,
               offset: const Offset(0, 2),
@@ -133,21 +143,20 @@ class ChatListPage extends ConsumerWidget {
         ),
         child: ListTile(
           dense: true,
-          contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           title: Text(
             chat.title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: isDark ? Colors.white : Colors.black87,
             ),
           ),
           subtitle: Text(
             chat.lastMessage,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[600],
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

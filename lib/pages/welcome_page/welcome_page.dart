@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:region_based_chat/pages/welcome_page/widget/story_bottom_sheet.dart';
-import 'package:region_based_chat/pages/welcome_page/widget/story_marker_map.dart';
-import '../auth/custom_drawer.dart';
-import '../../style/style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+import '../../style/style.dart';
+import '../auth/custom_drawer.dart';
 import '../story_create_page/story_create_page.dart';
+import 'widget/story_bottom_sheet.dart';
+import 'widget/story_marker_map.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -23,6 +24,7 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     final bool isLoggedIn = FirebaseAuth.instance.currentUser != null;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
         appBar: AppBar(
@@ -32,10 +34,15 @@ class _WelcomePageState extends State<WelcomePage> {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  AppBarStyles.appBarGradientStart,
-                  AppBarStyles.appBarGradientEnd,
-                ],
+                colors: isDark
+                    ? [
+                        Colors.black,
+                        Colors.grey[850]!,
+                      ]
+                    : [
+                        AppBarStyles.appBarGradientStart,
+                        AppBarStyles.appBarGradientEnd,
+                      ],
               ),
             ),
           ),
@@ -44,7 +51,7 @@ class _WelcomePageState extends State<WelcomePage> {
             children: [
               Image.asset(
                 'assets/logo_soeasy.png',
-                height: 100,
+                height: 110,
               ),
               const SizedBox(width: 8),
             ],
@@ -53,7 +60,7 @@ class _WelcomePageState extends State<WelcomePage> {
           iconTheme: const IconThemeData(color: Colors.white),
           actions: [
             IconButton(
-              icon: const Icon(Icons.edit_note),
+              icon: const Icon(Icons.edit_note, color: Colors.white),
               onPressed: () {
                 // 스토리 작성 페이지로 이동
                 if (isLoggedIn) {
