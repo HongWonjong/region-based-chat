@@ -7,6 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:region_based_chat/pages/welcome_page/welcome_page.dart';
 import 'package:region_based_chat/providers/firebase/firebase_storage_provider.dart';
 import 'package:region_based_chat/providers/firebase/firebase_store_provider.dart';
+import 'package:region_based_chat/providers/marker_provider.dart';
+import 'package:region_based_chat/providers/profile_provider.dart';
 import 'package:region_based_chat/style/style.dart';
 
 final nicknameProvider = StateProvider<String>((ref) => '');
@@ -71,6 +73,8 @@ class RegisterPage extends ConsumerWidget {
     });
 
     ref.read(isRegisteringProvider.notifier).state = false;
+    ref.invalidate(markerListProvider);
+    ref.invalidate(profileProvider(uid));
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const WelcomePage()));
   }
 

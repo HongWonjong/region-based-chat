@@ -2,6 +2,28 @@
 
 스파르타 코딩 클럽 1조의 혁신적인 팀 프로젝트! **소이지(소문 이웃 지킴이)** 는 위치 기반의 실시간 채팅 서비스로, 사용자들이 특정 장소(마커)에 연결된 채팅방에서 소통할 수 있는 플랫폼입니다. 사건 신고, 이벤트 공유, 커뮤니티 형성 등 다양한 용도로 활용 가능합니다. Firebase를 기반으로 빠르고 안정적인 데이터 관리와 실시간 채팅 기능을 제공합니다.
 
+## 📱 스크린샷
+
+<div style="display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 10px; margin-bottom: 20px;">
+  <img src="https://github.com/user-attachments/assets/1cf0b139-8020-413d-a554-dd9400028798" width="200"/>
+  <img src="https://github.com/user-attachments/assets/e53f517a-1045-4b4e-a0c5-fc4d9cbf1ace" width="200" />
+  <img src="https://github.com/user-attachments/assets/762af693-8d08-4558-b684-58c2fbe109b7" width="200" />
+  <img src="https://github.com/user-attachments/assets/b03646cf-eb08-463e-a4f4-1f704f3676d1" width="200" />
+  <img src="https://github.com/user-attachments/assets/a09d938f-65a2-4baf-898d-0db095526770" width="200" />
+  <img src="https://github.com/user-attachments/assets/da09ca87-bcf3-4081-a850-ab2b47e19441" width="200" />
+  <img src="https://github.com/user-attachments/assets/9d409a8c-93b0-421e-a915-cbe485482a11" width="200" />
+  <img src="https://github.com/user-attachments/assets/7e41a564-6f72-4967-9356-82044de956c3" width="200" />
+  <img src="https://github.com/user-attachments/assets/ad972b55-0b04-4bd1-88c7-b8925ff909ac" width="200" />
+  <img src="https://github.com/user-attachments/assets/b302110f-dede-4622-a285-3780e571ac8a" width="200" />
+  <img src="https://github.com/user-attachments/assets/aae2a213-703c-4209-b8bd-f44ff9fc2496" width="200" />
+  <img src="https://github.com/user-attachments/assets/7c63a32b-a9aa-42f3-b348-eee87cdea760" width="200" />
+  <img src="https://github.com/user-attachments/assets/76d2b45c-afc4-4403-ae83-ec7571cf361e" width="200" />
+  <img src="https://github.com/user-attachments/assets/59e5fb96-1ab5-4d9c-8fb4-dfaca5f4dd56" width="200" />
+  <img src="https://github.com/user-attachments/assets/880518ba-cdda-4717-8f90-424b07e49290" width="200" />
+  <img src="https://github.com/user-attachments/assets/4085aef6-10c2-458a-b6ec-7387b8c294c1" width="200" />
+</div>
+
+
 ## 🎯 프로젝트 소개
 
 **소이지**는 사용자들이 지도 위의 특정 위치(마커)에 채팅방을 생성하고, 다른 사용자들과 실시간으로 소통할 수 있는 서비스입니다. 주요 기능은 다음과 같습니다:
@@ -30,7 +52,7 @@
 ```json
 // Users/<user_uid>
 {
-  "uid": "user123", 
+  "uid": "user123",
   "email": "user@example.com",
   "username": "홍길동",
   "profileImageUrl": null, // 또는 Storage URL
@@ -81,7 +103,7 @@
 채팅방 내 개별 메시지를 저장합니다.
 
 ```json
-// Markers/<marker_id>/Chats/<chat_id>/Messages/<message_id> 
+// Markers/<marker_id>/Chats/<chat_id>/Messages/<message_id>
 {
   "messageId": "msg001", // 실제로는 uuid
   "senderId": "user123",
@@ -113,7 +135,7 @@
 프로필 이미지와 채팅 이미지는 Firebase Storage에 저장됩니다. 아래는 파일 경로 구조입니다:
 
 ```
-프로필 이미지: users/profileImages/<user_uid>.jpg 
+프로필 이미지: users/profileImages/<user_uid>.jpg
 채팅 이미지: chats/<marker_id>/messages/<message_id>/image.jpg
 ```
 
