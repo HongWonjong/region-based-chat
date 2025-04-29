@@ -1,13 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-enum StoryType {
-  event, // 일반적인 행사
-  minorIncident, // 가벼운 사건
-  majorIncident, // 중요한 사건/범죄
-  lostItem // 분실
-}
+import 'package:region_based_chat/enum/story_type_enum.dart';
 
 class Story {
   final String id;
