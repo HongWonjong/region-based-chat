@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Message {
+class MessageModel {
   final String messageId;
   final String senderId;
   final String senderName;
@@ -9,7 +9,7 @@ class Message {
   final DateTime timestamp;
   final List<String> readBy;
 
-  Message({
+  MessageModel({
     required this.messageId,
     required this.senderId,
     required this.senderName,
@@ -19,8 +19,8 @@ class Message {
     required this.readBy,
   });
 
-  factory Message.fromJson(Map<String, dynamic> json) {
-    return Message(
+  factory MessageModel.fromJson(Map<String, dynamic> json) {
+    return MessageModel(
       messageId: json['messageId'],
       senderId: json['senderId'],
       senderName: json['senderName'],

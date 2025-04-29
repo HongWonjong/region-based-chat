@@ -1,6 +1,6 @@
 import 'package:region_based_chat/enum/story_type_enum.dart';
 
-class StoryMarker {
+class StoryMarkerModel {
   final String id;
   final String title;
   final String description;
@@ -12,7 +12,7 @@ class StoryMarker {
   final String uid;
   final List<String> imageUrls;
 
-  StoryMarker({
+  StoryMarkerModel({
     required this.id,
     required this.title,
     required this.description,
@@ -40,8 +40,8 @@ class StoryMarker {
     };
   }
 
-  factory StoryMarker.fromMap(Map<String, dynamic> map) {
-    return StoryMarker(
+  factory StoryMarkerModel.fromMap(Map<String, dynamic> map) {
+    return StoryMarkerModel(
       id: map['id'],
       title: map['title'],
       description: map['description'],

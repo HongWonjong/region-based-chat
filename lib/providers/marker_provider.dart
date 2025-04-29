@@ -9,21 +9,21 @@ import '../repository/marker_repository.dart';
 import 'firebase_store_provider.dart';
 
 // 마커 리스트 상태 관리
-final markerListProvider = StateNotifierProvider<MarkerListNotifier, List<StoryMarker>>((ref) {
+final markerListProvider = StateNotifierProvider<MarkerListNotifier, List<StoryMarkerModel>>((ref) {
   final markerRepository = ref.watch(markerRepositoryProvider); // MarkerRepository를 주입받음
   return MarkerListNotifier(markerRepository);
 });
 
 // 선택된 마커 상태 관리
-final selectedMarkerProvider = StateProvider<StoryMarker?>((ref) => null);
+final selectedMarkerProvider = StateProvider<StoryMarkerModel?>((ref) => null);
 
 // 마커 리스트 상태 관리용 Notifier
-class MarkerListNotifier extends StateNotifier<List<StoryMarker>> {
+class MarkerListNotifier extends StateNotifier<List<StoryMarkerModel>> {
   final MarkerRepository markerRepository;
 
   MarkerListNotifier(this.markerRepository) : super([]);
 
-  Future<void> fetchMarkers(NaverMapController controller, double positonCorrectionValue, Function(StoryMarker) onMarkerTapped) async {
+  Future<void> fetchMarkers(NaverMapController controller, double positonCorrectionValue, Function(StoryMarkerModel) onMarkerTapped) async {
     log('fetch markers');
     final markers = await markerRepository.fetchMarkers(); // MarkerRepository에서 가져온 데이터
 
@@ -42,7 +42,7 @@ class MarkerListNotifier extends StateNotifier<List<StoryMarker>> {
     state = markers;
   }
 
-  List<List<StoryMarker>> _getNewAndRemovedMarkers(List<StoryMarker> currentMarkers, List<StoryMarker> newMarkers) {
+  List<List<StoryMarkerModel>> _getNewAndRemovedMarkers(List<StoryMarkerModel> currentMarkers, List<StoryMarkerModel> newMarkers) {
     final currentMarkerIds = currentMarkers.map((marker) => marker.id).toSet();
     final newMarkerIds = newMarkers.map((marker) => marker.id).toSet();
 

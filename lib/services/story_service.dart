@@ -24,7 +24,7 @@ class StoryService {
       final docRef = _firestore.collection(_collection).doc();
 
       // 스토리 객체 생성
-      final story = StoryMarker(
+      final story = StoryMarkerModel(
         id: docRef.id,
         title: title,
         description: description,
@@ -46,7 +46,7 @@ class StoryService {
   }
 
   // 특정 지역의 스토리 조회 (위도/경도 범위 내)
-  Future<List<StoryMarker>> getStoriesByLocation({
+  Future<List<StoryMarkerModel>> getStoriesByLocation({
     required double minLat,
     required double maxLat,
     required double minLng,
@@ -60,8 +60,8 @@ class StoryService {
           .get();
 
       // 위도 필터링 후 경도 필터링 (Firebase는 다중 필드 범위 쿼리 미지원)
-      List<StoryMarker> stories = querySnapshot.docs
-          .map((doc) => StoryMarker.fromMap(doc.data()))
+      List<StoryMarkerModel> stories = querySnapshot.docs
+          .map((doc) => StoryMarkerModel.fromMap(doc.data()))
           .where(
             (story) => story.longitude >= minLng && story.longitude <= maxLng,
           )
@@ -75,12 +75,12 @@ class StoryService {
   }
 
   // 특정 유저의 스토리 조회
-  Future<List<StoryMarker>> getStoriesByUser(String userId) async {
+  Future<List<StoryMarkerModel>> getStoriesByUser(String userId) async {
     try {
       final querySnapshot =
           await _firestore.collection(_collection).where('createdBy', isEqualTo: userId).orderBy('createdAt', descending: true).get();
 
-      return querySnapshot.docs.map((doc) => StoryMarker.fromMap(doc.data())).toList();
+      return querySnapshot.docs.map((doc) => StoryMarkerModel.fromMap(doc.data())).toList();
     } catch (e) {
       log('사용자 스토리 조회 오류: $e');
       rethrow;

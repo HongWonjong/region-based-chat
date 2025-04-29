@@ -82,7 +82,7 @@ class StoryBottomSheet extends ConsumerWidget {
   }
 
   // 소문 내용 렌더링
-  List<Widget> _content(StoryMarker? story, BuildContext context, FirebaseStorageService fireStorageProvider, bool isDark) {
+  List<Widget> _content(StoryMarkerModel? story, BuildContext context, FirebaseStorageService fireStorageProvider, bool isDark) {
     if (story == null) {
       return [
         Center(

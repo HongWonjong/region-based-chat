@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Chat {
+class ChatModel {
   final String markerId;
   final String title;
   final String createdBy;
@@ -10,7 +10,7 @@ class Chat {
   final DateTime lastMessageTime;
   final String lastMessageSender;
 
-  Chat({
+  ChatModel({
     required this.markerId,
     required this.title,
     required this.createdBy,
@@ -21,8 +21,8 @@ class Chat {
     required this.lastMessageSender,
   });
 
-  factory Chat.fromJson(Map<String, dynamic> json) {
-    return Chat(
+  factory ChatModel.fromJson(Map<String, dynamic> json) {
+    return ChatModel(
       markerId: json['markerId'],
       title: json['title'],
       createdBy: json['createdBy'],

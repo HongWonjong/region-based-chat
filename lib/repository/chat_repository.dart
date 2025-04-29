@@ -5,14 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../models/chat.dart';
-import '../models/message.dart';
+import '../models/chat_model.dart';
+import '../models/message_model.dart';
 
 class ChatRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  Future<Chat> getOrCreateChat(String markerId, String userId, String userName) async {
+  Future<ChatModel> getOrCreateChat(String markerId, String userId, String userName) async {
     final chatRef = _firestore.collection('markers').doc(markerId).collection('Chats');
     final chatDocRef = chatRef.doc('default');
     final querySnapshot = await chatRef.get();
@@ -41,7 +41,7 @@ class ChatRepository {
 
       // 업데이트된 채팅 데이터 반환
       final updatedDoc = await chatDocRef.get();
-      return Chat.fromJson(updatedDoc.data()!);
+      return ChatModel.fromJson(updatedDoc.data()!);
     } else {
       // 마커 문서에서 title 조회
       String title = '알 수 없는 제목';
@@ -55,7 +55,7 @@ class ChatRepository {
       }
 
       // 새로운 채팅방 생성
-      final newChat = Chat(
+      final newChat = ChatModel(
         markerId: markerId,
         title: title,
         createdBy: userId,
@@ -75,7 +75,7 @@ class ChatRepository {
   }
 
   // 메시지 스트림 제공
-  Stream<List<Message>> getMessages(String markerId) {
+  Stream<List<MessageModel>> getMessages(String markerId) {
     return _firestore
         .collection('markers')
         .doc(markerId)
@@ -84,11 +84,11 @@ class ChatRepository {
         .collection('Messages')
         .orderBy('timestamp', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => Message.fromJson(doc.data())).toList());
+        .map((snapshot) => snapshot.docs.map((doc) => MessageModel.fromJson(doc.data())).toList());
   }
 
   // 메시지 전송
-  Future<void> sendMessage(String markerId, Message message) async {
+  Future<void> sendMessage(String markerId, MessageModel message) async {
     final chatRef = _firestore.collection('markers').doc(markerId).collection('Chats').doc('default');
     final messageRef = chatRef.collection('Messages').doc();
 

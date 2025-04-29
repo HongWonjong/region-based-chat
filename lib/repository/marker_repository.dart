@@ -7,8 +7,8 @@ class MarkerRepository {
 
   MarkerRepository(this.firebaseFirestoreService);
 
-  Future<List<StoryMarker>> fetchMarkers() async {
+  Future<List<StoryMarkerModel>> fetchMarkers() async {
     final markers = await firebaseFirestoreService.getMarkers();
-    return markers.map((doc) => StoryMarker.fromMap(doc.data())).toList();
+    return markers.map((doc) => StoryMarkerModel.fromMap(doc.data())).toList();
   }
 }

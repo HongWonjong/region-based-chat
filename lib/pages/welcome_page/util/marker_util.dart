@@ -4,7 +4,7 @@ import 'package:region_based_chat/enum/story_type_enum.dart';
 import 'package:region_based_chat/models/story_model.dart';
 
 class MarkerUtils {
-  static NMarker convertToNMarker(StoryMarker story) {
+  static NMarker convertToNMarker(StoryMarkerModel story) {
     return NMarker(
       id: story.id,
       position: NLatLng(story.latitude, story.longitude),
@@ -13,9 +13,9 @@ class MarkerUtils {
 
   static void updateMapMarkers(
       {required NaverMapController mapController,
-      required List<StoryMarker> removedMarkers,
-      required List<StoryMarker> addedMarkers,
-      required Function(StoryMarker) onMarkerTapped,
+      required List<StoryMarkerModel> removedMarkers,
+      required List<StoryMarkerModel> addedMarkers,
+      required Function(StoryMarkerModel) onMarkerTapped,
       required double positonCorrectionValue}) {
     // 마커 제거
     for (var marker in removedMarkers) {
@@ -30,7 +30,7 @@ class MarkerUtils {
     }
   }
 
-  static void setMarkerVisual(StoryMarker story, NMarker nMarker) {
+  static void setMarkerVisual(StoryMarkerModel story, NMarker nMarker) {
     Color? color;
 
     switch (story.type) {
@@ -52,8 +52,8 @@ class MarkerUtils {
     nMarker.setIconTintColor(color);
   }
 
-  static void setMarkerListener(
-      NMarker nMarker, NaverMapController mapController, double positonCorrectionValue, Function(StoryMarker) onMarkerTapped, StoryMarker marker) {
+  static void setMarkerListener(NMarker nMarker, NaverMapController mapController, double positonCorrectionValue,
+      Function(StoryMarkerModel) onMarkerTapped, StoryMarkerModel marker) {
     nMarker.setOnTapListener((NMarker tappedMarker) async {
       // 바텀 시트가 올라온 상태에서 지도 중간에 마커가 위치하기위한 좌표 보정
 
