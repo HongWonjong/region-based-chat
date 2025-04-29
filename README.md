@@ -7,7 +7,7 @@
 <div style="display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 10px; margin-bottom: 20px;">
   <img src="https://github.com/user-attachments/assets/1cf0b139-8020-413d-a554-dd9400028798" width="200"/>
   <img src="https://github.com/user-attachments/assets/e53f517a-1045-4b4e-a0c5-fc4d9cbf1ace" width="200" />
-  <img src="https://github.com/user-attachments/assets/658d7ec3-5475-4075-a8af-480752be9551" width="200" />
+  <img src="https://github.com/user-attachments/assets/762af693-8d08-4558-b684-58c2fbe109b7" width="200" />
   <img src="https://github.com/user-attachments/assets/b03646cf-eb08-463e-a4f4-1f704f3676d1" width="200" />
   <img src="https://github.com/user-attachments/assets/a09d938f-65a2-4baf-898d-0db095526770" width="200" />
   <img src="https://github.com/user-attachments/assets/da09ca87-bcf3-4081-a850-ab2b47e19441" width="200" />
@@ -22,7 +22,6 @@
   <img src="https://github.com/user-attachments/assets/880518ba-cdda-4717-8f90-424b07e49290" width="200" />
   <img src="https://github.com/user-attachments/assets/4085aef6-10c2-458a-b6ec-7387b8c294c1" width="200" />
 </div>
-
 
 
 ## 🎯 프로젝트 소개
