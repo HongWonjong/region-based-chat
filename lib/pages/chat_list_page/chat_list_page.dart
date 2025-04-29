@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/chat_list_provider.dart';
 import '../chat_page/chat_page.dart';
 import 'chat_list_view_model.dart';
 import '../../style/style.dart';
