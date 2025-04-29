@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import '../welcome_page/welcome_page.dart';
 
 final authProvider = StateNotifierProvider<AuthNotifier, User?>((ref) {
   return AuthNotifier();
@@ -13,7 +12,8 @@ final authProvider = StateNotifierProvider<AuthNotifier, User?>((ref) {
 class AuthNotifier extends StateNotifier<User?> {
   AuthNotifier() : super(FirebaseAuth.instance.currentUser);
 
-  Future<void> signInWithGoogle(BuildContext context) async {
+  Future<void> signInWithGoogle(BuildContext context, WidgetRef ref) async {
+    //  ref 추가
     try {
       final googleSignIn = GoogleSignIn(
         scopes: ['email'],
@@ -50,10 +50,11 @@ class AuthNotifier extends StateNotifier<User?> {
       /// 파이어스토어에 해당 uid 문서 있는지 확인
       final uid = state!.uid;
       final doc =
-      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final nickname = doc.data()?['username'];
 
       if (doc.exists && nickname != null && nickname != "") {
+        ref.invalidate(markerListProvider); //  Provider 초기화
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const WelcomePage()),
